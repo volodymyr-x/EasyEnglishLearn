@@ -1,0 +1,25 @@
+Index: app/src/main/java/com/example/vladimir/easyenglishlearn/DatabaseHelper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/vladimir/easyenglishlearn/DatabaseHelper.java	(date 1501438831000)
++++ app/src/main/java/com/example/vladimir/easyenglishlearn/DatabaseHelper.java	(date 1501439020000)
+@@ -15,7 +15,7 @@
+     private static final String DATABASE_TABLE = "category";
+     public static final String COLUMN_ID = "_id";
+     public static final String COLUMN_CATEGORY = "name_of_category";
+-    private static final String DATABASE_CREATE_SCRIPT = "create table "
++    private static final String DATABASE_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
+             + DATABASE_TABLE + " (" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_CATEGORY
+             + " text not null" + ");";
+     public static final String DATABASE_TABLE_WORDS = "words";
+@@ -23,7 +23,7 @@
+     public static final String COLUMN_NAME_OF_CATEGORY = "name_of_category";
+     public static final String COLUMN_LEXEME = "lexeme";
+     public static final String COLUMN_TRANSLATION = "perevod";
+-    private static final String DATABASE_WORDS_CREATE_SCRIPT = "create table "
++    private static final String DATABASE_WORDS_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
+             + DATABASE_TABLE_WORDS + " (" + COLUMN_WORDS_ID + " integer primary key autoincrement, " + COLUMN_NAME_OF_CATEGORY
+             + " text, " + COLUMN_LEXEME + " text, " + COLUMN_TRANSLATION + " text" + ");";
+ 

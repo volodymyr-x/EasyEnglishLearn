@@ -1,0 +1,28 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <style name="AppTheme" parent="android:Theme.Light">
+        <item name="android:buttonStyle">@style/styleButton</item>
+        <item name="android:buttonBarButtonStyle">@style/dialogButton</item>
+        <item name="android:windowAnimationStyle">@style/DownUpActivity</item>
+        <item name="android:windowBackground">@drawable/english_learn_wallpaper_main</item>
+    </style>
+    <style name="DownUpActivity" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_down_up_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_down_up_exit</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_down_up_close_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_down_up_close_enter</item>
+
+    </style>
+
+    <style name="styleButton" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/states_button</item>
+    </style>
+
+    <style name="styleMainActivity">
+        <item name="android:background">@drawable/english_learn_wallpaper_main</item>
+    </style>
+    <style name="dialogButton" parent="@android:style/Widget.Holo.Light.Button.Borderless.Small">
+        <item name="android:background">@drawable/states_button</item>
+    </style>
+</resources>
