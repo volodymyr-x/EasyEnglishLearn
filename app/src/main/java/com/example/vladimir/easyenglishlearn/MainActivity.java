@@ -46,15 +46,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             case R.id.ma_btn_start:
                 intent = new Intent(this, CategoryActivity.class);
                 startActivity(intent);
-
                 break;
             case R.id.ma_btn_shar_pref:
                 intent.setClass(this, PreferencesActivity.class);
                 startActivity(intent);
-
                 break;
             case R.id.ma_btn_about:
-
                 break;
             default:
                 break;

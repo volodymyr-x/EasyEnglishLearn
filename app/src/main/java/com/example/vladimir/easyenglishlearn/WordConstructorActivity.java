@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.model.Answer;
 import com.example.vladimir.easyenglishlearn.model.Word;
+import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,6 +91,7 @@ public class WordConstructorActivity extends AppCompatActivity implements OnClic
                 break;
 
             case R.id.wca_btn_answer:
+                ToastUtil toastUtil = new ToastUtil(this);
                 Answer answerCheck = new Answer(resultList.get(iteration), answerBuilder, translationDirection);
                 if (answerCheck.isAnswerCorrect()) {
                     iteration++;
@@ -103,11 +105,11 @@ public class WordConstructorActivity extends AppCompatActivity implements OnClic
                             createButton(letter);
                         }
                     } else {
-                        showMessage(R.string.errors_count, errorsCount);
+                        toastUtil.showMessage(R.string.errors_count, errorsCount);
                         finish();
                     }
                 } else {
-                    showMessage(R.string.wrong_answer);
+                    toastUtil.showMessage(R.string.wrong_answer);
                     errorsCount++;
                     gridContainer.removeAllViews();
                     createButtons();
@@ -148,18 +150,17 @@ public class WordConstructorActivity extends AppCompatActivity implements OnClic
         }
     }
 
-    private void showMessage(@StringRes int id, int errorsCount) {
-        String message = getString(id);
-        if (errorsCount >= 0) {
-            message += " " + errorsCount;
-        }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-
-    }
-
-    private void showMessage(@StringRes int id) {
-        showMessage(id, -1);
-
-    }
+//    private void showMessage(@StringRes int id, int errorsCount) {
+//        String message = getString(id);
+//        if (errorsCount >= 0) {
+//            message += " " + errorsCount;
+//        }
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//
+//    }
+//
+//    private void showMessage(@StringRes int id) {
+//        showMessage(id, -1);
+//    }
 }
 

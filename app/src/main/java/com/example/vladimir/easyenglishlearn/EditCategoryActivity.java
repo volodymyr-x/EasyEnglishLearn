@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 import com.example.vladimir.easyenglishlearn.model.Word;
+import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -143,9 +144,10 @@ public class EditCategoryActivity extends AppCompatActivity implements OnClickLi
 
     @Override
     public void onClick(View v) {
+        ToastUtil toastUtil = new ToastUtil(this);
         switch (v.getId()) {
             case R.id.eca_btn_save_category:
-            if (!TextUtils.isEmpty(etCategoryName.getText())) {
+                if (!TextUtils.isEmpty(etCategoryName.getText())) {
                 newCategoryName = etCategoryName.getText().toString();
                 cursor =  dbHelper.getWords(oldCategoryName);
                 if (cursor != null) {
@@ -165,7 +167,7 @@ public class EditCategoryActivity extends AppCompatActivity implements OnClickLi
                 setResult(RESULT_OK, intent);
                 finish();
             } else {
-                showMessage(R.string.eca_toast_save_edit_category);
+                toastUtil.showMessage(R.string.eca_toast_save_edit_category);
             } break;
             case R.id.eca_btn_save_word:
                 if (isTextFieldsNotEmpty()) {
@@ -180,7 +182,7 @@ public class EditCategoryActivity extends AppCompatActivity implements OnClickLi
                     cleanTextFields();
 
                 } else {
-                    showMessage(R.string.eca_toast_save_word_empty_fields);
+                    toastUtil.showMessage(R.string.eca_toast_save_word_empty_fields);
                 } break;
             case R.id.eca_btn_clean:
                 cleanTextFields();
@@ -215,7 +217,7 @@ public class EditCategoryActivity extends AppCompatActivity implements OnClickLi
                 etEditTranslation.getText().toString());
     }
 
-    private void showMessage(@StringRes int id) {
-        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
-    }
+//    private void showMessage(@StringRes int id) {
+//        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
+//    }
 }

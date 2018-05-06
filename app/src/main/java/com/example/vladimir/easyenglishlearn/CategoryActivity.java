@@ -163,25 +163,5 @@ public class CategoryActivity extends AppCompatActivity implements LoaderManager
     public float getFontSize() {
         return fontSize;
     }
-
-    //    static class MyCursorLoader extends CursorLoader {
-//        DatabaseHelper db_helper;
-//
-//        public MyCursorLoader (Context context, DatabaseHelper db_helper) {
-//            super(context);
-//            this.db_helper = db_helper;
-//        }
-//
-//        @Override
-//        public Cursor loadInBackground() {
-//            Cursor cursor = db_helper.getAllData();
-//            try {
-//                TimeUnit.SECONDS.sleep(2);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            return cursor;
-//        }
-//    }
 }
 

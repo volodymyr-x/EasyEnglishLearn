@@ -1,7 +1,6 @@
 package com.example.vladimir.easyenglishlearn;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,11 +17,11 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 import com.example.vladimir.easyenglishlearn.fragments.ExerciseChoiceFragment;
 import com.example.vladimir.easyenglishlearn.model.Word;
+import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -110,7 +109,7 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
             }
             dialogFragment.show(getSupportFragmentManager(), EXERCISE_CHOICE_FRAGMENT);
         } else {
-            showMessage(R.string.wsa_toast_min_words_count);
+            new ToastUtil(this).showMessage(R.string.wsa_toast_min_words_count);
         }
     }
 
@@ -127,8 +126,8 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
         return selectedWordsList;
     }
 
-    private void showMessage(@StringRes int id) {
-        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
-    }
+//    private void showMessage(@StringRes int id) {
+//        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
+//    }
 }
 

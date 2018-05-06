@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.model.Answer;
 import com.example.vladimir.easyenglishlearn.model.Word;
+import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,6 +79,7 @@ public class WordQuizActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
+        ToastUtil toastUtil = new ToastUtil(this);
         RadioButton checkedRB = findViewById(rgTranslation.getCheckedRadioButtonId());
         answerBuilder.append(checkedRB.getText());
         Answer answerCheck = new Answer(currentWord, answerBuilder, translationDirection);
@@ -88,11 +90,11 @@ public class WordQuizActivity extends AppCompatActivity
                 tvQuestion.setText(translationDirection ? currentWord.getLexeme() : currentWord.getTranslation());
                 fillRadioGroup(currentWord);
             }else {
-                showMessage(R.string.errors_count, errorsCount);
+                toastUtil.showMessage(R.string.errors_count, errorsCount);
                 finish();
             }
         }else {
-            showMessage(R.string.wrong_answer);
+            toastUtil.showMessage(R.string.wrong_answer);
             errorsCount++;
         }
         answerBuilder.delete(0, answerBuilder.length());
@@ -120,16 +122,16 @@ public class WordQuizActivity extends AppCompatActivity
         }
     }
 
-    private void showMessage(@StringRes int id, int errorsCount) {
-        String message = getString(id);
-        if (errorsCount >= 0) {
-            message += " " + errorsCount;
-        }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-
-    }
-
-    private void showMessage(@StringRes int id) {
-        showMessage(id, -1);
-    }
+//    private void showMessage(@StringRes int id, int errorsCount) {
+//        String message = getString(id);
+//        if (errorsCount >= 0) {
+//            message += " " + errorsCount;
+//        }
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//
+//    }
+//
+//    private void showMessage(@StringRes int id) {
+//        showMessage(id, -1);
+//    }
 }

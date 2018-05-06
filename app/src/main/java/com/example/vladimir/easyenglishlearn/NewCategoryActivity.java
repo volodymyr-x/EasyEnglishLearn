@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 import com.example.vladimir.easyenglishlearn.model.Word;
+import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -122,6 +123,7 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
     }
     @Override
     public void onClick(View v) {
+        ToastUtil toastUtil = new ToastUtil(this);
         switch (v.getId()) {
             case R.id.nca_btn_create:
             if (!TextUtils.isEmpty(etCategoryName.getText())) {
@@ -134,7 +136,7 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
                 setResult(RESULT_OK, intent);
                 finish();
             } else {
-                showMessage(R.string.eca_toast_save_edit_category);
+                toastUtil.showMessage(R.string.eca_toast_save_edit_category);
             }
             break;
             case R.id.nca_btn_save_word:
@@ -149,7 +151,7 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
                     adapter.notifyDataSetChanged();
                     cleanTextFields();
                 } else {
-                    showMessage(R.string.eca_toast_save_word_empty_fields);
+                    toastUtil.showMessage(R.string.eca_toast_save_word_empty_fields);
                 }
                 break;
             case R.id.nca_btn_clean:
@@ -185,7 +187,7 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
         dbHelper.close();
     }
 
-    private void showMessage(@StringRes int id) {
-        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
-    }
+//    private void showMessage(@StringRes int id) {
+//        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
+//    }
 }
