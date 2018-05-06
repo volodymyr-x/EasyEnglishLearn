@@ -1,8 +1,5 @@
-package com.example.vladimir.easyenglishlearn;
+package com.example.vladimir.easyenglishlearn.model;
 
-/**
- * Created by BOBAH on 26.03.2015.
- */
 public class Answer {
     Word question;
     String answer;
@@ -15,8 +12,9 @@ public class Answer {
         this.translationDirection =translationDirection;
     }
 
-    boolean isAnswerCorrect(){
-        return  translationDirection ? question.translation.equalsIgnoreCase(answer): question.lexeme.equalsIgnoreCase(answer);
+    public boolean isAnswerCorrect(){
+        return  translationDirection ? question.getTranslation().equalsIgnoreCase(answer)
+                : question.getLexeme().equalsIgnoreCase(answer);
     }
 
 }

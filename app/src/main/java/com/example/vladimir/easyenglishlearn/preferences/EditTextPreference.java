@@ -1,4 +1,4 @@
-package com.example.vladimir.easyenglishlearn;
+package com.example.vladimir.easyenglishlearn.preferences;
 
 import android.content.Context;
 import android.graphics.Color;

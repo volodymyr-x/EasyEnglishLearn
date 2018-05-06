@@ -5,42 +5,41 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
-        android:textSize="17sp"
+        android:id="@+id/wqa_tv_question"
+        android:textSize="@dimen/wca_tv_text_size"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 
     <RadioGroup
-        android:id="@+id/rgPerevod"
+        android:id="@+id/wqa_rg_translation"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <RadioButton
-            android:id="@+id/radio0"
+            android:id="@+id/wqa_radio_btn_0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"  />
 
         <RadioButton
-            android:id="@+id/radio1"
+            android:id="@+id/wqa_radio_btn_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"  />
 
         <RadioButton
-            android:id="@+id/radio2"
+            android:id="@+id/wqa_radio_btn_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"  />
     </RadioGroup>
 
     <Button
-        android:id="@+id/btnOtvet"
+        android:id="@+id/wqa_btn_answer"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ответить" />
+        android:text="@string/wca_btn_answer" />
 
 </LinearLayout>

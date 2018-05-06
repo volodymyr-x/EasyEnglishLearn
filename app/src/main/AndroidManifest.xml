@@ -16,13 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="PreferencesActivity"></activity>
+        <activity android:name=".preferences.PreferencesActivity"></activity>
         <activity android:name=".CategoryActivity"></activity>
-        <activity android:name=".EditCollectionActivity" ></activity>
-        <activity android:name=".NewCollectionActivity" ></activity>
-        <activity android:name=".WordSelection" ></activity>
-        <activity android:name=".WordQuiz" ></activity>
-        <activity android:name=".WordConstructor" ></activity>
+        <activity android:name=".EditCategoryActivity" ></activity>
+        <activity android:name=".NewCategoryActivity" ></activity>
+        <activity android:name=".WordSelectionActivity" ></activity>
+        <activity android:name=".WordQuizActivity" ></activity>
+        <activity android:name=".WordConstructorActivity" ></activity>
     </application>
 
 </manifest>

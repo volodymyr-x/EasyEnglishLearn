@@ -1,4 +1,4 @@
-package com.example.vladimir.easyenglishlearn;
+package com.example.vladimir.easyenglishlearn.db;
 
 
 import android.content.ContentValues;
@@ -13,55 +13,55 @@ public class DatabaseHelper {
     private static final String DATABASE_NAME = "myDB2";
     private static final int DB_VERSION = 1;
     private static final String DATABASE_TABLE = "category";
-    public static final String COLUMN_ID = "_id";
+    private static final String COLUMN_ID = "_id";
     public static final String COLUMN_CATEGORY = "name_of_category";
     private static final String DATABASE_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
             + DATABASE_TABLE + " (" + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_CATEGORY
             + " text not null" + ");";
     public static final String DATABASE_TABLE_WORDS = "words";
     public static final String COLUMN_WORDS_ID = "_id";
-    public static final String COLUMN_NAME_OF_CATEGORY = "name_of_category";
+    private static final String COLUMN_NAME_OF_CATEGORY = "name_of_category";
     public static final String COLUMN_LEXEME = "lexeme";
     public static final String COLUMN_TRANSLATION = "perevod";
     private static final String DATABASE_WORDS_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
             + DATABASE_TABLE_WORDS + " (" + COLUMN_WORDS_ID + " integer primary key autoincrement, " + COLUMN_NAME_OF_CATEGORY
             + " text, " + COLUMN_LEXEME + " text, " + COLUMN_TRANSLATION + " text" + ");";
 
-    private final Context mCtx;
-    private DBHelper mDBHelper;
-    public SQLiteDatabase mDB;
+    private final Context context;
+    private DBHelper dbHelper;
+    public SQLiteDatabase sqLiteDB;
 
-    public DatabaseHelper(Context ctx) {
-        mCtx = ctx;
+    public DatabaseHelper(Context context) {
+        this.context = context;
     }
 
     // открыть подключение
     public void open() {
-        mDBHelper = new DBHelper(mCtx, DATABASE_NAME, null, DB_VERSION);
-        mDB = mDBHelper.getWritableDatabase();
+        dbHelper = new DBHelper(context, DATABASE_NAME, null, DB_VERSION);
+        sqLiteDB = dbHelper.getWritableDatabase();
     }
 
     // закрыть подключение
     public void close() {
-        if (mDBHelper!=null) mDBHelper.close();
+        if (dbHelper !=null) dbHelper.close();
     }
 
     // получить все данные из таблицы DB_TABLE
     public Cursor getAllData() {
-        return mDB.query(DATABASE_TABLE, null, null, null, null, null, null);
+        return sqLiteDB.query(DATABASE_TABLE, null, null, null, null, null, null);
     }
     // получить нужные данные из таблицы DATABASE_TABLE_WORDS
-    public Cursor getDataWords(String nameOfCategory) {
+    public Cursor getWords(String nameOfCategory) {
         String selection = "name_of_category == ?";
         String[] selectionArgs = new String[] { nameOfCategory };
-        return mDB.query(DATABASE_TABLE_WORDS, null, selection, selectionArgs, null, null, null);
+        return sqLiteDB.query(DATABASE_TABLE_WORDS, null, selection, selectionArgs, null, null, null);
     }
 
     // добавить запись в DB_TABLE
     public void addRec(String category) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_CATEGORY, category);
-        mDB.insert(DATABASE_TABLE, null, cv);
+        sqLiteDB.insert(DATABASE_TABLE, null, cv);
     }
     // добавить запись в DATABASE_TABLE_WORDS
     public void addRecWords(String category, String lexeme, String translation) {
@@ -69,23 +69,23 @@ public class DatabaseHelper {
         cv.put(COLUMN_NAME_OF_CATEGORY, category);
         cv.put(COLUMN_LEXEME, lexeme);
         cv.put(COLUMN_TRANSLATION, translation);
-        mDB.insert(DATABASE_TABLE_WORDS, null, cv);
+        sqLiteDB.insert(DATABASE_TABLE_WORDS, null, cv);
     }
 
     // удалить запись из DB_TABLE
     public void delRec(long id) {
-        mDB.delete(DATABASE_TABLE, COLUMN_ID + " = " + id, null);
+        sqLiteDB.delete(DATABASE_TABLE, COLUMN_ID + " = " + id, null);
     }
     // удалить запись из DB_TABLE_WORDS
     public void delRecWords(long id) {
-        mDB.delete(DATABASE_TABLE_WORDS, COLUMN_WORDS_ID + " = " + id, null);
+        sqLiteDB.delete(DATABASE_TABLE_WORDS, COLUMN_WORDS_ID + " = " + id, null);
     }
 
     //редактировать запись из DB_TABLE
     public void updRec (String newNameOfCategory, long id) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_CATEGORY, newNameOfCategory);
-        mDB.update(DATABASE_TABLE, cv, COLUMN_WORDS_ID + " = " + id, null);
+        sqLiteDB.update(DATABASE_TABLE, cv, COLUMN_WORDS_ID + " = " + id, null);
     }
 
     // редактировать запись из DB_TABLE_WORDS
@@ -93,13 +93,13 @@ public class DatabaseHelper {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_LEXEME, lexeme);
         cv.put(COLUMN_TRANSLATION, translation);
-        mDB.update(DATABASE_TABLE_WORDS, cv, COLUMN_WORDS_ID + " = " + id, null);
+        sqLiteDB.update(DATABASE_TABLE_WORDS, cv, COLUMN_WORDS_ID + " = " + id, null);
     }
 
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {
 
-        public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
         }
 

@@ -2,8 +2,7 @@
 <resources>
 
     <string name="app_name">EasyEnglishLearn</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="pr_openmode">OpenMode</string>
+    <string name="pr_open_mode">OpenMode</string>
     <string name="pr_color">Color</string>
     <string name="pr_color_black">ColorBlack</string>
     <string name="pr_color_red">ColorRed</string>
@@ -18,6 +17,44 @@
     <string name="start">Start</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
+    <string name="ca_cm_edit_coll">Edit this theme</string>
+    <string name="ca_cm_new_coll">Add new theme</string>
+    <string name="ca_cm_remove_coll">Remove this theme</string>
+    <string name="pr_size_list">listPreference</string>
+    <string name="context_menu_remove">Remove word</string>
+    <string name="eca_toast_save_edit_category">Enter category Name</string>
+    <string name="eca_save_word">Save word</string>
+    <string name="eca_toast_save_word_empty_fields">Fill all fields</string>
+    <string name="eca_edit_category_clean">Save word</string>
+    <string name="ca_tv_category_select">Select category</string>
+    <string name="btn_save_word_replace">Replace word</string>
+    <string name="eca_tv_edit_category">Edit category</string>
+    <string name="eca_btn_save_and_exit">Save and return</string>
+    <string name="eca_tv_lexeme">Lexeme:</string>
+    <string name="eca_tv_translation">Translation:</string>
+    <string name="eca_btn_save_word">Save word</string>
+    <string name="eca_btn_clean">Clean</string>
+    <string name="nca_tv_new_category">New category</string>
+    <string name="nca_btn_create">Create category</string>
+    <string name="nca_tv_lexeme">Lexeme:</string>
+    <string name="nca_tv_translation">Translation:</string>
+    <string name="nca_btn_save_word">Save word</string>
+    <string name="nca_btn_clean">Clean</string>
+    <string name="errors_count">Errors:</string>
+    <string name="wrong_answer">Wrong answer</string>
+    <string name="wca_btn_answer">Answer</string>
+    <string name="wca_btn_clear">Clear</string>
+    <string name="wsa_tv_choose_words">Choose the words</string>
+    <string name="wsa_btn_start">Start</string>
+    <string name="wsa_cb_choose_all">Choose all</string>
+    <string name="wsa_toast_min_words_count">select at least 4 words</string>
+    <string name="ecf_tv_title">Choose exercise</string>
+    <string name="ecf_rb_en_ru"><![CDATA[En—>Ru]]></string>
+    <string name="ecf_rb_ru_en"><![CDATA[Ru—>En]]></string>
+    <string name="ecf_btn_quiz">Quiz</string>
+    <string name="ecf_btn_constructor">Constructor</string>
+    <string name="ecf_btn_cancel">Cancel</string>
+    <string name="rcf_tv_remove_category">Remove this category?</string>
     <string-array name="entries">
         <item>Mini</item>
         <item>Midi</item>

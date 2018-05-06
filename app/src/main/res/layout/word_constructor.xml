@@ -5,29 +5,27 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/tvVopros"
+        android:id="@+id/wca_tv_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
+        android:textSize="@dimen/wca_tv_text_size"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:text="" />
+        android:gravity="center" />
 
     <TextView
-        android:id="@+id/tvOtvet"
+        android:id="@+id/wca_tv_answer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
+        android:textSize="@dimen/wca_tv_text_size"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:text="" />
+        android:gravity="center" />
 
     <GridLayout
         android:id="@+id/gridContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:columnCount="6"
+        android:columnCount="5"
         android:layout_gravity="center"
         android:orientation="horizontal" >
     </GridLayout>
@@ -38,18 +36,18 @@
         android:layout_gravity="center" >
 
         <Button
-            android:id="@+id/btnOtvet2"
+            android:id="@+id/wca_btn_answer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onBtnClick"
-            android:text="Ответить" />
+            android:text="@string/wca_btn_answer" />
 
         <Button
             android:id="@+id/btnClear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onBtnClick"
-            android:text="Стереть" />
+            android:text="@string/wca_btn_clear" />
 
     </LinearLayout>
 

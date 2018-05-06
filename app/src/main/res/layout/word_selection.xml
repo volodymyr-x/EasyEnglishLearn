@@ -5,46 +5,38 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/wsa_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Выберите слова"
+        android:text="@string/wsa_tv_choose_words"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/tvNameTema"
+        android:id="@+id/wsa_tv_category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
-
-        <Button
-            android:id="@+id/btnStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onClickStart"
-            android:text="Start" />
-
-    </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/chkAll"
-        android:button="@null"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+    <Button
+        android:id="@+id/wsa_btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Выбрать всё" />
+        android:layout_gravity="center"
+        android:text="@string/wsa_btn_start" />
+
+    <CheckBox
+        android:id="@+id/wsa_cb_choose_all"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/wsa_cb_choose_all" />
 
     <ListView
-        android:id="@+id/lvVyborSlov"
+        android:id="@+id/wsa_lv_words_choice"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:choiceMode="multipleChoice" >

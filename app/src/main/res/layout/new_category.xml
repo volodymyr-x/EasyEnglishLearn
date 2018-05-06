@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Редактирование категории"
+        android:text="@string/nca_tv_new_category"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_gravity="center" />
 
     <EditText
-        android:id="@+id/etEditCollName"
+        android:id="@+id/nca_et_category_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:layout_gravity="center" >
-
-        <requestFocus />
+        android:layout_gravity="center"
+        android:inputType="text"
+        tools:ignore="LabelFor" >
     </EditText>
 
     <Button
-        android:id="@+id/btnSaveEditColl"
+        android:id="@+id/nca_btn_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Сохранить и выйти" />
+        android:text="@string/nca_btn_create" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -35,65 +35,69 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/nca_tv_lexeme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Слово:"
-            android:id="@+id/tvEditCollSlovo"
+            android:text="@string/nca_tv_lexeme"
             android:padding="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <TextView
+            android:id="@+id/nca_tv_translation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Перевод:"
-            android:id="@+id/tvEditCollPerevod"
+            android:text="@string/nca_tv_translation"
             android:padding="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal" >
+
+        <EditText
+            android:id="@+id/nca_et_lexeme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text"
+            tools:ignore="LabelFor" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etEditCollLexema"
-            android:layout_weight="1"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/etEditCollPerevod"
-            android:layout_weight="1"/>
+            android:id="@+id/nca_et_translation"
+            android:layout_weight="1"
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center" >
 
         <Button
+            android:id="@+id/nca_btn_save_word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Сохранить слово"
-            android:id="@+id/btnEditCollSaveWord"
-            android:layout_gravity="center"/>
+            android:text="@string/nca_btn_save_word"
+            android:layout_gravity="center" />
 
         <Button
+            android:id="@+id/nca_btn_clean"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Отменить"
-            android:id="@+id/btnEditCollClean"/>
+            android:text="@string/nca_btn_clean" />
     </LinearLayout>
 
     <ListView
+        android:id="@+id/nca_lv_category"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lvEditColl"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

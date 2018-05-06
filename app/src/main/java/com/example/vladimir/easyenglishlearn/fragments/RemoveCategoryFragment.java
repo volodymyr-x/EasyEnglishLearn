@@ -1,33 +1,35 @@
-package com.example.vladimir.easyenglishlearn;
+package com.example.vladimir.easyenglishlearn.fragments;
 
-/**
- * Created by BOBAH on 26.03.2015.
- */
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class DialogDellColl extends DialogFragment implements OnClickListener {
+import com.example.vladimir.easyenglishlearn.CategoryActivity;
+import com.example.vladimir.easyenglishlearn.R;
+import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 
-    Cursor cursor = null;
-    final String LOG_TAG = "myLogs";
+public class RemoveCategoryFragment extends DialogFragment implements OnClickListener {
 
+    private final String LOG_TAG = RemoveCategoryFragment.class.getSimpleName();
+    public static final String DIALOG_REMOVE_CATEGORY = "DIALOG_REMOVE_CATEGORY";
+
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-        adb.setView(layoutInflater.inflate(R.layout.dialog_del_coll, null))
+        adb.setView(layoutInflater.inflate(R.layout.remove_category, null))
                 .setPositiveButton("Да", this)
                 .setNegativeButton("Нет", this);
-                //.setMessage("Удалить коллекцию?");
         return adb.create();
     }
 
@@ -39,15 +41,12 @@ public class DialogDellColl extends DialogFragment implements OnClickListener {
         Button negButton = ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_NEGATIVE);
         negButton.setBackgroundResource(R.drawable.states_button);
 
-        TextView textView = (TextView) getDialog().findViewById(R.id.tvDialDellColl);
+        TextView textView = getDialog().findViewById(R.id.rcf_tv_remove_category);
 
-        posiButton.setTextSize(((CategoryActivity) getActivity()).getfSize());
-        negButton.setTextSize(((CategoryActivity) getActivity()).getfSize());
-        textView.setTextSize(((CategoryActivity) getActivity()).getfSize());
-
-        posiButton.setTextColor(((CategoryActivity) getActivity()).getColor());
-        negButton.setTextColor(((CategoryActivity) getActivity()).getColor());
-        textView.setTextColor(((CategoryActivity) getActivity()).getColor());
+        float fontSize = ((CategoryActivity) getActivity()).getFontSize();
+        posiButton.setTextSize(fontSize);
+        negButton.setTextSize(fontSize);
+        textView.setTextSize(fontSize);
     }
 
 
@@ -56,17 +55,17 @@ public class DialogDellColl extends DialogFragment implements OnClickListener {
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
                 CategoryActivity activity = (CategoryActivity) this.getActivity();
-                String nameOfCategory = activity.scAdapter.getCursor()
-                        .getString(activity.scAdapter.getCursor().getColumnIndex(DatabaseHelper.COLUMN_CATEGORY));
+                String nameOfCategory = activity.getCursorAdapter().getCursor()
+                        .getString(activity.getCursorAdapter().getCursor().getColumnIndex(DatabaseHelper.COLUMN_CATEGORY));
 
                 String selection = "name_of_category == ?";
                 String[] selectionArgs = new String[] { nameOfCategory };
-                cursor = activity.db.mDB.query(DatabaseHelper.DATABASE_TABLE_WORDS, null, selection, selectionArgs, null, null, null);
+                Cursor cursor = activity.getDbHelper().sqLiteDB.query(DatabaseHelper.DATABASE_TABLE_WORDS, null, selection, selectionArgs, null, null, null);
 
                 if (cursor != null) {
                     if (cursor.moveToFirst()) {
                         do {
-                            activity.db.delRecWords(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORDS_ID)));
+                            activity.getDbHelper().delRecWords(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORDS_ID)));
 
                         } while (cursor.moveToNext());
                     }
@@ -74,13 +73,11 @@ public class DialogDellColl extends DialogFragment implements OnClickListener {
                 } else
                     Log.d(LOG_TAG, "Cursor is null");
 
-                activity.db.delRec(activity.acmi.id);
+                activity.getDbHelper().delRec(activity.getContextMenuAdapter().id);
                 activity.getSupportLoaderManager().getLoader(0).forceLoad();
                 break;
             case Dialog.BUTTON_NEGATIVE:
-
                 break;
-
             default:
                 break;
         }

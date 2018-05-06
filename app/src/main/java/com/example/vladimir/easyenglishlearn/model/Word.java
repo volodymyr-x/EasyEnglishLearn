@@ -1,16 +1,11 @@
-package com.example.vladimir.easyenglishlearn;
+package com.example.vladimir.easyenglishlearn.model;
 
-/**
- * Created by BOBAH on 26.03.2015.
- */
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-
 public class Word implements  Comparable<Word>, Parcelable{
-    String lexeme;
-    String translation;
+    private String lexeme;
+    private String translation;
 
     public Word(String lexeme, String translation) {
         super();
@@ -18,7 +13,7 @@ public class Word implements  Comparable<Word>, Parcelable{
         this.lexeme = lexeme;
     }
 
-    protected Word(Parcel in) {
+    private Word(Parcel in) {
         lexeme = in.readString();
         translation = in.readString();
     }
@@ -55,5 +50,13 @@ public class Word implements  Comparable<Word>, Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(lexeme);
         dest.writeString(translation);
+    }
+
+    public String getLexeme() {
+        return lexeme;
+    }
+
+    public String getTranslation() {
+        return translation;
     }
 }

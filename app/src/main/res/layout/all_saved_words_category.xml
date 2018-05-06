@@ -6,20 +6,11 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/tvNewCollLWlexema"
+        android:id="@+id/aswc_tv_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:text="">
-    </TextView>
-
-    <TextView
-        android:id="@+id/tvNewCollLWperevod"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:text="">
+        android:layout_marginStart="10dp"
+        android:textSize="18sp">
     </TextView>
 </LinearLayout>

@@ -3,16 +3,9 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <TextView
+            android:id="@+id/rcf_tv_remove_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Удалить коллекцию?"
-            android:id="@+id/tvDialDellColl" />
+            android:text="@string/rcf_tv_remove_category" />
     </LinearLayout>
-
-</LinearLayout>

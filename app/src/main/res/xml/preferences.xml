@@ -10,10 +10,9 @@
     <ListPreference
         android:entries="@array/entries"
         android:entryValues="@array/entry_values"
-        android:key="list"
+        android:key="@string/pr_size_list"
         android:summary="Одиночный выбор"
-        android:title="Размер текста">
-    </ListPreference>
+        android:title="Размер текста" />
     <PreferenceScreen
         android:key="@string/pr_color"
         android:title="Цвет текста"

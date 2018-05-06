@@ -6,30 +6,29 @@
     android:gravity="center">
 
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTitle"
-        android:text="Выбор упражнения"
-        />
+        android:text="@string/ecf_tv_title" />
 
     <RadioGroup
-        android:id="@+id/rgNP"
+        android:id="@+id/rg_translation_direction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" >
 
         <RadioButton
-            android:id="@+id/rEnRu"
+            android:id="@+id/rbEnRu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="En-->Ru" />
+            android:text="@string/ecf_rb_en_ru" />
 
         <RadioButton
-            android:id="@+id/rRuEn"
+            android:id="@+id/rbRuEn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ru-->En" />
+            android:text="@string/ecf_rb_ru_en" />
     </RadioGroup>
 
     <LinearLayout
@@ -39,33 +38,33 @@
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/btnUpr1"
+            android:id="@+id/ecf_btn_quiz"
             style="@style/dialogButton"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Викторина" >
+            android:text="@string/ecf_btn_quiz" >
         </Button>
 
         <Button
-            android:id="@+id/btnUpr2"
+            android:id="@+id/ecf_btn_constructor"
             style="@style/dialogButton"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Конструктор" >
+            android:text="@string/ecf_btn_constructor" >
         </Button>
 
         <Button
-            android:id="@+id/btnCancel1"
+            android:id="@+id/ecf_btn_cancel"
             style="@style/dialogButton"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Cancel" >
+            android:text="@string/ecf_btn_cancel" >
         </Button>
     </LinearLayout>
 
