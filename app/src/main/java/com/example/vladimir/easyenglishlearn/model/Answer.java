@@ -1,9 +1,9 @@
 package com.example.vladimir.easyenglishlearn.model;
 
 public class Answer {
-    Word question;
-    String answer;
-    boolean translationDirection;
+    private Word question;
+    private String answer;
+    private boolean translationDirection;
 
     public Answer(Word question, StringBuilder answerBuilder, boolean translationDirection) {
         super();

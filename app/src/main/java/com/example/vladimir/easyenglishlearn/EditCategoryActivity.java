@@ -216,8 +216,4 @@ public class EditCategoryActivity extends AppCompatActivity implements OnClickLi
         return new Word(etEditLexeme.getText().toString(),
                 etEditTranslation.getText().toString());
     }
-
-//    private void showMessage(@StringRes int id) {
-//        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
-//    }
 }

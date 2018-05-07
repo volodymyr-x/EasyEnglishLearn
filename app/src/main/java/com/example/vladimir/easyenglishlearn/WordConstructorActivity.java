@@ -149,18 +149,5 @@ public class WordConstructorActivity extends AppCompatActivity implements OnClic
             createButton(letter);
         }
     }
-
-//    private void showMessage(@StringRes int id, int errorsCount) {
-//        String message = getString(id);
-//        if (errorsCount >= 0) {
-//            message += " " + errorsCount;
-//        }
-//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-//
-//    }
-//
-//    private void showMessage(@StringRes int id) {
-//        showMessage(id, -1);
-//    }
 }
 

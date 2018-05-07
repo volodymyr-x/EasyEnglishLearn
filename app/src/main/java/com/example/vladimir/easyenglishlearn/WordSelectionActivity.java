@@ -125,9 +125,5 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
     public ArrayList<Word> getSelectedWordsList() {
         return selectedWordsList;
     }
-
-//    private void showMessage(@StringRes int id) {
-//        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
-//    }
 }
 

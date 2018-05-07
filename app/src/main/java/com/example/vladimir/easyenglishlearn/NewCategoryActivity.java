@@ -186,8 +186,4 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
         super.onDestroy();
         dbHelper.close();
     }
-
-//    private void showMessage(@StringRes int id) {
-//        Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
-//    }
 }

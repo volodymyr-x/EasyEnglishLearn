@@ -2,21 +2,12 @@ package com.example.vladimir.easyenglishlearn.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
-public class Word implements  Comparable<Word>, Parcelable{
+public class Word implements  Comparable<Word>, Parcelable {
+
     private String lexeme;
     private String translation;
-
-    public Word(String lexeme, String translation) {
-        super();
-        this.translation = translation;
-        this.lexeme = lexeme;
-    }
-
-    private Word(Parcel in) {
-        lexeme = in.readString();
-        translation = in.readString();
-    }
 
     public static final Creator<Word> CREATOR = new Creator<Word>() {
         @Override
@@ -30,16 +21,25 @@ public class Word implements  Comparable<Word>, Parcelable{
         }
     };
 
-    public int compareTo(Word o) {
-        return this.lexeme.compareTo(o.lexeme);
+    public Word(String lexeme, String translation) {
+        super();
+        this.translation = translation;
+        this.lexeme = lexeme;
     }
 
+    private Word(Parcel in) {
+        lexeme = in.readString();
+        translation = in.readString();
+    }
+
+    public int compareTo(@NonNull Word o) {
+        return this.lexeme.compareTo(o.lexeme);
+    }
 
     @Override
     public String toString() {
         return  lexeme + " (" + translation + ") ";
     }
-
 
     @Override
     public int describeContents() {
