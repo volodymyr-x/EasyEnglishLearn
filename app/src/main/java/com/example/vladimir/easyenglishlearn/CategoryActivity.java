@@ -4,7 +4,7 @@ import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +20,7 @@ import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 import com.example.vladimir.easyenglishlearn.db.MyCursorLoader;
 import com.example.vladimir.easyenglishlearn.fragments.RemoveCategoryFragment;
 
-public class CategoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class CategoryActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     private TextView tvCategorySelection;
     private AdapterContextMenuInfo contextMenuAdapter;
@@ -80,9 +80,9 @@ public class CategoryActivity extends AppCompatActivity implements LoaderManager
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(MENU_GROUP_ID, MENU_EDIT_COLL_ID, 0, getString(R.string.ca_cm_edit_coll));
-        menu.add(MENU_GROUP_ID, MENU_NEW_COLL_ID, 1, getString(R.string.ca_cm_new_coll));
-        menu.add(MENU_GROUP_ID, MENU_REMOVE_COLL_ID, 2, getString(R.string.ca_cm_remove_coll));
+        menu.add(MENU_GROUP_ID, MENU_EDIT_COLL_ID, 0, getString(R.string.ca_cm_edit_category));
+        menu.add(MENU_GROUP_ID, MENU_NEW_COLL_ID, 1, getString(R.string.ca_cm_new_category));
+        menu.add(MENU_GROUP_ID, MENU_REMOVE_COLL_ID, 2, getString(R.string.ca_cm_remove_category));
         contextMenuAdapter =(AdapterContextMenuInfo) menuInfo;
     }
 
@@ -148,16 +148,26 @@ public class CategoryActivity extends AppCompatActivity implements LoaderManager
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    public SimpleCursorAdapter getCursorAdapter() {
-        return cursorAdapter;
+    public void removeSelectedCategory(int index) {
+        String nameOfCategory = cursorAdapter.getCursor().getString(index);
+        String selection = "name_of_category == ?";
+        String[] selectionArgs = new String[] { nameOfCategory };
+        Cursor cursor = dbHelper.sqLiteDB.query(DatabaseHelper.DATABASE_TABLE_WORDS, null, selection, selectionArgs, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    dbHelper.delRecWords(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORDS_ID)));
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        dbHelper.delRec(contextMenuAdapter.id);
+        getSupportLoaderManager().getLoader(0).forceLoad();
     }
 
-    public AdapterContextMenuInfo getContextMenuAdapter() {
-        return contextMenuAdapter;
-    }
-
-    public DatabaseHelper getDbHelper() {
-        return dbHelper;
+    public int getSelectedColumnIndex() {
+        return cursorAdapter.getCursor().getColumnIndex(DatabaseHelper.COLUMN_CATEGORY);
     }
 
     public float getFontSize() {

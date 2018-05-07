@@ -9,7 +9,15 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAllCaps="true"
         android:text="@string/ecf_tv_title" />
+
+    <TextView
+        android:id="@+id/tv_translation_direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/ecf_tv_translation_direction" />
 
     <RadioGroup
         android:id="@+id/rg_translation_direction"

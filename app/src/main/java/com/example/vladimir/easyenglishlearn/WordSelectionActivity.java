@@ -125,5 +125,9 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
     public ArrayList<Word> getSelectedWordsList() {
         return selectedWordsList;
     }
+
+    public float getFontSize() {
+        return fontSize;
+    }
 }
 

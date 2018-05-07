@@ -3,9 +3,35 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/rcf_tv_remove_category"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/rcf_title" />
+
+    <TextView
+        android:id="@+id/rcf_tv_remove_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/rcf_tv_remove_category" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/rcf_btn_yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rcf_tv_remove_category" />
+            android:layout_margin="10dp"
+            android:text="@string/rcf_btn_yes"
+            style="?android:attr/borderlessButtonStyle"/>
+        <Button
+            android:id="@+id/rcf_btn_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/rcf_btn_no"
+            style="?android:attr/borderlessButtonStyle"/>
     </LinearLayout>
+</LinearLayout>
