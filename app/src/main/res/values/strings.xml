@@ -43,7 +43,7 @@
     <string name="errors_count">Errors:</string>
     <string name="wrong_answer">Wrong answer</string>
     <string name="wca_btn_answer">Answer</string>
-    <string name="wca_btn_clear">Clear</string>
+    <string name="wca_btn_clean">Clean</string>
     <string name="wsa_tv_choose_words">Choose the words</string>
     <string name="wsa_btn_start">Start</string>
     <string name="wsa_cb_choose_all">Choose all</string>

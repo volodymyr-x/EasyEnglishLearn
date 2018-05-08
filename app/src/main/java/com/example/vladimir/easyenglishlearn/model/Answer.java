@@ -12,7 +12,7 @@ public class Answer {
         this.translationDirection =translationDirection;
     }
 
-    public boolean isAnswerCorrect(){
+    public boolean isCorrect(){
         return  translationDirection ? question.getTranslation().equalsIgnoreCase(answer)
                 : question.getLexeme().equalsIgnoreCase(answer);
     }

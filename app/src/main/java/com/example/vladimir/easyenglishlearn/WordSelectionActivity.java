@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,7 +24,7 @@ import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 
-public class WordSelectionActivity extends AppCompatActivity implements OnClickListener, OnCheckedChangeListener{
+public class WordSelectionActivity extends AppCompatActivity {
 
     private TextView tvCategoryName, tvTitle;
     private ListView lvSelectedWords;
@@ -35,8 +34,32 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
     private CheckBox cbChooseAll;
     private DialogFragment dialogFragment;
     private float fontSize;
+    private ToastUtil toastUtil;
 
     public static final String EXERCISE_CHOICE_FRAGMENT = "EXERCISE_CHOICE_FRAGMENT";
+
+    private OnClickListener btnStartListener = v -> {
+        if (lvSelectedWords.getCheckedItemCount() > 3) {
+            SparseBooleanArray checked = lvSelectedWords.getCheckedItemPositions();
+            selectedWordsList = new ArrayList<>();
+            for (int i = 0; i < checked.size(); i++) {
+                int position = checked.keyAt(i);
+                if (checked.valueAt(i))
+                    selectedWordsList.add(allSavedWordsList.get(position));
+            }
+            dialogFragment.show(getSupportFragmentManager(), EXERCISE_CHOICE_FRAGMENT);
+        } else {
+            toastUtil.showMessage(R.string.wsa_toast_min_words_count);
+        }
+    };
+
+    private OnCheckedChangeListener cbChooseAllListener = (buttonView, isChecked) -> {
+        cbChooseAll = (CheckBox) buttonView;
+        int itemCount = lvSelectedWords.getCount();
+        for(int i=0 ; i < itemCount ; i++){
+            lvSelectedWords.setItemChecked(i, cbChooseAll.isChecked());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +69,17 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
         DatabaseHelper db = new DatabaseHelper(this);
         db.open();
 
+        toastUtil = new ToastUtil(this);
         dialogFragment = new ExerciseChoiceFragment();
+
         lvSelectedWords = findViewById(R.id.wsa_lv_words_choice);
         lvSelectedWords.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         tvCategoryName = findViewById(R.id.wsa_tv_category_name);
         tvTitle = findViewById(R.id.wsa_tv_title);
         btnStart = findViewById(R.id.wsa_btn_start);
-        btnStart.setOnClickListener(this);
+        btnStart.setOnClickListener(btnStartListener);
         cbChooseAll = findViewById(R.id.wsa_cb_choose_all);
-        cbChooseAll.setOnCheckedChangeListener(this);
+        cbChooseAll.setOnCheckedChangeListener(cbChooseAllListener);
 
         Intent intent = getIntent();
         String categoryName = intent.getStringExtra(CategoryActivity.CATEGORY_NAME);
@@ -98,29 +123,29 @@ public class WordSelectionActivity extends AppCompatActivity implements OnClickL
         tvTitle.setTextSize(fontSize);
     }
 
-    public void onClick(View v) {
-        if (lvSelectedWords.getCheckedItemCount() > 3) {
-            SparseBooleanArray checked = lvSelectedWords.getCheckedItemPositions();
-            selectedWordsList = new ArrayList<>();
-            for (int i = 0; i < checked.size(); i++) {
-                int position = checked.keyAt(i);
-                if (checked.valueAt(i))
-                    selectedWordsList.add(allSavedWordsList.get(position));
-            }
-            dialogFragment.show(getSupportFragmentManager(), EXERCISE_CHOICE_FRAGMENT);
-        } else {
-            new ToastUtil(this).showMessage(R.string.wsa_toast_min_words_count);
-        }
-    }
+//    public void onClick(View v) {
+//        if (lvSelectedWords.getCheckedItemCount() > 3) {
+//            SparseBooleanArray checked = lvSelectedWords.getCheckedItemPositions();
+//            selectedWordsList = new ArrayList<>();
+//            for (int i = 0; i < checked.size(); i++) {
+//                int position = checked.keyAt(i);
+//                if (checked.valueAt(i))
+//                    selectedWordsList.add(allSavedWordsList.get(position));
+//            }
+//            dialogFragment.show(getSupportFragmentManager(), EXERCISE_CHOICE_FRAGMENT);
+//        } else {
+//            new ToastUtil(this).showMessage(R.string.wsa_toast_min_words_count);
+//        }
+//    }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        cbChooseAll = (CheckBox) buttonView;
-        int itemCount = lvSelectedWords.getCount();
-        for(int i=0 ; i < itemCount ; i++){
-            lvSelectedWords.setItemChecked(i, cbChooseAll.isChecked());
-        }
-    }
+//    @Override
+//    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//        cbChooseAll = (CheckBox) buttonView;
+//        int itemCount = lvSelectedWords.getCount();
+//        for(int i=0 ; i < itemCount ; i++){
+//            lvSelectedWords.setItemChecked(i, cbChooseAll.isChecked());
+//        }
+//    }
 
     public ArrayList<Word> getSelectedWordsList() {
         return selectedWordsList;

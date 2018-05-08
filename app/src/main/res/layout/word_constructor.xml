@@ -39,15 +39,15 @@
             android:id="@+id/wca_btn_answer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onBtnClick"
+            style="?android:attr/buttonStyle"
             android:text="@string/wca_btn_answer" />
 
         <Button
-            android:id="@+id/btnClear"
+            android:id="@+id/wca_btn_clean"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onBtnClick"
-            android:text="@string/wca_btn_clear" />
+            style="?android:attr/buttonStyle"
+            android:text="@string/wca_btn_clean" />
 
     </LinearLayout>
 

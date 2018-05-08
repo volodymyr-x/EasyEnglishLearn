@@ -3,7 +3,6 @@ package com.example.vladimir.easyenglishlearn;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.ContextMenu;
@@ -12,13 +11,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 import com.example.vladimir.easyenglishlearn.model.Word;
@@ -26,7 +25,7 @@ import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 
-public class NewCategoryActivity extends AppCompatActivity implements OnClickListener {
+public class NewCategoryActivity extends AppCompatActivity {
 
     private Button btnCreate, btnSaveWord, btnClean;
     private EditText etCategoryName, etLexeme, etTranslation;
@@ -38,8 +37,57 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
     private ArrayList<Word> wordArrayList;
     private ArrayAdapter<Word> adapter;
     private int indexInArrayList = -1;
+    private ToastUtil toastUtil;
 
     public static final String CATEGORY_NEW_NAME = "CATEGORY_NEW_NAME";
+
+    private OnClickListener btnCreateListener = v -> {
+        if (!TextUtils.isEmpty(etCategoryName.getText())) {
+            String categoryName = etCategoryName.getText().toString();
+            for (Word word: wordArrayList) {
+                dbHelper.addRecWords(categoryName, word.getLexeme(), word.getTranslation());
+            }
+            Intent intent = new Intent();
+            intent.putExtra(CATEGORY_NEW_NAME, categoryName);
+            setResult(RESULT_OK, intent);
+            finish();
+        } else {
+            toastUtil.showMessage(R.string.eca_toast_save_edit_category);
+        }
+    };
+
+    private OnClickListener btnSaveWordListener = v -> {
+        if (isTextFieldsNotEmpty()) {
+            if (indexInArrayList == -1) {
+                wordArrayList.add(newWord());
+            } else {
+                wordArrayList.set(indexInArrayList, newWord());
+                indexInArrayList = -1;
+                btnSaveWord.setText(getString(R.string.eca_save_word));
+            }
+            adapter.notifyDataSetChanged();
+            cleanTextFields();
+        } else {
+            toastUtil.showMessage(R.string.eca_toast_save_word_empty_fields);
+        }
+    };
+
+    private OnClickListener btnCleanListener = v -> {
+        cleanTextFields();
+        indexInArrayList = -1;
+        btnSaveWord.setText(getString(R.string.eca_edit_category_clean));
+    };
+
+    private OnItemClickListener lvCategoryListener = (parent, view, position, id) -> {
+        Word word = adapter.getItem(position);
+        if (word != null) {
+            etLexeme.setText(word.getLexeme());
+            etTranslation.setText(word.getTranslation());
+        }
+        indexInArrayList = position;
+        btnSaveWord.setText(getString(R.string.btn_save_word_replace));
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +98,7 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
         dbHelper.open();
 
         fontSize = MainActivity.fontSize;
+        toastUtil = new ToastUtil(this);
 
         tvLexeme = findViewById(R.id.nca_tv_lexeme);
         tvTranslation = findViewById(R.id.nca_tv_translation);
@@ -57,11 +106,11 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
         etLexeme = findViewById(R.id.nca_et_lexeme);
         etTranslation = findViewById(R.id.nca_et_translation);
         btnCreate = findViewById(R.id.nca_btn_create);
-        btnCreate.setOnClickListener(this);
+        btnCreate.setOnClickListener(btnCreateListener);
         btnSaveWord = findViewById(R.id.nca_btn_save_word);
-        btnSaveWord.setOnClickListener(this);
+        btnSaveWord.setOnClickListener(btnSaveWordListener);
         btnClean = findViewById(R.id.nca_btn_clean);
-        btnClean.setOnClickListener(this);
+        btnClean.setOnClickListener(btnCleanListener);
         wordArrayList = new ArrayList<>();
 
         ListView lvCategory = findViewById(R.id.nca_lv_category);
@@ -76,15 +125,7 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
         };
         lvCategory.setAdapter(adapter);
         registerForContextMenu(lvCategory);
-        lvCategory.setOnItemClickListener((parent, view, position, id) -> {
-            Word word = adapter.getItem(position);
-            if (word != null) {
-                etLexeme.setText(word.getLexeme());
-                etTranslation.setText(word.getTranslation());
-            }
-            indexInArrayList = position;
-            btnSaveWord.setText(getString(R.string.btn_save_word_replace));
-        });
+        lvCategory.setOnItemClickListener(lvCategoryListener);
     }
 
     @Override
@@ -121,47 +162,46 @@ public class NewCategoryActivity extends AppCompatActivity implements OnClickLis
         tvTranslation.setTextSize(fontSize);
         tvLexeme.setTextSize(fontSize);
     }
-    @Override
-    public void onClick(View v) {
-        ToastUtil toastUtil = new ToastUtil(this);
-        switch (v.getId()) {
-            case R.id.nca_btn_create:
-            if (!TextUtils.isEmpty(etCategoryName.getText())) {
-                String categoryName = etCategoryName.getText().toString();
-                for (Word word: wordArrayList) {
-                    dbHelper.addRecWords(categoryName, word.getLexeme(), word.getTranslation());
-                }
-                Intent intent = new Intent();
-                intent.putExtra(CATEGORY_NEW_NAME, categoryName);
-                setResult(RESULT_OK, intent);
-                finish();
-            } else {
-                toastUtil.showMessage(R.string.eca_toast_save_edit_category);
-            }
-            break;
-            case R.id.nca_btn_save_word:
-                if (isTextFieldsNotEmpty()) {
-                    if (indexInArrayList == -1) {
-                        wordArrayList.add(newWord());
-                    } else {
-                        wordArrayList.set(indexInArrayList, newWord());
-                        indexInArrayList = -1;
-                        btnSaveWord.setText(getString(R.string.eca_save_word));
-                    }
-                    adapter.notifyDataSetChanged();
-                    cleanTextFields();
-                } else {
-                    toastUtil.showMessage(R.string.eca_toast_save_word_empty_fields);
-                }
-                break;
-            case R.id.nca_btn_clean:
-                cleanTextFields();
-                indexInArrayList = -1;
-                btnSaveWord.setText(getString(R.string.eca_edit_category_clean));
-                break;
-            default: break;
-        }
-    }
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.nca_btn_create:
+//            if (!TextUtils.isEmpty(etCategoryName.getText())) {
+//                String categoryName = etCategoryName.getText().toString();
+//                for (Word word: wordArrayList) {
+//                    dbHelper.addRecWords(categoryName, word.getLexeme(), word.getTranslation());
+//                }
+//                Intent intent = new Intent();
+//                intent.putExtra(CATEGORY_NEW_NAME, categoryName);
+//                setResult(RESULT_OK, intent);
+//                finish();
+//            } else {
+//                toastUtil.showMessage(R.string.eca_toast_save_edit_category);
+//            }
+//            break;
+//            case R.id.nca_btn_save_word:
+//                if (isTextFieldsNotEmpty()) {
+//                    if (indexInArrayList == -1) {
+//                        wordArrayList.add(newWord());
+//                    } else {
+//                        wordArrayList.set(indexInArrayList, newWord());
+//                        indexInArrayList = -1;
+//                        btnSaveWord.setText(getString(R.string.eca_save_word));
+//                    }
+//                    adapter.notifyDataSetChanged();
+//                    cleanTextFields();
+//                } else {
+//                    toastUtil.showMessage(R.string.eca_toast_save_word_empty_fields);
+//                }
+//                break;
+//            case R.id.nca_btn_clean:
+//                cleanTextFields();
+//                indexInArrayList = -1;
+//                btnSaveWord.setText(getString(R.string.eca_edit_category_clean));
+//                break;
+//            default: break;
+//        }
+//    }
 
     private boolean isTextFieldsNotEmpty() {
         boolean result = false;

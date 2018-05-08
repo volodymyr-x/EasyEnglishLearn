@@ -2,15 +2,13 @@ package com.example.vladimir.easyenglishlearn;
 
 
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.model.Answer;
 import com.example.vladimir.easyenglishlearn.model.Word;
@@ -20,11 +18,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import static com.example.vladimir.easyenglishlearn.fragments.ExerciseChoiceFragment.SELECTED_WORDS;
-import static com.example.vladimir.easyenglishlearn.fragments.ExerciseChoiceFragment.TRANSLATION_DIRECTION;
+import static com.example.vladimir.easyenglishlearn.fragments.ExerciseChoiceFragment.*;
 
-public class WordQuizActivity extends AppCompatActivity
-        implements RadioGroup.OnCheckedChangeListener, OnClickListener{
+public class WordQuizActivity extends AppCompatActivity {
 
     private RadioGroup rgTranslation;
     private RadioButton radioBtn0, radioBtn1, radioBtn2;
@@ -36,54 +32,15 @@ public class WordQuizActivity extends AppCompatActivity
     private Word currentWord;
     private boolean translationDirection;
     private StringBuilder answerBuilder;
+    private ToastUtil toastUtil;
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_quiz);
+    private OnCheckedChangeListener rgTranslationListener = (group, checkedId) -> {};
 
-        tvQuestion = findViewById(R.id.wqa_tv_question);
-        this.rgTranslation = findViewById(R.id.wqa_rg_translation);
-        this.rgTranslation.setOnCheckedChangeListener(this);
-        radioBtn0 = findViewById(R.id.wqa_radio_btn_0);
-        radioBtn1 = findViewById(R.id.wqa_radio_btn_1);
-        radioBtn2 = findViewById(R.id.wqa_radio_btn_2);
-        btnAnswer = findViewById(R.id.wqa_btn_answer);
-        btnAnswer.setOnClickListener(this);
-
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            resultWordsList = bundle.getParcelableArrayList(SELECTED_WORDS);
-            translationDirection = bundle.getBoolean(TRANSLATION_DIRECTION, false);
-            Collections.shuffle(resultWordsList);
-            currentWord = resultWordsList.get(iteration);
-            tvQuestion.setText(translationDirection ? currentWord.getLexeme()
-                    : currentWord.getTranslation());
-            fillRadioGroup(currentWord);
-        }
-        answerBuilder = new StringBuilder("");
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        float fontSize = MainActivity.fontSize;
-        tvQuestion.setTextSize(fontSize);
-        btnAnswer.setTextSize(fontSize);
-        radioBtn0.setTextSize(fontSize);
-        radioBtn1.setTextSize(fontSize);
-        radioBtn2.setTextSize(fontSize);
-    }
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        ToastUtil toastUtil = new ToastUtil(this);
+    private OnClickListener btnAnswerListener = v -> {
         RadioButton checkedRB = findViewById(rgTranslation.getCheckedRadioButtonId());
         answerBuilder.append(checkedRB.getText());
         Answer answerCheck = new Answer(currentWord, answerBuilder, translationDirection);
-        if (answerCheck.isAnswerCorrect()) {
+        if (answerCheck.isCorrect()) {
             iteration++;
             if (iteration < resultWordsList.size()) {
                 currentWord = resultWordsList.get(iteration);
@@ -98,10 +55,78 @@ public class WordQuizActivity extends AppCompatActivity
             errorsCount++;
         }
         answerBuilder.delete(0, answerBuilder.length());
+    };
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.word_quiz);
+
+        toastUtil = new ToastUtil(this);
+
+        tvQuestion = findViewById(R.id.wqa_tv_question);
+        rgTranslation = findViewById(R.id.wqa_rg_translation);
+        rgTranslation.setOnCheckedChangeListener(rgTranslationListener);
+        radioBtn0 = findViewById(R.id.wqa_radio_btn_0);
+        radioBtn1 = findViewById(R.id.wqa_radio_btn_1);
+        radioBtn2 = findViewById(R.id.wqa_radio_btn_2);
+        btnAnswer = findViewById(R.id.wqa_btn_answer);
+        btnAnswer.setOnClickListener(btnAnswerListener);
+
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            resultWordsList = bundle.getParcelableArrayList(SELECTED_WORDS);
+            translationDirection = bundle.getBoolean(TRANSLATION_DIRECTION, false);
+            Collections.shuffle(resultWordsList);
+            currentWord = resultWordsList.get(iteration);
+            tvQuestion.setText(translationDirection ? currentWord.getLexeme()
+                    : currentWord.getTranslation());
+            fillRadioGroup(currentWord);
+        }
+        answerBuilder = new StringBuilder();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        float fontSize = MainActivity.fontSize;
+        tvQuestion.setTextSize(fontSize);
+        btnAnswer.setTextSize(fontSize);
+        radioBtn0.setTextSize(fontSize);
+        radioBtn1.setTextSize(fontSize);
+        radioBtn2.setTextSize(fontSize);
+    }
+
+//    @Override
+//    public void onCheckedChanged(RadioGroup group, int checkedId) {
+//
+//    }
+
+//    @Override
+//    public void onClick(View v) {
+//        ToastUtil toastUtil = new ToastUtil(this);
+//        RadioButton checkedRB = findViewById(rgTranslation.getCheckedRadioButtonId());
+//        answerBuilder.append(checkedRB.getText());
+//        Answer answerCheck = new Answer(currentWord, answerBuilder, translationDirection);
+//        if (answerCheck.isCorrect()) {
+//            iteration++;
+//            if (iteration < resultWordsList.size()) {
+//                currentWord = resultWordsList.get(iteration);
+//                tvQuestion.setText(translationDirection ? currentWord.getLexeme() : currentWord.getTranslation());
+//                fillRadioGroup(currentWord);
+//            }else {
+//                toastUtil.showMessage(R.string.errors_count, errorsCount);
+//                finish();
+//            }
+//        }else {
+//            toastUtil.showMessage(R.string.wrong_answer);
+//            errorsCount++;
+//        }
+//        answerBuilder.delete(0, answerBuilder.length());
+//    }
 
     private void fillRadioGroup(Word word) {
         ArrayList<Word> tempWordsList = new ArrayList<>(resultWordsList);
+        rgTranslation.clearCheck();
         Collections.shuffle(tempWordsList);
         int j = new Random().nextInt(3);
         for(int i = 0; i < 3; i++){
