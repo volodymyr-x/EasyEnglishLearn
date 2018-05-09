@@ -20,6 +20,8 @@ import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
 import com.example.vladimir.easyenglishlearn.db.MyCursorLoader;
 import com.example.vladimir.easyenglishlearn.fragments.RemoveCategoryFragment;
 
+import static com.example.vladimir.easyenglishlearn.EditCategoryActivity.*;
+
 public class CategoryActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     private TextView tvCategorySelection;
@@ -92,17 +94,18 @@ public class CategoryActivity extends AppCompatActivity implements LoaderCallbac
         switch (item.getItemId()) {
             case MENU_EDIT_COLL_ID:
                 intent = new Intent(this, EditCategoryActivity.class);
-                intent.putExtra(CATEGORY_NAME, String.valueOf(cursorAdapter.getCursor()
-                        .getString(cursorAdapter.getCursor().getColumnIndex(DatabaseHelper.COLUMN_CATEGORY))));
+                intent.putExtra(CATEGORY_NAME,
+                        cursorAdapter.getCursor().getString(getSelectedColumnIndex()));
                 startActivityForResult(intent, REQUEST_CODE_EDIT_CATEGORY);
                 return true;
             case MENU_NEW_COLL_ID:
-                intent = new Intent(this, NewCategoryActivity.class);
+                intent = new Intent(this, EditCategoryActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_NEW_CATEGORY);
                 return true;
             case MENU_REMOVE_COLL_ID:
                 contextMenuAdapter = (AdapterContextMenuInfo) item.getMenuInfo();
-                dialogFragment.show(getSupportFragmentManager(), RemoveCategoryFragment.DIALOG_REMOVE_CATEGORY);
+                dialogFragment.show(getSupportFragmentManager(),
+                        RemoveCategoryFragment.DIALOG_REMOVE_CATEGORY);
                 return true;
             default: break;
         }
@@ -112,17 +115,19 @@ public class CategoryActivity extends AppCompatActivity implements LoaderCallbac
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+            String categoryNewName;
             switch (requestCode) {
                 case REQUEST_CODE_EDIT_CATEGORY:
-                    String categoryNewName = data.getStringExtra(EditCategoryActivity.CATEGORY_NEW_NAME);
-                    String categoryOldName = data.getStringExtra(EditCategoryActivity.CATEGORY_OLD_NAME);
+                    categoryNewName = data.getStringExtra(CATEGORY_NEW_NAME);
+                    String categoryOldName = data.getStringExtra(CATEGORY_OLD_NAME);
                     if (!categoryNewName.equals(categoryOldName)) {
-                       dbHelper.updRec(categoryNewName, cursorAdapter.getItemId(contextMenuAdapter.position));
+                       dbHelper.updRec(categoryNewName,
+                               cursorAdapter.getItemId(contextMenuAdapter.position));
                     }
                     break;
                 case REQUEST_CODE_NEW_CATEGORY:
-                    String nameNewColl = data.getStringExtra(NewCategoryActivity.CATEGORY_NEW_NAME);
-                    dbHelper.addRec(nameNewColl);
+                    categoryNewName = data.getStringExtra(CATEGORY_NEW_NAME);
+                    dbHelper.addRec(categoryNewName);
                     break;
                 default:    break;
             }
@@ -152,11 +157,12 @@ public class CategoryActivity extends AppCompatActivity implements LoaderCallbac
         String nameOfCategory = cursorAdapter.getCursor().getString(index);
         String selection = "name_of_category == ?";
         String[] selectionArgs = new String[] { nameOfCategory };
-        Cursor cursor = dbHelper.sqLiteDB.query(DatabaseHelper.DATABASE_TABLE_WORDS, null, selection, selectionArgs, null, null, null);
+        Cursor cursor = dbHelper.sqLiteDB.query(DatabaseHelper.DATABASE_TABLE_WORDS, null,
+                selection, selectionArgs, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    dbHelper.delRecWords(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORDS_ID)));
+                    dbHelper.delRecWords(cursor.getLong(getSelectedColumnIndex()));
 
                 } while (cursor.moveToNext());
             }

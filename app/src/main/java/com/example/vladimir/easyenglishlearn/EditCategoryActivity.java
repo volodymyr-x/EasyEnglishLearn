@@ -27,6 +27,8 @@ import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 import java.util.ArrayList;
 
 public class EditCategoryActivity extends AppCompatActivity {
+
+    private TextView tvTitle;
     private EditText etCategoryName, etEditLexeme, etEditTranslation;
     private Button btnSaveCategory, btnSaveWord, btnClean;
     private TextView tvLexeme, tvTranslation;
@@ -39,28 +41,32 @@ public class EditCategoryActivity extends AppCompatActivity {
     private ArrayAdapter<Word> adapter;
     private float fontSize;
     private ToastUtil toastUtil;
+    private boolean isCategoryAlreadyExist;
 
     public static final String CATEGORY_NEW_NAME = "CATEGORY_NEW_NAME";
     public static final String CATEGORY_OLD_NAME = "CATEGORY_OLD_NAME";
     private final int MENU_REMOVE_CATEGORY_ID = 113;
 
     private OnClickListener btnSaveCategoryListener = v -> {
-        if (!TextUtils.isEmpty(etCategoryName.getText().toString().trim())) {
-            newCategoryName = etCategoryName.getText().toString();
-            cursor = dbHelper.getWords(oldCategoryName);
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    do {
-                        dbHelper.delRecWords(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORDS_ID)));
-                    } while (cursor.moveToNext());
+        newCategoryName = etCategoryName.getText().toString().trim();
+        if (!TextUtils.isEmpty(newCategoryName)) {
+            if (isCategoryAlreadyExist) {
+                cursor = dbHelper.getWords(oldCategoryName);
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        do {
+                            dbHelper.delRecWords(cursor.getLong(
+                                    cursor.getColumnIndex(DatabaseHelper.COLUMN_WORDS_ID)));
+                        } while (cursor.moveToNext());
+                    }
+                    cursor.close();
                 }
-                cursor.close();
             }
             for (Word word : wordArrayList) {
-                dbHelper.addRecWords(newCategoryName, word.getLexeme(), word.getTranslation());
+                dbHelper.addRecWords(this.newCategoryName, word.getLexeme(), word.getTranslation());
             }
             Intent intent = new Intent();
-            intent.putExtra(CATEGORY_NEW_NAME, newCategoryName);
+            intent.putExtra(CATEGORY_NEW_NAME, this.newCategoryName);
             intent.putExtra(CATEGORY_OLD_NAME, oldCategoryName);
             setResult(RESULT_OK, intent);
             finish();
@@ -108,7 +114,11 @@ public class EditCategoryActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
         dbHelper.open();
+        fontSize = MainActivity.fontSize;
+        toastUtil = new ToastUtil(this);
+        wordArrayList = new ArrayList<>();
 
+        tvTitle = findViewById(R.id.eca_tv_title);
         tvLexeme = findViewById(R.id.eca_tv_lexeme);
         tvTranslation = findViewById(R.id.eca_tv_translation);
         etCategoryName = findViewById(R.id.eca_et_category_name);
@@ -121,25 +131,26 @@ public class EditCategoryActivity extends AppCompatActivity {
         btnClean = findViewById(R.id.eca_btn_clean);
         btnClean.setOnClickListener(btnCleanListener);
 
-        fontSize = MainActivity.fontSize;
-        toastUtil = new ToastUtil(this);
         Intent intent = getIntent();
-        newCategoryName = intent.getStringExtra(CategoryActivity.CATEGORY_NAME);
-        oldCategoryName = newCategoryName;
-        etCategoryName.setText(newCategoryName);
-
-        wordArrayList = new ArrayList<>();
-        cursor = dbHelper.getWords(newCategoryName);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    Word word = new Word(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_LEXEME)),
-                            cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TRANSLATION)));
-                    wordArrayList.add(word);
-                } while (cursor.moveToNext());
+        String categoryName = intent.getStringExtra(CategoryActivity.CATEGORY_NAME);
+        if (categoryName != null) {
+            isCategoryAlreadyExist = true;
+            newCategoryName = categoryName;
+            oldCategoryName = newCategoryName;
+            etCategoryName.setText(newCategoryName);
+            cursor = dbHelper.getWords(newCategoryName);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        Word word = new Word(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_LEXEME)),
+                                cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TRANSLATION)));
+                        wordArrayList.add(word);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
             }
-            cursor.close();
         }
+
         ListView lvCategory = findViewById(R.id.eca_lv_category);
         adapter = new ArrayAdapter<Word>(this, android.R.layout.simple_list_item_1, wordArrayList) {
             @NonNull
@@ -158,14 +169,18 @@ public class EditCategoryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!isCategoryAlreadyExist) {
+            tvTitle.setText(getString(R.string.nca_tv_new_category));
+        }
+        tvTitle.setTextSize(fontSize);
+        tvTranslation.setTextSize(fontSize);
+        tvLexeme.setTextSize(fontSize);
         etCategoryName.setTextSize(fontSize);
         etEditLexeme.setTextSize(fontSize);
         etEditTranslation.setTextSize(fontSize);
         btnSaveCategory.setTextSize(fontSize);
         btnSaveWord.setTextSize(fontSize);
         btnClean.setTextSize(fontSize);
-        tvTranslation.setTextSize(fontSize);
-        tvLexeme.setTextSize(fontSize);
     }
 
     @Override
@@ -211,7 +226,7 @@ public class EditCategoryActivity extends AppCompatActivity {
     }
 
     private Word newWord() {
-        return new Word(etEditLexeme.getText().toString(),
-                etEditTranslation.getText().toString());
+        return new Word(etEditLexeme.getText().toString().trim(),
+                etEditTranslation.getText().toString().trim());
     }
 }

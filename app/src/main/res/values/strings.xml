@@ -35,11 +35,6 @@
     <string name="eca_btn_save_word">Save word</string>
     <string name="eca_btn_clean">Clean</string>
     <string name="nca_tv_new_category">New category</string>
-    <string name="nca_btn_create">Create category</string>
-    <string name="nca_tv_lexeme">Lexeme:</string>
-    <string name="nca_tv_translation">Translation:</string>
-    <string name="nca_btn_save_word">Save word</string>
-    <string name="nca_btn_clean">Clean</string>
     <string name="errors_count">Errors:</string>
     <string name="wrong_answer">Wrong answer</string>
     <string name="wca_btn_answer">Answer</string>
