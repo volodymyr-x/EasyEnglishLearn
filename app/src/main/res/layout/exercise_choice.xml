@@ -6,34 +6,34 @@
     android:gravity="center">
 
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/ecf_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="true"
         android:text="@string/ecf_tv_title" />
 
     <TextView
-        android:id="@+id/tv_translation_direction"
+        android:id="@+id/ecf_tv_translation_direction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="@string/ecf_tv_translation_direction" />
 
     <RadioGroup
-        android:id="@+id/rg_translation_direction"
+        android:id="@+id/ecf_rg_translation_direction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" >
 
         <RadioButton
-            android:id="@+id/rbEnRu"
+            android:id="@+id/ecf_rb_en_ru"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="@string/ecf_rb_en_ru" />
 
         <RadioButton
-            android:id="@+id/rbRuEn"
+            android:id="@+id/ecf_rb_ru_en"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ecf_rb_ru_en" />

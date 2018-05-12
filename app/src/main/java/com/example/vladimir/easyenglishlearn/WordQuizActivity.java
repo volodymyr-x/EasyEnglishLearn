@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import static com.example.vladimir.easyenglishlearn.fragments.ExerciseChoiceFragment.*;
+import static com.example.vladimir.easyenglishlearn.WordSelectionActivity.*;
 
 public class WordQuizActivity extends AppCompatActivity {
 
@@ -95,34 +95,6 @@ public class WordQuizActivity extends AppCompatActivity {
         radioBtn1.setTextSize(fontSize);
         radioBtn2.setTextSize(fontSize);
     }
-
-//    @Override
-//    public void onCheckedChanged(RadioGroup group, int checkedId) {
-//
-//    }
-
-//    @Override
-//    public void onClick(View v) {
-//        ToastUtil toastUtil = new ToastUtil(this);
-//        RadioButton checkedRB = findViewById(rgTranslation.getCheckedRadioButtonId());
-//        answerBuilder.append(checkedRB.getText());
-//        Answer answerCheck = new Answer(currentWord, answerBuilder, translationDirection);
-//        if (answerCheck.isCorrect()) {
-//            iteration++;
-//            if (iteration < resultWordsList.size()) {
-//                currentWord = resultWordsList.get(iteration);
-//                tvQuestion.setText(translationDirection ? currentWord.getLexeme() : currentWord.getTranslation());
-//                fillRadioGroup(currentWord);
-//            }else {
-//                toastUtil.showMessage(R.string.errors_count, errorsCount);
-//                finish();
-//            }
-//        }else {
-//            toastUtil.showMessage(R.string.wrong_answer);
-//            errorsCount++;
-//        }
-//        answerBuilder.delete(0, answerBuilder.length());
-//    }
 
     private void fillRadioGroup(Word word) {
         ArrayList<Word> tempWordsList = new ArrayList<>(resultWordsList);

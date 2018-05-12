@@ -1,8 +1,10 @@
 package com.example.vladimir.easyenglishlearn.fragments;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,28 +17,27 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.example.vladimir.easyenglishlearn.R;
-import com.example.vladimir.easyenglishlearn.WordConstructorActivity;
-import com.example.vladimir.easyenglishlearn.WordQuizActivity;
-import com.example.vladimir.easyenglishlearn.WordSelectionActivity;
 
 public class ExerciseChoiceFragment extends DialogFragment {
 
     private RadioButton rbRuEn, rbEnRu;
     private Button btnConstructor, btnQuiz, btnCancel;
-    private TextView tvTitle;
+    private TextView tvTitle, tvTranslationDirection;
     private boolean translationDirection = true;
-    private WordSelectionActivity activity;
+    private ExerciseChoiceListener listener;
 
-    public static final String SELECTED_WORDS = "SELECTED_WORDS";
-    public static final String TRANSLATION_DIRECTION = "TRANSLATION_DIRECTION";
+    public interface ExerciseChoiceListener {
+        void btnConstructorClicked(boolean translationDirection);
+        void btnQuizClicked(boolean translationDirection);
+    }
 
     private OnClickListener btnConstructorListener = v -> {
-        startActivity(intentLoad(WordConstructorActivity.class));
+        listener.btnConstructorClicked(translationDirection);
         dismiss();
     };
 
     private OnClickListener btnQuizListener = v -> {
-        startActivity(intentLoad(WordQuizActivity.class));
+        listener.btnQuizClicked(translationDirection);
         dismiss();
     };
 
@@ -44,25 +45,31 @@ public class ExerciseChoiceFragment extends DialogFragment {
 
     private OnCheckedChangeListener rgChangeListener = (group, checkedId) -> {
         switch (checkedId) {
-            case R.id.rbEnRu:
+            case R.id.ecf_rb_en_ru:
                 translationDirection = true;
                 break;
-            case R.id.rbRuEn:
+            case R.id.ecf_rb_ru_en:
                 translationDirection = false;
                 break;
             default: break;
         }
     };
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (ExerciseChoiceListener) context;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.exercise_choice, container);
-        activity = (WordSelectionActivity) getActivity();
-        tvTitle = view.findViewById(R.id.tvTitle);
-        ((RadioGroup) view.findViewById(R.id.rg_translation_direction))
+        tvTitle = view.findViewById(R.id.ecf_tv_title);
+        tvTranslationDirection = view.findViewById(R.id.ecf_tv_translation_direction);
+        ((RadioGroup) view.findViewById(R.id.ecf_rg_translation_direction))
                 .setOnCheckedChangeListener(rgChangeListener);
-        rbEnRu = view.findViewById(R.id.rbEnRu);
-        rbRuEn = view.findViewById(R.id.rbRuEn);
+        rbEnRu = view.findViewById(R.id.ecf_rb_en_ru);
+        rbRuEn = view.findViewById(R.id.ecf_rb_ru_en);
         rbRuEn.setChecked(true);
         btnQuiz = view.findViewById(R.id.ecf_btn_quiz);
         btnQuiz.setOnClickListener(btnQuizListener);
@@ -76,22 +83,16 @@ public class ExerciseChoiceFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        float fontSize = activity.getFontSize();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        float fontSize  = Float.parseFloat(prefs.getString(getString(R.string.pr_size_list),
+                getString(R.string.pr_default_size)));
         rbRuEn.setTextSize(fontSize);
         rbEnRu.setTextSize(fontSize);
         btnQuiz.setTextSize(fontSize);
         btnConstructor.setTextSize(fontSize);
         btnCancel.setTextSize(fontSize);
         tvTitle.setTextSize(fontSize);
-    }
-
-    private Intent intentLoad (Class clazz) {
-        Intent intent = new Intent(activity, clazz);
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(SELECTED_WORDS, activity.getSelectedWordsList());
-        bundle.putBoolean(TRANSLATION_DIRECTION, translationDirection);
-        intent.putExtras(bundle);
-        return intent;
+        tvTranslationDirection.setTextSize(fontSize);
     }
 }
 

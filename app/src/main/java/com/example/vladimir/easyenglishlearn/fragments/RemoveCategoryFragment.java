@@ -56,7 +56,8 @@ public class RemoveCategoryFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        float fontSize  = Float.parseFloat(prefs.getString(getString(R.string.pr_size_list), "20"));
+        float fontSize  = Float.parseFloat(prefs.getString(getString(R.string.pr_size_list),
+                getString(R.string.pr_default_size)));
         btnYes.setTextSize(fontSize);
         btnNo.setTextSize(fontSize);
         tvRemoveCategory.setTextSize(fontSize);

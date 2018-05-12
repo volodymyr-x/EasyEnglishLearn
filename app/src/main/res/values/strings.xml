@@ -10,6 +10,8 @@
     <string name="pr_color_blue">ColorBlue</string>
     <string name="pr_size">Size</string>
     <string name="pr_style">Style</string>
+    <string name="pr_size_list">listPreference</string>
+    <string name="pr_default_size">20</string>
     <string name="pr_style_regular">StyleRegular</string>
     <string name="pr_style_bold">StyleBold</string>
     <string name="pr_style_italic">StyleItalic</string>
@@ -20,7 +22,6 @@
     <string name="ca_cm_edit_category">Edit this category</string>
     <string name="ca_cm_new_category">Add new category</string>
     <string name="ca_cm_remove_category">Remove this category</string>
-    <string name="pr_size_list">listPreference</string>
     <string name="context_menu_remove">Remove word</string>
     <string name="eca_toast_save_edit_category">Enter category name</string>
     <string name="eca_save_word">Save word</string>

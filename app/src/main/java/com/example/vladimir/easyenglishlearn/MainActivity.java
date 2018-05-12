@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        fontSize = Float.parseFloat(prefs.getString(getString(R.string.pr_size_list), "20"));
+        fontSize = Float.parseFloat(prefs.getString(getString(R.string.pr_size_list),
+                getString(R.string.pr_default_size)));
         btnStart.setTextSize(fontSize);
         btnSPref.setTextSize(fontSize);
         btnAbout.setTextSize(fontSize);

@@ -24,7 +24,8 @@ import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
 import java.util.ArrayList;
 
-public class WordSelectionActivity extends AppCompatActivity {
+public class WordSelectionActivity extends AppCompatActivity
+        implements ExerciseChoiceFragment.ExerciseChoiceListener {
 
     private TextView tvCategoryName, tvTitle;
     private ListView lvSelectedWords;
@@ -37,6 +38,8 @@ public class WordSelectionActivity extends AppCompatActivity {
     private ToastUtil toastUtil;
 
     public static final String EXERCISE_CHOICE_FRAGMENT = "EXERCISE_CHOICE_FRAGMENT";
+    public static final String SELECTED_WORDS = "SELECTED_WORDS";
+    public static final String TRANSLATION_DIRECTION = "TRANSLATION_DIRECTION";
 
     private OnClickListener btnStartListener = v -> {
         if (lvSelectedWords.getCheckedItemCount() > 3) {
@@ -123,36 +126,23 @@ public class WordSelectionActivity extends AppCompatActivity {
         tvTitle.setTextSize(fontSize);
     }
 
-//    public void onClick(View v) {
-//        if (lvSelectedWords.getCheckedItemCount() > 3) {
-//            SparseBooleanArray checked = lvSelectedWords.getCheckedItemPositions();
-//            selectedWordsList = new ArrayList<>();
-//            for (int i = 0; i < checked.size(); i++) {
-//                int position = checked.keyAt(i);
-//                if (checked.valueAt(i))
-//                    selectedWordsList.add(allSavedWordsList.get(position));
-//            }
-//            dialogFragment.show(getSupportFragmentManager(), EXERCISE_CHOICE_FRAGMENT);
-//        } else {
-//            new ToastUtil(this).showMessage(R.string.wsa_toast_min_words_count);
-//        }
-//    }
-
-//    @Override
-//    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//        cbChooseAll = (CheckBox) buttonView;
-//        int itemCount = lvSelectedWords.getCount();
-//        for(int i=0 ; i < itemCount ; i++){
-//            lvSelectedWords.setItemChecked(i, cbChooseAll.isChecked());
-//        }
-//    }
-
-    public ArrayList<Word> getSelectedWordsList() {
-        return selectedWordsList;
+    @Override
+    public void btnConstructorClicked(boolean translationDirection) {
+        startActivity(getPreparedIntent(WordConstructorActivity.class, translationDirection));
     }
 
-    public float getFontSize() {
-        return fontSize;
+    @Override
+    public void btnQuizClicked(boolean translationDirection) {
+        startActivity(getPreparedIntent(WordQuizActivity.class, translationDirection));
+    }
+
+    private Intent getPreparedIntent (Class clazz, boolean translationDirection) {
+        Intent intent = new Intent(this, clazz);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(SELECTED_WORDS, selectedWordsList);
+        bundle.putBoolean(TRANSLATION_DIRECTION, translationDirection);
+        intent.putExtras(bundle);
+        return intent;
     }
 }
 
