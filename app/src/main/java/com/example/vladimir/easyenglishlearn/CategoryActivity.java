@@ -22,7 +22,8 @@ import com.example.vladimir.easyenglishlearn.fragments.RemoveCategoryFragment;
 
 import static com.example.vladimir.easyenglishlearn.EditCategoryActivity.*;
 
-public class CategoryActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class CategoryActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,
+        RemoveCategoryFragment.RemoveCategoryListener {
 
     private TextView tvCategorySelection;
     private AdapterContextMenuInfo contextMenuAdapter;
@@ -153,10 +154,15 @@ public class CategoryActivity extends AppCompatActivity implements LoaderCallbac
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    public void removeSelectedCategory(int index) {
-        String nameOfCategory = cursorAdapter.getCursor().getString(index);
+    public int getSelectedColumnIndex() {
+        return cursorAdapter.getCursor().getColumnIndex(DatabaseHelper.COLUMN_CATEGORY);
+    }
+
+    @Override
+    public void okBtnClicked() {
+        String categoryName = cursorAdapter.getCursor().getString(getSelectedColumnIndex());
         String selection = "name_of_category == ?";
-        String[] selectionArgs = new String[] { nameOfCategory };
+        String[] selectionArgs = new String[] { categoryName };
         Cursor cursor = dbHelper.sqLiteDB.query(DatabaseHelper.DATABASE_TABLE_WORDS, null,
                 selection, selectionArgs, null, null, null);
         if (cursor != null) {
@@ -170,14 +176,6 @@ public class CategoryActivity extends AppCompatActivity implements LoaderCallbac
         }
         dbHelper.delRec(contextMenuAdapter.id);
         getSupportLoaderManager().getLoader(0).forceLoad();
-    }
-
-    public int getSelectedColumnIndex() {
-        return cursorAdapter.getCursor().getColumnIndex(DatabaseHelper.COLUMN_CATEGORY);
-    }
-
-    public float getFontSize() {
-        return fontSize;
     }
 }
 
