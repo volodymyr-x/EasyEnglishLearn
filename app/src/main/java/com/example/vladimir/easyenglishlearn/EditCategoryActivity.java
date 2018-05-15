@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
+import com.example.vladimir.easyenglishlearn.fragments.CategoryFragment;
 import com.example.vladimir.easyenglishlearn.model.Word;
 import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
 
@@ -132,7 +133,7 @@ public class EditCategoryActivity extends AppCompatActivity {
         btnClean.setOnClickListener(btnCleanListener);
 
         Intent intent = getIntent();
-        String categoryName = intent.getStringExtra(CategoryActivity.CATEGORY_NAME);
+        String categoryName = intent.getStringExtra(CategoryFragment.CATEGORY_NAME);
         if (categoryName != null) {
             isCategoryAlreadyExist = true;
             newCategoryName = categoryName;

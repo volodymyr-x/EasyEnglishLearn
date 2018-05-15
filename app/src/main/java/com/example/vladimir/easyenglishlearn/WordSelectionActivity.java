@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.vladimir.easyenglishlearn.db.DatabaseHelper;
+import com.example.vladimir.easyenglishlearn.fragments.CategoryFragment;
 import com.example.vladimir.easyenglishlearn.fragments.ExerciseChoiceFragment;
 import com.example.vladimir.easyenglishlearn.model.Word;
 import com.example.vladimir.easyenglishlearn.utils.ToastUtil;
@@ -85,7 +86,7 @@ public class WordSelectionActivity extends AppCompatActivity
         cbChooseAll.setOnCheckedChangeListener(cbChooseAllListener);
 
         Intent intent = getIntent();
-        String categoryName = intent.getStringExtra(CategoryActivity.CATEGORY_NAME);
+        String categoryName = intent.getStringExtra(CategoryFragment.CATEGORY_NAME);
         tvCategoryName.setText(categoryName);
 
         String selection = "name_of_category == ?";

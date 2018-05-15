@@ -17,7 +17,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".preferences.PreferencesActivity"></activity>
-        <activity android:name=".CategoryActivity"></activity>
         <activity android:name=".EditCategoryActivity" ></activity>
         <activity android:name=".WordSelectionActivity" ></activity>
         <activity android:name=".WordQuizActivity" ></activity>

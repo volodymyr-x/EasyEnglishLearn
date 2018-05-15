@@ -55,6 +55,8 @@
     <string name="rcf_btn_yes">Yes</string>
     <string name="rcf_btn_no">No</string>
     <string name="rcf_title">Attention!</string>
+    <string name="exit">Exit</string>
+    <string name="hello_about_fragment">About fragment</string>
     <string-array name="entries">
         <item>Mini</item>
         <item>Midi</item>
@@ -67,5 +69,4 @@
         <item>20</item>
         <item>25</item>
     </string-array>
-
 </resources>

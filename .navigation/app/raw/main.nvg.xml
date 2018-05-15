@@ -62,7 +62,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.CategoryActivity"/>
+        className = "com.example.vladimir.easyenglishlearn.fragments.CategoryFragment"/>
       <point      
         x = "500"      
         y = "100"/>

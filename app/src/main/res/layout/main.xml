@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center" >
-
-    <Button
-        android:id="@+id/ma_btn_start"
-        android:layout_width="@dimen/ma_btn_layout_width"
-        android:layout_height="wrap_content"
-        android:text="@string/start" />
-
-    <Button
-        android:id="@+id/ma_btn_shar_pref"
-        android:layout_width="@dimen/ma_btn_layout_width"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:text="@string/settings" />
-
-    <Button
-        android:id="@+id/ma_btn_about"
-        android:layout_width="@dimen/ma_btn_layout_width"
-        android:layout_height="wrap_content"
-        android:text="@string/about" />
-
-</LinearLayout>
+    android:orientation="vertical"/>
