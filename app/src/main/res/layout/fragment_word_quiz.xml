@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/wqf_tv_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin"
+        android:textSize="@dimen/large_text_size"
+        tools:text="@string/question" />
+
+    <RadioGroup
+        android:id="@+id/wqf_rg_translation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin">
+
+        <RadioButton
+            android:id="@+id/wqf_rb_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:textSize="@dimen/text_size"
+            tools:text="First Answer" />
+
+        <RadioButton
+            android:id="@+id/wqf_rb_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:textSize="@dimen/text_size"
+            tools:text="Second Answer" />
+
+        <RadioButton
+            android:id="@+id/wqf_rb_third"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:textSize="@dimen/text_size"
+            tools:text="Third Answer" />
+    </RadioGroup>
+
+</LinearLayout>

@@ -30,7 +30,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.WordSelectionActivity"/>
+        className = "com.example.vladimir.easyenglishlearn.word_selection.WordSelectionFragment"/>
       <point      
         x = "1768"      
         y = "100"/>
@@ -38,7 +38,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.EditCategoryActivity"/>
+        className = "com.example.vladimir.easyenglishlearn.category_edit.CategoryEditFragment"/>
       <point      
         x = "648"      
         y = "1628"/>
@@ -46,7 +46,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.WordConstructorActivity"/>
+        className = "com.example.vladimir.easyenglishlearn.fragments.WordConstructorFragment"/>
       <point      
         x = "700"      
         y = "1680"/>
@@ -54,7 +54,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.WordQuizActivity"/>
+        className = "com.example.vladimir.easyenglishlearn.fragments.WordQuizFragment"/>
       <point      
         x = "748"      
         y = "1728"/>
@@ -62,7 +62,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.fragments.CategoryFragment"/>
+        className = "com.example.vladimir.easyenglishlearn.category_select.CategoryFragment"/>
       <point      
         x = "500"      
         y = "100"/>

@@ -23,23 +23,23 @@
     <string name="ca_cm_new_category">Add new category</string>
     <string name="ca_cm_remove_category">Remove this category</string>
     <string name="context_menu_remove">Remove word</string>
-    <string name="eca_toast_save_edit_category">Enter category name</string>
-    <string name="eca_save_word">Save word</string>
-    <string name="eca_toast_save_word_empty_fields">Fill all fields</string>
-    <string name="eca_edit_category_clean">Save word</string>
+    <string name="cef_toast_save_edit_category">Enter category name</string>
+    <string name="cef_save_word">Save word</string>
+    <string name="cef_toast_save_word_empty_fields">Fill all fields</string>
+    <string name="cef_category_edit_clean">Save word</string>
     <string name="ca_tv_category_select">Select category</string>
     <string name="btn_save_word_replace">Replace word</string>
     <string name="eca_tv_edit_category">Edit category</string>
+    <string name="eca_tv_new_category">New category</string>
     <string name="eca_btn_save_and_exit">Save and return</string>
     <string name="eca_tv_lexeme">Lexeme:</string>
     <string name="eca_tv_translation">Translation:</string>
     <string name="eca_btn_save_word">Save word</string>
     <string name="eca_btn_clean">Clean</string>
-    <string name="nca_tv_new_category">New category</string>
-    <string name="errors_count">Errors:</string>
+    <string name="errors_count">Errors: </string>
     <string name="wrong_answer">Wrong answer</string>
-    <string name="wca_btn_answer">Answer</string>
-    <string name="wca_btn_clean">Clean</string>
+    <string name="answer">Answer</string>
+    <string name="clean">Clean</string>
     <string name="wsa_tv_choose_words">Choose the words</string>
     <string name="wsa_btn_start">Start</string>
     <string name="wsa_cb_choose_all">Choose all</string>
@@ -57,6 +57,9 @@
     <string name="rcf_title">Attention!</string>
     <string name="exit">Exit</string>
     <string name="hello_about_fragment">About fragment</string>
+    <string name="ca_cm_on_item_click">On Item Click</string>
+    <string name="category_name">Category Name</string>
+    <string name="question">Question</string>
     <string-array name="entries">
         <item>Mini</item>
         <item>Midi</item>

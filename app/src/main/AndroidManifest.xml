@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.vladimir.easyenglishlearn" >
+    package="com.example.vladimir.easyenglishlearn">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".preferences.PreferencesActivity"></activity>
-        <activity android:name=".EditCategoryActivity" ></activity>
-        <activity android:name=".WordSelectionActivity" ></activity>
-        <activity android:name=".WordQuizActivity" ></activity>
-        <activity android:name=".WordConstructorActivity" ></activity>
+        <activity android:name=".ExerciseActivity" />
     </application>
 
 </manifest>

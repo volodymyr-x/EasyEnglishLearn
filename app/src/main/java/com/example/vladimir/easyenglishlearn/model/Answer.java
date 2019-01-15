@@ -1,20 +1,20 @@
 package com.example.vladimir.easyenglishlearn.model;
 
 public class Answer {
-    private Word question;
-    private String answer;
-    private boolean translationDirection;
+    private Word mQuestion;
+    private String mAnswer;
+    private boolean mTranslationDirection;
 
     public Answer(Word question, StringBuilder answerBuilder, boolean translationDirection) {
-        super();
-        this.question = question;
-        this.answer = answerBuilder.toString();
-        this.translationDirection =translationDirection;
+        mQuestion = question;
+        mAnswer = answerBuilder.toString();
+        mTranslationDirection = translationDirection;
     }
 
-    public boolean isCorrect(){
-        return  translationDirection ? question.getTranslation().equalsIgnoreCase(answer)
-                : question.getLexeme().equalsIgnoreCase(answer);
+    public boolean isCorrect() {
+        return mTranslationDirection
+                ? mQuestion.getTranslation().equalsIgnoreCase(mAnswer)
+                : mQuestion.getLexeme().equalsIgnoreCase(mAnswer);
     }
 
 }
