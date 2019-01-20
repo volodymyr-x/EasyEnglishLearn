@@ -1,11 +1,13 @@
 package com.example.vladimir.easyenglishlearn.category_select;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,28 +15,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.vladimir.easyenglishlearn.db.CategoryRepository;
 import com.example.vladimir.easyenglishlearn.R;
+import com.example.vladimir.easyenglishlearn.databinding.FragmentCategorySelectBinding;
+import com.example.vladimir.easyenglishlearn.databinding.RvCategoryItemBinding;
 import com.example.vladimir.easyenglishlearn.fragments.CategoryRemoveFragment;
-import com.example.vladimir.easyenglishlearn.db.CategoryRepositoryImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static com.example.vladimir.easyenglishlearn.Constants.ACTION_EDIT_CATEGORY;
 import static com.example.vladimir.easyenglishlearn.Constants.ACTION_OPEN_CATEGORY;
-import static com.example.vladimir.easyenglishlearn.Constants.CATEGORY_LISTENER;
 import static com.example.vladimir.easyenglishlearn.Constants.CATEGORY_NAME;
 import static com.example.vladimir.easyenglishlearn.Constants.DIALOG_REMOVE_CATEGORY;
 import static com.example.vladimir.easyenglishlearn.Constants.REQUEST_CATEGORY_REMOVE;
 
 public class CategoryFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
-    private CategoryRepository mRepository;
     private Callbacks mCallbacks;
+    private CategoryViewModel mViewModel;
+    private FragmentCategorySelectBinding mBinding;
 
 
     /**
@@ -58,24 +59,32 @@ public class CategoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_category_select, container, false);
-        mRecyclerView = view.findViewById(R.id.rv_category_select);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mBinding = DataBindingUtil.inflate(inflater,
+                R.layout.fragment_category_select,
+                container,
+                false);
+        return mBinding.getRoot();
+    }
 
-        FloatingActionButton fab = view.findViewById(R.id.fab_category_add);
-        fab.setOnClickListener(v -> mCallbacks.onCategorySelected(null, ACTION_EDIT_CATEGORY));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        mRepository = CategoryRepositoryImpl.getInstance();
-        mRepository.setDataChangeListener(CATEGORY_LISTENER, this::updateUI);
+        mBinding.rvCategorySelect.setLayoutManager(new LinearLayoutManager(getActivity()));
+        CategoryAdapter adapter = new CategoryAdapter();
+        mBinding.rvCategorySelect.setAdapter(adapter);
 
-        updateUI();
-        return view;
+        mBinding.fabCategoryAdd.setOnClickListener(v ->
+                mCallbacks.onCategorySelected(null, ACTION_EDIT_CATEGORY));
+
+        mViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
+        mViewModel.getCategories()
+                .observe(Objects.requireNonNull(getActivity()), adapter::setCategoryList);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mRepository.removeDataChangeListener(CATEGORY_LISTENER);
         mCallbacks = null;
     }
 
@@ -85,29 +94,24 @@ public class CategoryFragment extends Fragment {
 
         if (requestCode == REQUEST_CATEGORY_REMOVE) {
             String categoryName = data.getStringExtra(CATEGORY_NAME);
-            mRepository.removeCategory(categoryName);
+            mViewModel.removeCategory(categoryName);
         }
-    }
-
-    private void updateUI() {
-        List<String> categoryList = mRepository.getAllCategories();
-        CategoryAdapter adapter = new CategoryAdapter(categoryList);
-        mRecyclerView.setAdapter(adapter);
     }
 
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryHolder> {
 
-        private List<String> mCategoryList;
+        private List<String> mCategoryList = new ArrayList<>();
 
-
-        CategoryAdapter(List<String> categoryList) {
-            mCategoryList = categoryList;
-        }
 
         @NonNull
         @Override
-        public CategoryHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-            return new CategoryHolder(LayoutInflater.from(getActivity()), viewGroup);
+        public CategoryHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            RvCategoryItemBinding binding = DataBindingUtil.inflate(inflater,
+                    R.layout.rv_category_item,
+                    parent,
+                    false);
+            return new CategoryHolder(binding);
         }
 
         @Override
@@ -119,24 +123,30 @@ public class CategoryFragment extends Fragment {
         public int getItemCount() {
             return mCategoryList.size();
         }
+
+        void setCategoryList(List<String> categoryList) {
+            mCategoryList = categoryList;
+            notifyDataSetChanged();
+        }
     }
 
     private class CategoryHolder extends RecyclerView.ViewHolder {
 
-        private TextView mCategoryName;
         private String mCategory;
+        private RvCategoryItemBinding mBinding;
 
 
-        CategoryHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.rv_category_item, parent, false));
-            mCategoryName = itemView.findViewById(R.id.category_name);
-            itemView.setOnClickListener(view ->
+        CategoryHolder(RvCategoryItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+
+            mBinding.getRoot().setOnClickListener(view ->
                     mCallbacks.onCategorySelected(mCategory, ACTION_OPEN_CATEGORY));
 
-            itemView.findViewById(R.id.category_edit).setOnClickListener(view ->
+            mBinding.categoryEdit.setOnClickListener(view ->
                     mCallbacks.onCategorySelected(mCategory, ACTION_EDIT_CATEGORY));
 
-            itemView.findViewById(R.id.category_remove).setOnClickListener(view -> {
+            mBinding.categoryRemove.setOnClickListener(view -> {
                 DialogFragment dialogFragment = CategoryRemoveFragment.newInstance(mCategory);
                 dialogFragment.setTargetFragment(CategoryFragment.this, REQUEST_CATEGORY_REMOVE);
                 dialogFragment
@@ -147,7 +157,7 @@ public class CategoryFragment extends Fragment {
 
         void bind(String category) {
             mCategory = category;
-            mCategoryName.setText(mCategory);
+            mBinding.categoryName.setText(mCategory);
         }
     }
 }

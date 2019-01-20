@@ -1,5 +1,8 @@
 package com.example.vladimir.easyenglishlearn.db;
 
+import android.arch.lifecycle.MutableLiveData;
+import android.os.AsyncTask;
+
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.ArrayList;
@@ -12,9 +15,10 @@ import java.util.Set;
 
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    private Map<String, DataChangeListener> mListenerList = new HashMap<>();
+    //private Map<String, DataChangeListener> mListenerList = new HashMap<>();
     private static CategoryRepositoryImpl repository;
     private static List<Word> sWordList = new ArrayList<>();
+    private MutableLiveData<List<String>> mData;
 
     static {
         sWordList.add(new Word("milk", "молоко", "Еда и Напитки"));
@@ -54,12 +58,22 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public List<String> getAllCategories() {
+    public MutableLiveData<List<String>> getAllCategories() {
         Set<String> set = new HashSet<>();
         for (Word word : sWordList) {
             set.add(word.getCategory());
         }
-        return new ArrayList<>(set);
+        /*return new ArrayList<>(set);*/
+
+        /*try {
+            return new getAllCategoriesAsyncTask().get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new MutableLiveData<>();*/
+        if (mData == null) mData = new MutableLiveData<>();
+        mData.postValue(new ArrayList<>(set));
+        return mData;
     }
 
     @Override
@@ -68,7 +82,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             word.setCategory(categoryName);
             sWordList.add(word);
         }
-        notifyListeners();
+        //notifyListeners();
+        getAllCategories();
     }
 
     @Override
@@ -83,22 +98,38 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             Word word = iterator.next();
             if (word.getCategory().equals(categoryName)) iterator.remove();
         }
-        notifyListeners();
+        //notifyListeners();
+        getAllCategories();
     }
 
-    @Override
-    public void setDataChangeListener(String key, DataChangeListener listener) {
-        mListenerList.put(key, listener);
-    }
+//    @Override
+//    public void setDataChangeListener(String key, DataChangeListener listener) {
+//        mListenerList.put(key, listener);
+//    }
 
-    @Override
-    public void removeDataChangeListener(String key) {
-        mListenerList.remove(key);
-    }
+//    @Override
+//    public void removeDataChangeListener(String key) {
+//        mListenerList.remove(key);
+//    }
 
-    private void notifyListeners() {
-        for (DataChangeListener listener : mListenerList.values()) {
-            listener.dataIsChanged();
+//    private void notifyListeners() {
+//        for (DataChangeListener listener : mListenerList.values()) {
+//            listener.dataIsChanged();
+//        }
+//    }
+
+    private static class getAllCategoriesAsyncTask
+            extends AsyncTask<Void, Void, MutableLiveData<List<String>>> {
+
+        @Override
+        protected MutableLiveData<List<String>> doInBackground(Void... voids) {
+            Set<String> set = new HashSet<>();
+            for (Word word : sWordList) {
+                set.add(word.getCategory());
+            }
+            MutableLiveData<List<String>> data = new MutableLiveData<>();
+            data.postValue(new ArrayList<>(set));
+            return data;
         }
     }
 }
