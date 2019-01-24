@@ -6,16 +6,13 @@ import android.os.AsyncTask;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    //private Map<String, DataChangeListener> mListenerList = new HashMap<>();
     private static CategoryRepositoryImpl repository;
     private static List<Word> sWordList = new ArrayList<>();
     private MutableLiveData<List<String>> mData;
@@ -63,14 +60,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         for (Word word : sWordList) {
             set.add(word.getCategory());
         }
-        /*return new ArrayList<>(set);*/
-
-        /*try {
-            return new getAllCategoriesAsyncTask().get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return new MutableLiveData<>();*/
         if (mData == null) mData = new MutableLiveData<>();
         mData.postValue(new ArrayList<>(set));
         return mData;
@@ -80,10 +69,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public void addNewCategory(String categoryName, List<Word> wordList) {
         for (Word word : wordList) {
             word.setCategory(categoryName);
-            sWordList.add(word);
         }
-        //notifyListeners();
-        getAllCategories();
+        new AddNewCategoryAsyncTask(this).execute(wordList);
     }
 
     @Override
@@ -94,42 +81,57 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public void removeCategory(String categoryName) {
-        for (Iterator<Word> iterator = sWordList.iterator(); iterator.hasNext(); ) {
-            Word word = iterator.next();
-            if (word.getCategory().equals(categoryName)) iterator.remove();
-        }
-        //notifyListeners();
-        getAllCategories();
+        new RemoveCategoryAsyncTask(this).execute(categoryName);
     }
 
-//    @Override
-//    public void setDataChangeListener(String key, DataChangeListener listener) {
-//        mListenerList.put(key, listener);
-//    }
+    private static class AddNewCategoryAsyncTask extends AsyncTask<List<Word>, Void, Void> {
 
-//    @Override
-//    public void removeDataChangeListener(String key) {
-//        mListenerList.remove(key);
-//    }
+        CategoryRepositoryImpl mRepository;
 
-//    private void notifyListeners() {
-//        for (DataChangeListener listener : mListenerList.values()) {
-//            listener.dataIsChanged();
-//        }
-//    }
 
-    private static class getAllCategoriesAsyncTask
-            extends AsyncTask<Void, Void, MutableLiveData<List<String>>> {
+        AddNewCategoryAsyncTask(CategoryRepositoryImpl repository) {
+            mRepository = repository;
+        }
+
+        @SafeVarargs
+        @Override
+        protected final Void doInBackground(List<Word>... lists) {
+            sWordList.addAll(lists[0]);
+            repository.getAllCategories();
+            return null;
+        }
 
         @Override
-        protected MutableLiveData<List<String>> doInBackground(Void... voids) {
-            Set<String> set = new HashSet<>();
-            for (Word word : sWordList) {
-                set.add(word.getCategory());
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mRepository = null;
+        }
+    }
+
+    private static class RemoveCategoryAsyncTask extends AsyncTask<String, Void, Void> {
+
+        CategoryRepositoryImpl mRepository;
+
+
+        RemoveCategoryAsyncTask(CategoryRepositoryImpl repository) {
+            mRepository = repository;
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String categoryName = strings[0];
+            for (Iterator<Word> iterator = sWordList.iterator(); iterator.hasNext(); ) {
+                Word word = iterator.next();
+                if (word.getCategory().equals(categoryName)) iterator.remove();
             }
-            MutableLiveData<List<String>> data = new MutableLiveData<>();
-            data.postValue(new ArrayList<>(set));
-            return data;
+            repository.getAllCategories();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mRepository = null;
         }
     }
 }

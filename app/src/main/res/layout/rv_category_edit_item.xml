@@ -1,39 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/cei_tv_lexeme"
-        android:layout_width="wrap_content"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.vladimir.easyenglishlearn.category_edit.CategoryEditViewModel" />
+
+        <variable
+            name="word"
+            type="com.example.vladimir.easyenglishlearn.model.Word" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin"
-        android:textSize="@dimen/text_size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/eca_tv_lexeme" />
+        android:onClick="@{() -> viewModel.onRvItemClick(word)}">
 
-    <TextView
-        android:id="@+id/cei_tv_translation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin"
-        android:textSize="@dimen/text_size"
-        app:layout_constraintEnd_toStartOf="@id/cei_iv_word_remove"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/eca_tv_translation" />
+        <TextView
+            android:id="@+id/cei_tv_lexeme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:text="@{word.lexeme}"
+            android:textSize="@dimen/text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/eca_tv_lexeme" />
 
-    <ImageView
-        android:id="@+id/cei_iv_word_remove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin"
-        android:contentDescription="@string/ca_cm_remove_category"
-        android:src="@drawable/ic_action_remove"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/cei_tv_translation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:text="@{word.translation}"
+            android:textSize="@dimen/text_size"
+            app:layout_constraintEnd_toStartOf="@id/cei_iv_word_remove"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/eca_tv_translation" />
 
-</android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:id="@+id/cei_iv_word_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:contentDescription="@string/ca_cm_remove_category"
+            android:onClick="@{() -> viewModel.onIconRemoveWordClick(word)}"
+            android:src="@drawable/ic_action_remove"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

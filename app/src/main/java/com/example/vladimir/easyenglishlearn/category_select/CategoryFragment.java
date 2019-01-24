@@ -75,10 +75,10 @@ public class CategoryFragment extends Fragment {
         mBinding.rvCategorySelect.setAdapter(adapter);
 
         mBinding.fabCategoryAdd.setOnClickListener(v ->
-                mCallbacks.onCategorySelected(null, ACTION_EDIT_CATEGORY));
+                mCallbacks.onCategorySelected("", ACTION_EDIT_CATEGORY));
 
         mViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
-        mViewModel.getCategories()
+        mViewModel.getCategoryList()
                 .observe(Objects.requireNonNull(getActivity()), adapter::setCategoryList);
     }
 
@@ -132,7 +132,7 @@ public class CategoryFragment extends Fragment {
 
     private class CategoryHolder extends RecyclerView.ViewHolder {
 
-        private String mCategory;
+        private String mCategoryName;
         private RvCategoryItemBinding mBinding;
 
 
@@ -141,13 +141,13 @@ public class CategoryFragment extends Fragment {
             mBinding = binding;
 
             mBinding.getRoot().setOnClickListener(view ->
-                    mCallbacks.onCategorySelected(mCategory, ACTION_OPEN_CATEGORY));
+                    mCallbacks.onCategorySelected(mCategoryName, ACTION_OPEN_CATEGORY));
 
             mBinding.categoryEdit.setOnClickListener(view ->
-                    mCallbacks.onCategorySelected(mCategory, ACTION_EDIT_CATEGORY));
+                    mCallbacks.onCategorySelected(mCategoryName, ACTION_EDIT_CATEGORY));
 
             mBinding.categoryRemove.setOnClickListener(view -> {
-                DialogFragment dialogFragment = CategoryRemoveFragment.newInstance(mCategory);
+                DialogFragment dialogFragment = CategoryRemoveFragment.newInstance(mCategoryName);
                 dialogFragment.setTargetFragment(CategoryFragment.this, REQUEST_CATEGORY_REMOVE);
                 dialogFragment
                         .show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(),
@@ -155,9 +155,10 @@ public class CategoryFragment extends Fragment {
             });
         }
 
-        void bind(String category) {
-            mCategory = category;
-            mBinding.categoryName.setText(mCategory);
+        void bind(String categoryName) {
+            mCategoryName = categoryName;
+            mBinding.setCategoryName(categoryName);
+            mBinding.executePendingBindings();
         }
     }
 }

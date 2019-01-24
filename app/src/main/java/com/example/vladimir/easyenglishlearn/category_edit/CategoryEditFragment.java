@@ -1,53 +1,34 @@
 package com.example.vladimir.easyenglishlearn.category_edit;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.vladimir.easyenglishlearn.db.CategoryRepository;
+import com.example.vladimir.easyenglishlearn.databinding.FragmentCategoryEditBinding;
 import com.example.vladimir.easyenglishlearn.R;
-import com.example.vladimir.easyenglishlearn.db.CategoryRepositoryImpl;
+import com.example.vladimir.easyenglishlearn.databinding.RvCategoryEditItemBinding;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import static com.example.vladimir.easyenglishlearn.Constants.ARG_CATEGORY_NAME;
 
 public class CategoryEditFragment extends Fragment {
 
-    @BindView(R.id.cef_tv_title)
-    TextView tvTitle;
-    @BindView(R.id.cef_et_category_name)
-    EditText etCategoryName;
-    @BindView(R.id.cef_et_lexeme)
-    EditText etEditLexeme;
-    @BindView(R.id.cef_et_translation)
-    EditText etEditTranslation;
-    @BindView(R.id.cef_btn_save_word)
-    Button btnSaveWord;
-    @BindView(R.id.cef_rv_category_edit)
-    RecyclerView mRecyclerView;
-    private String mOldCategoryName;
-    private CategoryRepository mRepository;
-    private List<Word> mWordList;
-    private int wordIndex = -1;
+    private FragmentCategoryEditBinding mBinding;
+    private CategoryEditViewModel mViewModel;
+    private CategoryEditAdapter mAdapter;
 
 
     public static Fragment newInstance(String categoryName) {
@@ -61,100 +42,64 @@ public class CategoryEditFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_category_edit, container, false);
-        ButterKnife.bind(this, view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRepository = CategoryRepositoryImpl.getInstance();
-
-        mOldCategoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
-        if (mOldCategoryName != null) {
-            tvTitle.setText(getString(R.string.eca_tv_edit_category));
-            etCategoryName.setText(mOldCategoryName);
-            loadWords(mOldCategoryName);
-        } else {
-            tvTitle.setText(getString(R.string.eca_tv_new_category));
-            mWordList = new ArrayList<>();
-        }
-        updateUI();
-        return view;
+        mBinding = DataBindingUtil.inflate(inflater,
+                R.layout.fragment_category_edit,
+                container,
+                false);
+        return mBinding.getRoot();
     }
 
-    @OnClick(R.id.cef_btn_save_category)
-    public void onBtnSaveCategoryClick() {
-        String mNewCategoryName = etCategoryName.getText().toString();
-        if (!TextUtils.isEmpty(mNewCategoryName)) {
-            if (mOldCategoryName != null) {
-                mRepository.updateCategory(mOldCategoryName, mNewCategoryName, mWordList);
-            } else {
-                mRepository.addNewCategory(mNewCategoryName, mWordList);
-            }
-            Objects.requireNonNull(getActivity()).onBackPressed();
-        } else {
-            showToast(R.string.cef_toast_save_edit_category);
-        }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        String oldCategoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
+        mViewModel = ViewModelProviders.of(this).get(CategoryEditViewModel.class);
+        mViewModel.setCategoryName(oldCategoryName);
+        mBinding.setViewModel(mViewModel);
+
+        mBinding.cefRvCategoryEdit.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mAdapter = new CategoryEditAdapter();
+        mBinding.cefRvCategoryEdit.setAdapter(mAdapter);
+
+        int stringId = "".equals(oldCategoryName) ?
+                R.string.eca_tv_new_category :
+                R.string.eca_tv_edit_category;
+        mBinding.cefTvTitle.setText(getString(stringId));
+        mBinding.cefEtCategoryName.setText(oldCategoryName);
+
+        subscribeToLiveData();
     }
 
-    @OnClick(R.id.cef_btn_save_word)
-    public void onBtnSaveWordClick() {
-        if (isTextFieldsNotEmpty()) {
-            Word newWord = new Word(etEditLexeme.getText().toString().trim(),
-                    etEditTranslation.getText().toString().trim());
-            if (wordIndex >= 0) {
-                mWordList.set(wordIndex, newWord);
-            } else {
-                mWordList.add(newWord);
-            }
-            updateUI();
-            btnSaveWord.setText(getString(R.string.cef_save_word));
-            cleanTextFields();
-        } else {
-            showToast(R.string.cef_toast_save_word_empty_fields);
-        }
+    private void subscribeToLiveData() {
+        mViewModel.getWordList()
+                .observe(Objects.requireNonNull(getActivity()), mAdapter::setWordList);
+        mViewModel.getToastMessage().observe(getActivity(), this::showToast);
+        mViewModel.getFragmentClose().observe(getActivity(), this::closeFragment);
     }
 
-    @OnClick(R.id.cef_btn_clean)
-    public void onBtnCleanClick() {
-        btnSaveWord.setText(getString(R.string.cef_category_edit_clean));
-        cleanTextFields();
+    private void closeFragment(@SuppressWarnings("unused") Void aVoid) {
+        Objects.requireNonNull(getActivity()).onBackPressed();
     }
 
-    private boolean isTextFieldsNotEmpty() {
-        return !TextUtils.isEmpty(etCategoryName.getText().toString().trim()) &&
-                !TextUtils.isEmpty(etEditLexeme.getText().toString().trim()) &&
-                !TextUtils.isEmpty(etEditTranslation.getText().toString().trim());
-    }
-
-    public void cleanTextFields() {
-        etEditLexeme.setText("");
-        etEditTranslation.setText("");
-        wordIndex = -1;
-    }
-
-    public void showToast(@StringRes int resId) {
-        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
-    }
-
-    private void updateUI() {
-        mRecyclerView.setAdapter(new CategoryEditAdapter(mWordList));
-    }
-
-    private void loadWords(String categoryName) {
-        mWordList = mRepository.getWordsByCategory(categoryName);
+    public void showToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     private class CategoryEditAdapter extends RecyclerView.Adapter<CategoryEditHolder> {
 
-        private List<Word> mWordList;
+        private List<Word> mWordList = new ArrayList<>();
 
-
-        CategoryEditAdapter(List<Word> wordList) {
-            mWordList = wordList;
-        }
 
         @NonNull
         @Override
-        public CategoryEditHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-            return new CategoryEditHolder(LayoutInflater.from(getActivity()), viewGroup);
+        public CategoryEditHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            RvCategoryEditItemBinding binding = DataBindingUtil.inflate(inflater,
+                    R.layout.rv_category_edit_item,
+                    parent,
+                    false);
+            return new CategoryEditHolder(binding);
         }
 
         @Override
@@ -166,35 +111,27 @@ public class CategoryEditFragment extends Fragment {
         public int getItemCount() {
             return mWordList.size();
         }
+
+        void setWordList(List<Word> wordList) {
+            mWordList = wordList;
+            notifyDataSetChanged();
+        }
     }
 
     private class CategoryEditHolder extends RecyclerView.ViewHolder {
 
-        private TextView mLexeme;
-        private TextView mTranslation;
-        private Word mWord;
+        private RvCategoryEditItemBinding mBinding;
 
 
-        CategoryEditHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.rv_category_edit_item, parent, false));
-            mLexeme = itemView.findViewById(R.id.cei_tv_lexeme);
-            mTranslation = itemView.findViewById(R.id.cei_tv_translation);
-            itemView.setOnClickListener(view -> {
-                etEditLexeme.setText(mWord.getLexeme());
-                etEditTranslation.setText(mWord.getTranslation());
-                wordIndex = mWordList.indexOf(mWord);
-            });
-            itemView.findViewById(R.id.cei_iv_word_remove).setOnClickListener(v -> {
-                mWordList.remove(mWord);
-                updateUI();
-                cleanTextFields();
-            });
+        CategoryEditHolder(RvCategoryEditItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+            mBinding.setViewModel(mViewModel);
         }
 
         void bind(Word word) {
-            mWord = word;
-            mLexeme.setText(mWord.getLexeme());
-            mTranslation.setText(mWord.getTranslation());
+            mBinding.setWord(word);
+            mBinding.executePendingBindings();
         }
     }
 }

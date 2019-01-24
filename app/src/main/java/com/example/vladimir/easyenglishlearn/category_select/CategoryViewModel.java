@@ -10,27 +10,19 @@ import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.List;
 
-class CategoryViewModel extends ViewModel {
+public class CategoryViewModel extends ViewModel {
 
     private CategoryRepository mRepository;
     private MutableLiveData<List<String>> mLiveData;
 
 
-    CategoryViewModel() {
+    public CategoryViewModel() {
         mRepository = CategoryRepositoryImpl.getInstance();
         mLiveData = mRepository.getAllCategories();
     }
 
-    LiveData<List<String>> getCategories() {
+    LiveData<List<String>> getCategoryList() {
         return mLiveData;
-    }
-
-    void addNewCategory(String categoryName, List<Word> wordList) {
-        mRepository.addNewCategory(categoryName, wordList);
-    }
-
-    void updateCategory(String oldCategoryName, String newCategoryName, List<Word> wordList) {
-        mRepository.updateCategory(oldCategoryName, newCategoryName, wordList);
     }
 
     void removeCategory(String categoryName) {
