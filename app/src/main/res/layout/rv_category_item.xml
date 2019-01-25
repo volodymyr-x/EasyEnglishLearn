@@ -5,14 +5,17 @@
 
     <data>
 
-        <variable name="category_name"
-            type="String" />
+        <variable name="category_name" type="String" />
+        <variable
+            name="viewModel"
+            type="com.example.vladimir.easyenglishlearn.category_select.CategoryViewModel"/>
 
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> viewModel.onRvItemClick(category_name)}">
 
         <TextView
             android:id="@+id/category_name"
@@ -35,7 +38,8 @@
             android:src="@drawable/ic_action_edit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/category_remove"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{() -> viewModel.onEditIconClick(category_name)}"/>
 
         <ImageView
             android:id="@+id/category_remove"
@@ -46,7 +50,8 @@
             android:src="@drawable/ic_action_remove"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{() -> viewModel.onRemoveIconClick(category_name)}"/>
 
     </android.support.constraint.ConstraintLayout>
 

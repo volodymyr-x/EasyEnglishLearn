@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.example.vladimir.easyenglishlearn.Constants.ARG_CATEGORY_NAME;
+import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
 
 public class CategoryEditFragment extends Fragment {
 
@@ -54,15 +56,15 @@ public class CategoryEditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String oldCategoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
-        mViewModel = ViewModelProviders.of(this).get(CategoryEditViewModel.class);
-        mViewModel.setCategoryName(oldCategoryName);
+        mViewModel = ViewModelProviders.of(this, new ModelFactory(oldCategoryName))
+                .get(CategoryEditViewModel.class);
         mBinding.setViewModel(mViewModel);
 
         mBinding.cefRvCategoryEdit.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new CategoryEditAdapter();
         mBinding.cefRvCategoryEdit.setAdapter(mAdapter);
 
-        int stringId = "".equals(oldCategoryName) ?
+        int stringId = EMPTY_STRING.equals(oldCategoryName) ?
                 R.string.eca_tv_new_category :
                 R.string.eca_tv_edit_category;
         mBinding.cefTvTitle.setText(getString(stringId));
@@ -82,8 +84,8 @@ public class CategoryEditFragment extends Fragment {
         Objects.requireNonNull(getActivity()).onBackPressed();
     }
 
-    public void showToast(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    public void showToast(@StringRes int resId) {
+        Toast.makeText(getActivity(), getString(resId), Toast.LENGTH_SHORT).show();
     }
 
     private class CategoryEditAdapter extends RecyclerView.Adapter<CategoryEditHolder> {

@@ -17,6 +17,7 @@ import com.example.vladimir.easyenglishlearn.word_selection.WordSelectionFragmen
 import static com.example.vladimir.easyenglishlearn.Constants.ACTION_ABOUT;
 import static com.example.vladimir.easyenglishlearn.Constants.ACTION_EDIT_CATEGORY;
 import static com.example.vladimir.easyenglishlearn.Constants.ACTION_OPEN_CATEGORY;
+import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
 
 
 public class MainActivity extends AppCompatActivity implements CategoryFragment.Callbacks {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CategoryFragment.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.main_menu_about:
-                onCategorySelected("", ACTION_ABOUT);
+                doAction(EMPTY_STRING, ACTION_ABOUT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -60,7 +61,16 @@ public class MainActivity extends AppCompatActivity implements CategoryFragment.
     }
 
     @Override
-    public void onCategorySelected(String categoryName, int actionCode) {
+    public void onCategorySelected(String categoryName) {
+        doAction(categoryName, ACTION_OPEN_CATEGORY);
+    }
+
+    @Override
+    public void onCategoryEdit(String categoryName) {
+        doAction(categoryName, ACTION_EDIT_CATEGORY);
+    }
+
+    private void doAction(String categoryName, int actionCode) {
         int containerId = R.id.detail_fragment_container;
         if (findViewById(R.id.detail_fragment_container) == null) {
             containerId = R.id.fragment_container;

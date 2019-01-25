@@ -1,11 +1,9 @@
 package com.example.vladimir.easyenglishlearn.category_edit;
 
-import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableField;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
@@ -16,41 +14,43 @@ import com.example.vladimir.easyenglishlearn.db.CategoryRepositoryImpl;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.List;
-import java.util.Objects;
 
-public class CategoryEditViewModel extends AndroidViewModel {
+import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
 
-    public final ObservableField<String> categoryName;
-    public final ObservableField<String> lexeme;
-    public final ObservableField<String> translation;
-    private SingleLiveEvent<String> mToastMessage;
+public class CategoryEditViewModel extends ViewModel {
+
+    public final ObservableField<String> categoryName = new ObservableField<>();
+    public final ObservableField<String> lexeme = new ObservableField<>();
+    public final ObservableField<String> translation = new ObservableField<>();
+    private SingleLiveEvent<Integer> mToastMessage;
     private SingleLiveEvent<Void> mFragmentClose;
     private MutableLiveData<List<Word>> mLiveData;
     private CategoryRepository mRepository;
     private String mOldCategoryName;
-    private int wordIndex;
+    private int mWordIndex;
 
 
-    public CategoryEditViewModel(@NonNull Application application) {
-        super(application);
+    CategoryEditViewModel(String categoryName) {
+        mRepository = CategoryRepositoryImpl.getInstance();
+        mOldCategoryName = categoryName;
+        this.categoryName.set(categoryName);
         mLiveData = new MutableLiveData<>();
-        categoryName = new ObservableField<>();
-        lexeme = new ObservableField<>();
-        translation = new ObservableField<>();
+        mLiveData.setValue(mRepository.getWordsByCategory(categoryName));
         mToastMessage = new SingleLiveEvent<>();
         mFragmentClose = new SingleLiveEvent<>();
-        mRepository = CategoryRepositoryImpl.getInstance();
+        cleanTextFields();
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void onBtnSaveCategoryClick() {
-        String newCategoryName = categoryName.get();
+        String newCategoryName = categoryName.get().trim();
         if (TextUtils.isEmpty(newCategoryName)) {
             showToast(R.string.cef_toast_save_edit_category);
         } else {
-            if (mOldCategoryName != null) {
-                updateCategory(mOldCategoryName, newCategoryName, mLiveData.getValue());
-            } else {
+            if (TextUtils.isEmpty(mOldCategoryName)) {
                 addNewCategory(newCategoryName, mLiveData.getValue());
+            } else {
+                updateCategory(mOldCategoryName, newCategoryName, mLiveData.getValue());
             }
             mFragmentClose.call();
         }
@@ -59,11 +59,10 @@ public class CategoryEditViewModel extends AndroidViewModel {
     @SuppressWarnings("ConstantConditions")
     public void onBtnSaveWordClick() {
         if (isTextFieldsNotEmpty()) {
-            Word newWord = new Word(Objects.requireNonNull(lexeme.get()).trim(),
-                    Objects.requireNonNull(translation.get()).trim());
+            Word newWord = new Word(lexeme.get().trim(), translation.get().trim());
             List<Word> wordList = mLiveData.getValue();
-            if (wordIndex >= 0) {
-                wordList.set(wordIndex, newWord);
+            if (mWordIndex >= 0) {
+                wordList.set(mWordIndex, newWord);
             } else {
                 wordList.add(newWord);
             }
@@ -90,7 +89,7 @@ public class CategoryEditViewModel extends AndroidViewModel {
     public void onRvItemClick(Word word) {
         lexeme.set(word.getLexeme());
         translation.set(word.getTranslation());
-        wordIndex = mLiveData.getValue().indexOf(word);
+        mWordIndex = mLiveData.getValue().indexOf(word);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -101,20 +100,13 @@ public class CategoryEditViewModel extends AndroidViewModel {
     }
 
     private void cleanTextFields() {
-        lexeme.set("");
-        translation.set("");
-        wordIndex = -1;
+        lexeme.set(EMPTY_STRING);
+        translation.set(EMPTY_STRING);
+        mWordIndex = -1;
     }
 
     private void showToast(@StringRes int resId) {
-        String message = getApplication().getString(resId);
-        mToastMessage.setValue(message);
-    }
-
-    private void init(String categoryName) {
-        this.categoryName.set(categoryName);
-        mLiveData.setValue(mRepository.getWordsByCategory(categoryName));
-        cleanTextFields();
+        mToastMessage.setValue(resId);
     }
 
     private void addNewCategory(String categoryName, List<Word> wordList) {
@@ -129,16 +121,11 @@ public class CategoryEditViewModel extends AndroidViewModel {
         return mLiveData;
     }
 
-    LiveData<String> getToastMessage() {
+    LiveData<Integer> getToastMessage() {
         return mToastMessage;
     }
 
     LiveData<Void> getFragmentClose() {
         return mFragmentClose;
-    }
-
-    public void setCategoryName(String oldCategoryName) {
-        if (!"".equals(oldCategoryName)) mOldCategoryName = oldCategoryName;
-        init(oldCategoryName);
     }
 }
