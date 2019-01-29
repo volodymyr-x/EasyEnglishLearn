@@ -4,11 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
+
 public class Word implements Comparable<Word>, Parcelable {
 
     private String mLexeme;
     private String mTranslation;
     private String mCategory;
+    private boolean isChecked;
 
 
     public static final Creator<Word> CREATOR = new Creator<Word>() {
@@ -24,13 +27,14 @@ public class Word implements Comparable<Word>, Parcelable {
     };
 
     public Word(String lexeme, String translation) {
-        this(lexeme, translation, "");
+        this(lexeme, translation, EMPTY_STRING);
     }
 
     public Word(String lexeme, String translation, String category) {
         mLexeme = lexeme;
         mTranslation = translation;
         mCategory = category;
+        isChecked = false;
     }
 
     private Word(Parcel in) {
@@ -70,6 +74,7 @@ public class Word implements Comparable<Word>, Parcelable {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return mLexeme + " (" + mTranslation + ") ";
@@ -101,5 +106,13 @@ public class Word implements Comparable<Word>, Parcelable {
 
     public void setCategory(String category) {
         mCategory = category;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

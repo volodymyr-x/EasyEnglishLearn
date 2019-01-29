@@ -19,8 +19,6 @@ public interface Constants {
     int ACTION_OPEN_CATEGORY = 100;
     int ACTION_EDIT_CATEGORY = 101;
     int ACTION_ABOUT = 102;
-    int REQUEST_CATEGORY_REMOVE = 110;
-    int REQUEST_EXERCISE_CHOICE = 300;
 
     @Retention(SOURCE)
     @StringDef({ WORD_CONSTRUCTOR, WORD_QUIZ })

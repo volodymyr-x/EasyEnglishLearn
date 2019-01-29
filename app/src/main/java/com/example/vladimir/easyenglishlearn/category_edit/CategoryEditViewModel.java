@@ -22,22 +22,22 @@ public class CategoryEditViewModel extends ViewModel {
     public final ObservableField<String> categoryName = new ObservableField<>();
     public final ObservableField<String> lexeme = new ObservableField<>();
     public final ObservableField<String> translation = new ObservableField<>();
-    private SingleLiveEvent<Integer> mToastMessage;
-    private SingleLiveEvent<Void> mFragmentClose;
-    private MutableLiveData<List<Word>> mLiveData;
+    private SingleLiveEvent<Integer> mMessageLiveData;
+    private SingleLiveEvent<Void> mFragmentCloseLiveData;
+    private MutableLiveData<List<Word>> mWordsLiveData;
     private CategoryRepository mRepository;
     private String mOldCategoryName;
     private int mWordIndex;
 
 
-    CategoryEditViewModel(String categoryName) {
+    public CategoryEditViewModel(String categoryName) {
         mRepository = CategoryRepositoryImpl.getInstance();
         mOldCategoryName = categoryName;
         this.categoryName.set(categoryName);
-        mLiveData = new MutableLiveData<>();
-        mLiveData.setValue(mRepository.getWordsByCategory(categoryName));
-        mToastMessage = new SingleLiveEvent<>();
-        mFragmentClose = new SingleLiveEvent<>();
+        mWordsLiveData = new MutableLiveData<>();
+        mWordsLiveData.setValue(mRepository.getWordsByCategory(categoryName));
+        mMessageLiveData = new SingleLiveEvent<>();
+        mFragmentCloseLiveData = new SingleLiveEvent<>();
         cleanTextFields();
     }
 
@@ -48,11 +48,11 @@ public class CategoryEditViewModel extends ViewModel {
             showToast(R.string.cef_toast_save_edit_category);
         } else {
             if (TextUtils.isEmpty(mOldCategoryName)) {
-                addNewCategory(newCategoryName, mLiveData.getValue());
+                addNewCategory(newCategoryName, mWordsLiveData.getValue());
             } else {
-                updateCategory(mOldCategoryName, newCategoryName, mLiveData.getValue());
+                updateCategory(mOldCategoryName, newCategoryName, mWordsLiveData.getValue());
             }
-            mFragmentClose.call();
+            mFragmentCloseLiveData.call();
         }
     }
 
@@ -60,13 +60,13 @@ public class CategoryEditViewModel extends ViewModel {
     public void onBtnSaveWordClick() {
         if (isTextFieldsNotEmpty()) {
             Word newWord = new Word(lexeme.get().trim(), translation.get().trim());
-            List<Word> wordList = mLiveData.getValue();
+            List<Word> wordList = mWordsLiveData.getValue();
             if (mWordIndex >= 0) {
                 wordList.set(mWordIndex, newWord);
             } else {
                 wordList.add(newWord);
             }
-            mLiveData.setValue(wordList);
+            mWordsLiveData.setValue(wordList);
             cleanTextFields();
         } else {
             showToast(R.string.cef_toast_save_word_empty_fields);
@@ -79,9 +79,9 @@ public class CategoryEditViewModel extends ViewModel {
 
     @SuppressWarnings("ConstantConditions")
     public void onIconRemoveWordClick(Word word) {
-        List<Word> wordList = mLiveData.getValue();
+        List<Word> wordList = mWordsLiveData.getValue();
         wordList.remove(word);
-        mLiveData.setValue(wordList);
+        mWordsLiveData.setValue(wordList);
         cleanTextFields();
     }
 
@@ -89,7 +89,7 @@ public class CategoryEditViewModel extends ViewModel {
     public void onRvItemClick(Word word) {
         lexeme.set(word.getLexeme());
         translation.set(word.getTranslation());
-        mWordIndex = mLiveData.getValue().indexOf(word);
+        mWordIndex = mWordsLiveData.getValue().indexOf(word);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -106,7 +106,7 @@ public class CategoryEditViewModel extends ViewModel {
     }
 
     private void showToast(@StringRes int resId) {
-        mToastMessage.setValue(resId);
+        mMessageLiveData.setValue(resId);
     }
 
     private void addNewCategory(String categoryName, List<Word> wordList) {
@@ -117,15 +117,15 @@ public class CategoryEditViewModel extends ViewModel {
         mRepository.updateCategory(oldCategoryName, newCategoryName, wordList);
     }
 
-    LiveData<List<Word>> getWordList() {
-        return mLiveData;
+    LiveData<List<Word>> getWordsLiveData() {
+        return mWordsLiveData;
     }
 
-    LiveData<Integer> getToastMessage() {
-        return mToastMessage;
+    LiveData<Integer> getMessageLiveData() {
+        return mMessageLiveData;
     }
 
-    LiveData<Void> getFragmentClose() {
-        return mFragmentClose;
+    LiveData<Void> getFragmentCloseLiveData() {
+        return mFragmentCloseLiveData;
     }
 }

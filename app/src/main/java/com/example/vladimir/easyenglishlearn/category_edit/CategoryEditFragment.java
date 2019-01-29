@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.vladimir.easyenglishlearn.ModelFactory;
 import com.example.vladimir.easyenglishlearn.databinding.FragmentCategoryEditBinding;
 import com.example.vladimir.easyenglishlearn.R;
 import com.example.vladimir.easyenglishlearn.databinding.RvCategoryEditItemBinding;
@@ -33,6 +34,7 @@ public class CategoryEditFragment extends Fragment {
     private CategoryEditAdapter mAdapter;
 
 
+    @NonNull
     public static Fragment newInstance(String categoryName) {
         Bundle args = new Bundle();
         args.putString(ARG_CATEGORY_NAME, categoryName);
@@ -41,6 +43,7 @@ public class CategoryEditFragment extends Fragment {
         return fragment;
     }
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class CategoryEditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String oldCategoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
-        mViewModel = ViewModelProviders.of(this, new ModelFactory(oldCategoryName))
+        mViewModel = ViewModelProviders.of(this, ModelFactory.getInstance(oldCategoryName))
                 .get(CategoryEditViewModel.class);
         mBinding.setViewModel(mViewModel);
 
@@ -74,18 +77,17 @@ public class CategoryEditFragment extends Fragment {
     }
 
     private void subscribeToLiveData() {
-        mViewModel.getWordList()
-                .observe(Objects.requireNonNull(getActivity()), mAdapter::setWordList);
-        mViewModel.getToastMessage().observe(getActivity(), this::showToast);
-        mViewModel.getFragmentClose().observe(getActivity(), this::closeFragment);
+        mViewModel.getWordsLiveData().observe(this, mAdapter::setWordList);
+        mViewModel.getMessageLiveData().observe(this, this::showToast);
+        mViewModel.getFragmentCloseLiveData().observe(this, aVoid -> closeFragment());
     }
 
-    private void closeFragment(@SuppressWarnings("unused") Void aVoid) {
+    private void closeFragment() {
         Objects.requireNonNull(getActivity()).onBackPressed();
     }
 
     public void showToast(@StringRes int resId) {
-        Toast.makeText(getActivity(), getString(resId), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
     private class CategoryEditAdapter extends RecyclerView.Adapter<CategoryEditHolder> {

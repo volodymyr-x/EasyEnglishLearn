@@ -15,64 +15,64 @@ import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
 public class CategoryViewModel extends ViewModel {
 
     private CategoryRepository mRepository;
-    private MutableLiveData<List<String>> mLiveData;
-    private SingleLiveEvent<String> mEditCategory;
-    private SingleLiveEvent<String> mRemoveDialog;
-    private SingleLiveEvent<String> mOpenCategory;
-    private SingleLiveEvent<Void> mRemoveCategory;
+    private MutableLiveData<List<String>> mCategoriesLiveData;
+    private SingleLiveEvent<String> mEditCategoryLiveData;
+    private SingleLiveEvent<String> mRemoveDialogLiveData;
+    private SingleLiveEvent<String> mOpenCategoryLiveData;
+    private SingleLiveEvent<Void> mRemoveCategoryLiveData;
 
 
     public CategoryViewModel() {
         mRepository = CategoryRepositoryImpl.getInstance();
-        mLiveData = mRepository.getAllCategories();
-        mEditCategory = new SingleLiveEvent<>();
-        mRemoveDialog = new SingleLiveEvent<>();
-        mOpenCategory = new SingleLiveEvent<>();
-        mRemoveCategory = new SingleLiveEvent<>();
+        mCategoriesLiveData = mRepository.getAllCategories();
+        mEditCategoryLiveData = new SingleLiveEvent<>();
+        mRemoveDialogLiveData = new SingleLiveEvent<>();
+        mOpenCategoryLiveData = new SingleLiveEvent<>();
+        mRemoveCategoryLiveData = new SingleLiveEvent<>();
     }
 
     public void onFabClick() {
-        mEditCategory.setValue(EMPTY_STRING);
+        mEditCategoryLiveData.setValue(EMPTY_STRING);
     }
 
     public void onRemoveIconClick(String categoryName) {
-        mRemoveDialog.setValue(categoryName);
+        mRemoveDialogLiveData.setValue(categoryName);
     }
 
     public void onEditIconClick(String categoryName) {
-        mEditCategory.setValue(categoryName);
+        mEditCategoryLiveData.setValue(categoryName);
     }
 
     public void onRvItemClick(String categoryName) {
-        mOpenCategory.setValue(categoryName);
+        mOpenCategoryLiveData.setValue(categoryName);
     }
 
-    LiveData<String> getOpenCategory() {
-        return mOpenCategory;
+    LiveData<String> getOpenCategoryLiveData() {
+        return mOpenCategoryLiveData;
     }
 
-    LiveData<String> getEditCategory() {
-        return mEditCategory;
+    LiveData<String> getEditCategoryLiveData() {
+        return mEditCategoryLiveData;
     }
 
-    LiveData<String> getRemoveDialog() {
-        return mRemoveDialog;
+    LiveData<String> getRemoveDialogLiveData() {
+        return mRemoveDialogLiveData;
     }
 
-    LiveData<Void> getRemoveCategory() {
-        return mRemoveCategory;
+    LiveData<Void> getRemoveCategoryLiveData() {
+        return mRemoveCategoryLiveData;
     }
 
-    LiveData<List<String>> getCategoryList() {
-        return mLiveData;
+    LiveData<List<String>> getCategoriesLiveData() {
+        return mCategoriesLiveData;
     }
 
     public void removeCategory(String categoryName) {
         mRepository.removeCategory(categoryName);
-        mRemoveCategory.call();
+        mRemoveCategoryLiveData.call();
     }
 
     public void cancelRemoving() {
-        mRemoveCategory.call();
+        mRemoveCategoryLiveData.call();
     }
 }

@@ -52,6 +52,7 @@ public class CategoryFragment extends Fragment {
         mCallbacks = (Callbacks) context;
     }
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,18 +83,16 @@ public class CategoryFragment extends Fragment {
     }
 
     private void subscribeToLiveData() {
-        mViewModel.getCategoryList()
-                .observe(Objects.requireNonNull(getActivity()), mAdapter::setCategoryList);
-        mViewModel.getEditCategory().observe(getActivity(), mCallbacks::onCategoryEdit);
-        mViewModel.getRemoveDialog().observe(getActivity(), this::showDialog);
-        mViewModel.getOpenCategory().observe(getActivity(), mCallbacks::onCategorySelected);
+        mViewModel.getCategoriesLiveData().observe(this, mAdapter::setCategoryList);
+        mViewModel.getEditCategoryLiveData().observe(this, mCallbacks::onCategoryEdit);
+        mViewModel.getRemoveDialogLiveData().observe(this, this::showDialog);
+        mViewModel.getOpenCategoryLiveData().observe(this, mCallbacks::onCategorySelected);
     }
 
     private void showDialog(String categoryName) {
         DialogFragment dialogFragment = CategoryRemoveFragment.newInstance(categoryName);
-        dialogFragment
-                .show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(),
-                        DIALOG_REMOVE_CATEGORY);
+        dialogFragment.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(),
+                DIALOG_REMOVE_CATEGORY);
     }
 
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryHolder> {

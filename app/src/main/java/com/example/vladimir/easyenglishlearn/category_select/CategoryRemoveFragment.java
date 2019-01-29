@@ -22,6 +22,7 @@ public class CategoryRemoveFragment extends DialogFragment {
     private CategoryViewModel mViewModel;
 
 
+    @NonNull
     public static DialogFragment newInstance(String categoryName) {
         Bundle args = new Bundle();
         args.putString(CATEGORY_NAME, categoryName);
@@ -47,12 +48,11 @@ public class CategoryRemoveFragment extends DialogFragment {
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mViewModel.getRemoveCategory().observe(getActivity(), this::closeDialog);
+        mViewModel.getRemoveCategoryLiveData().observe(this, aVoid -> closeDialog());
     }
 
-    public void closeDialog(@SuppressWarnings("unused") Void aVoid) {
+    public void closeDialog() {
         dismiss();
     }
 }
