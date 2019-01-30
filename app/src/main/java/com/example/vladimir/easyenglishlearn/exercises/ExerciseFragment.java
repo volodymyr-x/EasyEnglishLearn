@@ -1,4 +1,4 @@
-package com.example.vladimir.easyenglishlearn.fragments;
+package com.example.vladimir.easyenglishlearn.exercises;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;

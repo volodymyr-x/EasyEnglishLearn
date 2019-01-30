@@ -1,48 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/wqf_tv_question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin"
-        android:textSize="@dimen/large_text_size"
-        tools:text="@string/question" />
+    <data>
 
-    <RadioGroup
-        android:id="@+id/wqf_rg_translation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin">
+        <variable
+            name="viewModel"
+            type="com.example.vladimir.easyenglishlearn.exercises.WordQuizViewModel" />
+    </data>
 
-        <RadioButton
-            android:id="@+id/wqf_rb_first"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/wqf_tv_question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
-            android:textSize="@dimen/text_size"
-            tools:text="First Answer" />
+            android:textSize="@dimen/large_text_size"
+            tools:text="@string/question"
+            android:text="@{viewModel.question}"/>
 
-        <RadioButton
-            android:id="@+id/wqf_rb_second"
+        <RadioGroup
+            android:id="@+id/wqf_rg_answers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/layout_margin"
-            android:textSize="@dimen/text_size"
-            tools:text="Second Answer" />
+            android:layout_margin="@dimen/layout_margin">
 
-        <RadioButton
-            android:id="@+id/wqf_rb_third"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/layout_margin"
-            android:textSize="@dimen/text_size"
-            tools:text="Third Answer" />
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/wqf_rb_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:textSize="@dimen/text_size"
+                tools:text="First Answer"
+                android:text="@{viewModel.answers[0]}"
+                android:onClick="@{() -> viewModel.onAnswerChecked(viewModel.answers[0])}"/>
 
-</LinearLayout>
+            <RadioButton
+                android:id="@+id/wqf_rb_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:textSize="@dimen/text_size"
+                tools:text="Second Answer"
+                android:text="@{viewModel.answers[1]}"
+                android:onClick="@{() -> viewModel.onAnswerChecked(viewModel.answers[1])}"/>
+
+            <RadioButton
+                android:id="@+id/wqf_rb_third"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:textSize="@dimen/text_size"
+                tools:text="Third Answer"
+                android:text="@{viewModel.answers[2]}"
+                android:onClick="@{() -> viewModel.onAnswerChecked(viewModel.answers[2])}"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+</layout>

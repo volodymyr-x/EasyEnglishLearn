@@ -36,7 +36,7 @@
     <string name="eca_tv_translation">Translation:</string>
     <string name="eca_btn_save_word">Save word</string>
     <string name="eca_btn_clean">Clean</string>
-    <string name="errors_count">Errors: </string>
+    <string name="errors_count">Errors: %d</string>
     <string name="wrong_answer">Wrong answer</string>
     <string name="answer">Answer</string>
     <string name="clean">Clean</string>

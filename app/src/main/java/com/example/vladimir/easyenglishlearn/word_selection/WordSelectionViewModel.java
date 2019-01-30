@@ -19,7 +19,7 @@ import static com.example.vladimir.easyenglishlearn.Constants.WORD_CONSTRUCTOR;
 public class WordSelectionViewModel extends ViewModel {
 
     private SingleLiveEvent<Integer> mMessageLiveData;
-    private SingleLiveEvent<Void> mChoiceDialogLiveData;
+    private SingleLiveEvent<String> mChoiceDialogLiveData;
     private MutableLiveData<List<Word>> mWordsLiveData;
     private SingleLiveEvent<WordSelectionDto> mSelectedWordsLiveData;
     private SingleLiveEvent<Void> mCloseDialogLiveData;
@@ -44,7 +44,7 @@ public class WordSelectionViewModel extends ViewModel {
         if (mSelectedWordList.size() < 4) {
             showToast();
         } else {
-            mChoiceDialogLiveData.call();
+            mChoiceDialogLiveData.setValue(mCategoryName);
         }
     }
 
@@ -114,7 +114,7 @@ public class WordSelectionViewModel extends ViewModel {
         return mMessageLiveData;
     }
 
-    LiveData<Void> getChoiceDialogLiveData() {
+    LiveData<String> getChoiceDialogLiveData() {
         return mChoiceDialogLiveData;
     }
 

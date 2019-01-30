@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.vladimir.easyenglishlearn.fragments.WordConstructorFragment;
-import com.example.vladimir.easyenglishlearn.fragments.WordQuizFragment;
+import com.example.vladimir.easyenglishlearn.exercises.WordConstructorFragment;
+import com.example.vladimir.easyenglishlearn.exercises.WordQuizFragment;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.ArrayList;

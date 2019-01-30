@@ -1,7 +1,8 @@
-package com.example.vladimir.easyenglishlearn.fragments;
+package com.example.vladimir.easyenglishlearn.exercises;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -38,6 +39,7 @@ public class WordConstructorFragment extends ExerciseFragment {
     };
 
 
+    @NonNull
     public static Fragment newInstance(ArrayList<Word> selectedWordList,
                                        boolean translationDirection) {
         Bundle args = new Bundle();

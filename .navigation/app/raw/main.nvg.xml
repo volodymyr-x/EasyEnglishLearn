@@ -46,7 +46,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.fragments.WordConstructorFragment"/>
+        className = "com.example.vladimir.easyenglishlearn.exercises.WordConstructorFragment"/>
       <point      
         x = "700"      
         y = "1680"/>
@@ -54,7 +54,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.example.vladimir.easyenglishlearn.fragments.WordQuizFragment"/>
+        className = "com.example.vladimir.easyenglishlearn.exercises.WordQuizFragment"/>
       <point      
         x = "748"      
         y = "1728"/>

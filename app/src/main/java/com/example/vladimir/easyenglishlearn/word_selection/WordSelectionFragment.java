@@ -37,7 +37,6 @@ public class WordSelectionFragment extends Fragment {
 
     private FragmentWordSelectionBinding mBinding;
     private WordSelectionAdapter mAdapter;
-    private String mCategoryName;
     private WordSelectionViewModel mViewModel;
 
 
@@ -66,12 +65,12 @@ public class WordSelectionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mCategoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
+        String categoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
         mAdapter = new WordSelectionAdapter();
         mBinding.wsfRvWordsChoice.setAdapter(mAdapter);
 
         mViewModel = ViewModelProviders
-                .of(this, ModelFactory.getInstance(mCategoryName))
+                .of(this, ModelFactory.getInstance(categoryName))
                 .get(WordSelectionViewModel.class);
         mBinding.setViewModel(mViewModel);
         subscribeToLiveData();
@@ -84,12 +83,12 @@ public class WordSelectionFragment extends Fragment {
     private void subscribeToLiveData() {
         mViewModel.getWordsLiveData().observe(this, mAdapter::setWordList);
         mViewModel.getMessageLiveData().observe(this, this::showToast);
-        mViewModel.getChoiceDialogLiveData().observe(this, aVoid -> showDialog());
+        mViewModel.getChoiceDialogLiveData().observe(this, this::showDialog);
         mViewModel.getSelectedWordsLiveData().observe(this, this::startExercise);
     }
 
-    private void showDialog() {
-        DialogFragment dialogFragment = ExerciseChoiceFragment.newInstance(mCategoryName);
+    private void showDialog(String categoryName) {
+        DialogFragment dialogFragment = ExerciseChoiceFragment.newInstance(categoryName);
         dialogFragment.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(),
                 EXERCISE_CHOICE_FRAGMENT);
     }

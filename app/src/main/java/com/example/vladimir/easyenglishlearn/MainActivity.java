@@ -11,7 +11,6 @@ import android.view.MenuItem;
 
 import com.example.vladimir.easyenglishlearn.category_edit.CategoryEditFragment;
 import com.example.vladimir.easyenglishlearn.category_select.CategoryFragment;
-import com.example.vladimir.easyenglishlearn.fragments.AboutFragment;
 import com.example.vladimir.easyenglishlearn.word_selection.WordSelectionFragment;
 
 import static com.example.vladimir.easyenglishlearn.Constants.ACTION_ABOUT;
