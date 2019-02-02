@@ -39,11 +39,11 @@
     <string name="errors_count">Errors: %d</string>
     <string name="wrong_answer">Wrong answer</string>
     <string name="answer">Answer</string>
-    <string name="clean">Clean</string>
+    <string name="undo">Undo</string>
     <string name="wsa_tv_choose_words">Choose the words</string>
     <string name="wsa_btn_start">Start</string>
     <string name="wsa_cb_choose_all">Choose all</string>
-    <string name="wsa_toast_min_words_count">select at least 4 words</string>
+    <string name="wsa_toast_min_words_count">select at least %d words</string>
     <string name="ecf_tv_translation_direction">select translation direction</string>
     <string name="ecf_tv_title">Choose exercise</string>
     <string name="ecf_rb_en_ru"><![CDATA[En—>Ru]]></string>

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.vladimir.easyenglishlearn.Constants.ANSWERS_COUNT;
 import static com.example.vladimir.easyenglishlearn.Constants.ARG_CATEGORY_NAME;
 import static com.example.vladimir.easyenglishlearn.Constants.EXERCISE_CHOICE_FRAGMENT;
 import static com.example.vladimir.easyenglishlearn.Constants.EXERCISE_TYPE;
@@ -76,21 +77,22 @@ public class WordSelectionFragment extends Fragment {
         subscribeToLiveData();
     }
 
-    public void showToast(@StringRes int resId) {
-        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
+    public void showMessage(@StringRes int resId) {
+        String message = getString(resId, ANSWERS_COUNT);
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void subscribeToLiveData() {
         mViewModel.getWordsLiveData().observe(this, mAdapter::setWordList);
-        mViewModel.getMessageLiveData().observe(this, this::showToast);
+        mViewModel.getMessageLiveData().observe(this, this::showMessage);
         mViewModel.getChoiceDialogLiveData().observe(this, this::showDialog);
         mViewModel.getSelectedWordsLiveData().observe(this, this::startExercise);
     }
 
     private void showDialog(String categoryName) {
         DialogFragment dialogFragment = ExerciseChoiceFragment.newInstance(categoryName);
-        dialogFragment.show(Objects.requireNonNull(getActivity()).getSupportFragmentManager(),
-                EXERCISE_CHOICE_FRAGMENT);
+        dialogFragment.show(Objects.requireNonNull(getActivity())
+                        .getSupportFragmentManager(), EXERCISE_CHOICE_FRAGMENT);
     }
 
     private void startExercise(WordSelectionDto dto) {

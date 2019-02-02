@@ -78,7 +78,7 @@ public class CategoryEditFragment extends Fragment {
 
     private void subscribeToLiveData() {
         mViewModel.getWordsLiveData().observe(this, mAdapter::setWordList);
-        mViewModel.getMessageLiveData().observe(this, this::showToast);
+        mViewModel.getMessageLiveData().observe(this, this::showMessage);
         mViewModel.getFragmentCloseLiveData().observe(this, aVoid -> closeFragment());
     }
 
@@ -86,7 +86,7 @@ public class CategoryEditFragment extends Fragment {
         Objects.requireNonNull(getActivity()).onBackPressed();
     }
 
-    public void showToast(@StringRes int resId) {
+    public void showMessage(@StringRes int resId) {
         Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 

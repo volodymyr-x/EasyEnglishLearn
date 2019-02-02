@@ -16,6 +16,7 @@ public interface Constants {
     String EXERCISE_CHOICE_FRAGMENT = "EXERCISE_CHOICE_FRAGMENT";
     String SELECTED_WORDS = "SELECTED_WORDS";
     String EMPTY_STRING = "";
+    int ANSWERS_COUNT = 3;
     int ACTION_OPEN_CATEGORY = 100;
     int ACTION_EDIT_CATEGORY = 101;
     int ACTION_ABOUT = 102;

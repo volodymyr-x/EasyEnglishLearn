@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.example.vladimir.easyenglishlearn.Constants;
+import com.example.vladimir.easyenglishlearn.Constants.Exercises;
 import com.example.vladimir.easyenglishlearn.R;
 import com.example.vladimir.easyenglishlearn.SingleLiveEvent;
 import com.example.vladimir.easyenglishlearn.db.CategoryRepository;
@@ -14,7 +15,9 @@ import com.example.vladimir.easyenglishlearn.model.Word;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.vladimir.easyenglishlearn.Constants.ANSWERS_COUNT;
 import static com.example.vladimir.easyenglishlearn.Constants.WORD_CONSTRUCTOR;
+import static com.example.vladimir.easyenglishlearn.Constants.WORD_QUIZ;
 
 public class WordSelectionViewModel extends ViewModel {
 
@@ -41,8 +44,8 @@ public class WordSelectionViewModel extends ViewModel {
     }
 
     public void onBtnStartClick() {
-        if (mSelectedWordList.size() < 4) {
-            showToast();
+        if (mSelectedWordList.size() < ANSWERS_COUNT) {
+            showMessage();
         } else {
             mChoiceDialogLiveData.setValue(mCategoryName);
         }
@@ -71,18 +74,11 @@ public class WordSelectionViewModel extends ViewModel {
     }
 
     public void onBtnConstructorClick() {
-
-        mCloseDialogLiveData.call();
-        WordSelectionDto dto = new WordSelectionDto(mTranslationDirection,
-                mSelectedWordList, WORD_CONSTRUCTOR);
-        mSelectedWordsLiveData.setValue(dto);
+        sendDTO(WORD_CONSTRUCTOR);
     }
 
     public void onBtnQuizClick() {
-        mCloseDialogLiveData.call();
-        WordSelectionDto dto = new WordSelectionDto(mTranslationDirection,
-                mSelectedWordList, Constants.WORD_QUIZ);
-        mSelectedWordsLiveData.setValue(dto);
+        sendDTO(WORD_QUIZ);
     }
 
     public void onBtnCancelClick() {
@@ -102,7 +98,14 @@ public class WordSelectionViewModel extends ViewModel {
         }
     }
 
-    private void showToast() {
+    private void sendDTO(@Exercises String exerciseType) {
+        mCloseDialogLiveData.call();
+        WordSelectionDto dto = new WordSelectionDto(mTranslationDirection,
+                mSelectedWordList, exerciseType);
+        mSelectedWordsLiveData.setValue(dto);
+    }
+
+    private void showMessage() {
         mMessageLiveData.setValue(R.string.wsa_toast_min_words_count);
     }
 

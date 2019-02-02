@@ -45,7 +45,7 @@ public class CategoryEditViewModel extends ViewModel {
     public void onBtnSaveCategoryClick() {
         String newCategoryName = categoryName.get().trim();
         if (TextUtils.isEmpty(newCategoryName)) {
-            showToast(R.string.cef_toast_save_edit_category);
+            showMessage(R.string.cef_toast_save_edit_category);
         } else {
             if (TextUtils.isEmpty(mOldCategoryName)) {
                 addNewCategory(newCategoryName, mWordsLiveData.getValue());
@@ -69,7 +69,7 @@ public class CategoryEditViewModel extends ViewModel {
             mWordsLiveData.setValue(wordList);
             cleanTextFields();
         } else {
-            showToast(R.string.cef_toast_save_word_empty_fields);
+            showMessage(R.string.cef_toast_save_word_empty_fields);
         }
     }
 
@@ -105,7 +105,7 @@ public class CategoryEditViewModel extends ViewModel {
         mWordIndex = -1;
     }
 
-    private void showToast(@StringRes int resId) {
+    private void showMessage(@StringRes int resId) {
         mMessageLiveData.setValue(resId);
     }
 

@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static com.example.vladimir.easyenglishlearn.Constants.ANSWERS_COUNT;
+
 public class WordQuizViewModel extends ViewModel {
 
     public final ObservableField<String> question = new ObservableField<>();
@@ -25,7 +27,6 @@ public class WordQuizViewModel extends ViewModel {
     private int mErrorsCount;
     private boolean mTranslationDirection;
     private StringBuilder mAnswerBuilder;
-    private static final int ANSWERS_COUNT = 3;
 
 
     public WordQuizViewModel(List<Word> wordList, boolean translationDirection) {
@@ -36,7 +37,7 @@ public class WordQuizViewModel extends ViewModel {
         mMessageLiveData = new SingleLiveEvent<>();
         mClearRadioGroupLiveData = new SingleLiveEvent<>();
 
-        prepareAnswers(mWordList.get(mIteration));
+        prepareQuestionAndAnswers(mWordList.get(mIteration));
     }
 
     public void onAnswerChecked(String answer) {
@@ -44,7 +45,7 @@ public class WordQuizViewModel extends ViewModel {
         if (isExerciseOver()) {
             finishExercise();
         } else {
-            prepareAnswers(mWordList.get(mIteration));
+            prepareQuestionAndAnswers(mWordList.get(mIteration));
         }
     }
 
@@ -74,7 +75,7 @@ public class WordQuizViewModel extends ViewModel {
         mMessageLiveData.setValue(errorsCount);
     }
 
-    private void prepareAnswers(Word currentWord) {
+    private void prepareQuestionAndAnswers(Word currentWord) {
         mClearRadioGroupLiveData.call();
         question.set(mTranslationDirection ? currentWord.getLexeme() : currentWord.getTranslation());
         List<String> answerList = new ArrayList<>();
