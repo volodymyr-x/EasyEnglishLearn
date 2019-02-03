@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.vladimir.easyenglishlearn.ModelFactory;
 import com.example.vladimir.easyenglishlearn.R;
 import com.example.vladimir.easyenglishlearn.databinding.FragmentWordQuizBinding;
 import com.example.vladimir.easyenglishlearn.model.Word;
@@ -25,7 +24,6 @@ import static com.example.vladimir.easyenglishlearn.Constants.TRANSLATION_DIRECT
 
 public class WordQuizFragment extends Fragment {
 
-    private WordQuizViewModel mViewModel;
     private FragmentWordQuizBinding mBinding;
 
 
@@ -49,21 +47,22 @@ public class WordQuizFragment extends Fragment {
                 R.layout.fragment_word_quiz,
                 container,
                 false);
-        boolean translationDirection = getArguments().getBoolean(TRANSLATION_DIRECTION);
-        List<Word> wordList = getArguments().getParcelableArrayList(SELECTED_WORDS);
-        mViewModel = ViewModelProviders
-                .of(this, ModelFactory.getInstance(wordList, translationDirection))
-                .get(WordQuizViewModel.class);
-        mBinding.setViewModel(mViewModel);
+        WordQuizViewModel viewModel = ViewModelProviders.of(this).get(WordQuizViewModel.class);
+        mBinding.setViewModel(viewModel);
+        subscribeToLiveData(viewModel);
 
-        subscribeToLiveData();
+        if (savedInstanceState == null) {
+            boolean translationDirection = getArguments().getBoolean(TRANSLATION_DIRECTION);
+            List<Word> wordList = getArguments().getParcelableArrayList(SELECTED_WORDS);
+            viewModel.startExercise(wordList, translationDirection);
+        }
         return mBinding.getRoot();
     }
 
-    private void subscribeToLiveData() {
-        mViewModel.getExerciseCloseLiveData().observe(this, aVoid -> closeFragment());
-        mViewModel.getMessageLiveData().observe(this, this::showMessage);
-        mViewModel.getClearRadioGroupLiveData().observe(this, aVoid -> clearRadioGroup());
+    private void subscribeToLiveData(@NonNull WordQuizViewModel viewModel) {
+        viewModel.getExerciseCloseLiveData().observe(this, aVoid -> closeFragment());
+        viewModel.getMessageLiveData().observe(this, this::showMessage);
+        viewModel.getClearRadioGroupLiveData().observe(this, aVoid -> clearRadioGroup());
     }
 
     private void clearRadioGroup() {

@@ -1,11 +1,9 @@
 package com.example.vladimir.easyenglishlearn.exercises;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableField;
 
 import com.example.vladimir.easyenglishlearn.SingleLiveEvent;
-import com.example.vladimir.easyenglishlearn.model.Answer;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.ArrayList;
@@ -15,71 +13,27 @@ import java.util.Random;
 
 import static com.example.vladimir.easyenglishlearn.Constants.ANSWERS_COUNT;
 
-public class WordQuizViewModel extends ViewModel {
+public class WordQuizViewModel extends ExerciseViewModel {
 
-    public final ObservableField<String> question = new ObservableField<>();
-    public final ObservableField<List<String>> answers = new ObservableField<>();
-    private SingleLiveEvent<Void> mExerciseCloseLiveData;
-    private SingleLiveEvent<Integer> mMessageLiveData;
     private SingleLiveEvent<Void> mClearRadioGroupLiveData;
-    private List<Word> mWordList;
-    private int mIteration;
-    private int mErrorsCount;
-    private boolean mTranslationDirection;
-    private StringBuilder mAnswerBuilder;
+    public final ObservableField<List<String>> answers = new ObservableField<>();
 
 
-    public WordQuizViewModel(List<Word> wordList, boolean translationDirection) {
-        mWordList = wordList;
-        mTranslationDirection = translationDirection;
-        mAnswerBuilder = new StringBuilder();
-        mExerciseCloseLiveData = new SingleLiveEvent<>();
-        mMessageLiveData = new SingleLiveEvent<>();
+    public WordQuizViewModel() {
         mClearRadioGroupLiveData = new SingleLiveEvent<>();
-
-        prepareQuestionAndAnswers(mWordList.get(mIteration));
     }
 
     public void onAnswerChecked(String answer) {
         mAnswerBuilder.append(answer);
-        if (isExerciseOver()) {
-            finishExercise();
-        } else {
-            prepareQuestionAndAnswers(mWordList.get(mIteration));
-        }
+        checkAnswer();
     }
 
-    private boolean isExerciseOver() {
-        Word currentWord = mWordList.get(mIteration);
-        Answer answer = new Answer(currentWord, mAnswerBuilder, mTranslationDirection);
-        if (answer.isCorrect()) {
-            if (++mIteration >= mWordList.size()) {
-                return true;
-            }
-        } else {
-            showMessage(-1);
-            mErrorsCount++;
-        }
-        mAnswerBuilder.delete(0, mAnswerBuilder.length());
-        return false;
-    }
+    @Override
+    void prepareQuestionAndAnswers() {
+        super.prepareQuestionAndAnswers();
 
-    private void finishExercise() {
-        showMessage(mErrorsCount);
-        mExerciseCloseLiveData.call();
-        mErrorsCount = 0;
-        mIteration = 0;
-    }
-
-    private void showMessage(int errorsCount) {
-        mMessageLiveData.setValue(errorsCount);
-    }
-
-    private void prepareQuestionAndAnswers(Word currentWord) {
-        mClearRadioGroupLiveData.call();
-        question.set(mTranslationDirection ? currentWord.getLexeme() : currentWord.getTranslation());
         List<String> answerList = new ArrayList<>();
-        addAnswer(answerList, currentWord);
+        addAnswer(answerList, mCurrentWord);
         while (answerList.size() < ANSWERS_COUNT) {
             int randomIndex = new Random().nextInt(mWordList.size());
             Word tempWord = mWordList.get(randomIndex);
@@ -87,6 +41,12 @@ public class WordQuizViewModel extends ViewModel {
         }
         Collections.shuffle(answerList);
         answers.set(answerList);
+    }
+
+    @Override
+    void cleanPreviousData() {
+        super.cleanPreviousData();
+        mClearRadioGroupLiveData.call();
     }
 
     private boolean isWordNotInAnswerList(List<String> answerList, Word word) {
@@ -99,14 +59,6 @@ public class WordQuizViewModel extends ViewModel {
         answerList.add(mTranslationDirection
                 ? word.getTranslation()
                 : word.getLexeme());
-    }
-
-    LiveData<Void> getExerciseCloseLiveData() {
-        return mExerciseCloseLiveData;
-    }
-
-    LiveData<Integer> getMessageLiveData() {
-        return mMessageLiveData;
     }
 
     LiveData<Void> getClearRadioGroupLiveData() {

@@ -24,7 +24,7 @@ import java.util.Objects;
 import static com.example.vladimir.easyenglishlearn.Constants.SELECTED_WORDS;
 import static com.example.vladimir.easyenglishlearn.Constants.TRANSLATION_DIRECTION;
 
-public class WordConstructorFragment extends /*Exercise*/Fragment {
+public class WordConstructorFragment extends Fragment {
 
     private FragmentWordConstructorBinding mBinding;
     private WordConstructorViewModel mViewModel;
@@ -56,14 +56,13 @@ public class WordConstructorFragment extends /*Exercise*/Fragment {
                 R.layout.fragment_word_constructor,
                 container,
                 false);
-        boolean translationDirection = getArguments().getBoolean(TRANSLATION_DIRECTION);
-        List<Word> wordList = getArguments().getParcelableArrayList(SELECTED_WORDS);
-
         mViewModel = ViewModelProviders.of(this).get(WordConstructorViewModel.class);
         mBinding.setViewModel(mViewModel);
-
         subscribeToLiveData(mViewModel);
+
         if (savedInstanceState == null) {
+            boolean translationDirection = getArguments().getBoolean(TRANSLATION_DIRECTION);
+            List<Word> wordList = getArguments().getParcelableArrayList(SELECTED_WORDS);
             mViewModel.startExercise(wordList, translationDirection);
         }
         return mBinding.getRoot();
