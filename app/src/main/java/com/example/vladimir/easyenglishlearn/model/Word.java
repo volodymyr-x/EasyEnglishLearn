@@ -1,16 +1,28 @@
 package com.example.vladimir.easyenglishlearn.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
 
+@Entity
 public class Word implements Comparable<Word>, Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private long mId;
+    @ColumnInfo(name = "lexeme")
     private String mLexeme;
+    @ColumnInfo(name = "translation")
     private String mTranslation;
+    @ColumnInfo(name = "category")
     private String mCategory;
+    @Ignore
     private boolean isChecked;
 
 
@@ -26,6 +38,7 @@ public class Word implements Comparable<Word>, Parcelable {
         }
     };
 
+    @Ignore
     public Word(String lexeme, String translation) {
         this(lexeme, translation, EMPTY_STRING);
     }
@@ -37,7 +50,8 @@ public class Word implements Comparable<Word>, Parcelable {
         isChecked = false;
     }
 
-    private Word(Parcel in) {
+    @Ignore
+    private Word(@NonNull Parcel in) {
         mLexeme = in.readString();
         mTranslation = in.readString();
         mCategory = in.readString();
@@ -92,8 +106,24 @@ public class Word implements Comparable<Word>, Parcelable {
         dest.writeString(mCategory);
     }
 
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
+    }
+
     public String getLexeme() {
         return mLexeme;
+    }
+
+    public void setLexeme(String lexeme) {
+        mLexeme = lexeme;
+    }
+
+    public void setTranslation(String translation) {
+        mTranslation = translation;
     }
 
     public String getTranslation() {

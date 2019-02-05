@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.vladimir.easyenglishlearn.R;
 import com.example.vladimir.easyenglishlearn.databinding.FragmentCategorySelectBinding;
@@ -87,6 +89,11 @@ public class CategoryFragment extends Fragment {
         mViewModel.getEditCategoryLiveData().observe(this, mCallbacks::onCategoryEdit);
         mViewModel.getRemoveDialogLiveData().observe(this, this::showDialog);
         mViewModel.getOpenCategoryLiveData().observe(this, mCallbacks::onCategorySelected);
+        mViewModel.getMessageLiveData().observe(this, this::showMessage);
+    }
+
+    public void showMessage(@StringRes int resId) {
+        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
     private void showDialog(String categoryName) {

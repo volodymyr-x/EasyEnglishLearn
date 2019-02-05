@@ -4,16 +4,19 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.example.vladimir.easyenglishlearn.Constants;
+import com.example.vladimir.easyenglishlearn.App;
 import com.example.vladimir.easyenglishlearn.Constants.Exercises;
 import com.example.vladimir.easyenglishlearn.R;
 import com.example.vladimir.easyenglishlearn.SingleLiveEvent;
-import com.example.vladimir.easyenglishlearn.db.CategoryRepository;
-import com.example.vladimir.easyenglishlearn.db.CategoryRepositoryImpl;
+import com.example.vladimir.easyenglishlearn.db.WordDao;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.example.vladimir.easyenglishlearn.Constants.ANSWERS_COUNT;
 import static com.example.vladimir.easyenglishlearn.Constants.WORD_CONSTRUCTOR;
@@ -27,20 +30,23 @@ public class WordSelectionViewModel extends ViewModel {
     private SingleLiveEvent<WordSelectionDto> mSelectedWordsLiveData;
     private SingleLiveEvent<Void> mCloseDialogLiveData;
     private ArrayList<Word> mSelectedWordList;
+    private CompositeDisposable mDisposable;
     private String mCategoryName;
     private boolean mTranslationDirection = true;
 
 
     public WordSelectionViewModel(String categoryName) {
         mCategoryName = categoryName;
-        CategoryRepository repository = CategoryRepositoryImpl.getInstance();
+        WordDao repository = App.getInstance().getDatabase().wordDao();
         mSelectedWordsLiveData = new SingleLiveEvent<>();
         mMessageLiveData = new SingleLiveEvent<>();
         mChoiceDialogLiveData = new SingleLiveEvent<>();
         mWordsLiveData = new MutableLiveData<>();
         mCloseDialogLiveData = new SingleLiveEvent<>();
-        mWordsLiveData.setValue(repository.getWordsByCategory(categoryName));
         mSelectedWordList = new ArrayList<>();
+        mDisposable = new CompositeDisposable();
+
+        subscribeWordsToData(repository);
     }
 
     public void onBtnStartClick() {
@@ -98,6 +104,13 @@ public class WordSelectionViewModel extends ViewModel {
         }
     }
 
+    private void subscribeWordsToData(WordDao repository) {
+        Disposable disposable = repository.getWordsByCategory(mCategoryName)
+                .subscribeOn(Schedulers.io())
+                .subscribe(words -> mWordsLiveData.postValue(words));
+        mDisposable.add(disposable);
+    }
+
     private void sendDTO(@Exercises String exerciseType) {
         mCloseDialogLiveData.call();
         WordSelectionDto dto = new WordSelectionDto(mTranslationDirection,
@@ -107,6 +120,12 @@ public class WordSelectionViewModel extends ViewModel {
 
     private void showMessage() {
         mMessageLiveData.setValue(R.string.wsa_toast_min_words_count);
+    }
+
+    @Override
+    protected void onCleared() {
+        mDisposable.dispose();
+
     }
 
     public String getCategoryName() {

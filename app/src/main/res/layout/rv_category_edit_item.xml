@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
-            android:contentDescription="@string/ca_cm_remove_category"
+            android:contentDescription="@string/ca_cm_remove_word"
             android:onClick="@{() -> viewModel.onIconRemoveWordClick(word)}"
             android:src="@drawable/ic_action_remove"
             app:layout_constraintBottom_toBottomOf="parent"

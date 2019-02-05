@@ -7,13 +7,19 @@ import android.databinding.ObservableField;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
+import com.example.vladimir.easyenglishlearn.App;
 import com.example.vladimir.easyenglishlearn.R;
 import com.example.vladimir.easyenglishlearn.SingleLiveEvent;
-import com.example.vladimir.easyenglishlearn.db.CategoryRepository;
-import com.example.vladimir.easyenglishlearn.db.CategoryRepositoryImpl;
+import com.example.vladimir.easyenglishlearn.db.WordDao;
 import com.example.vladimir.easyenglishlearn.model.Word;
 
 import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.example.vladimir.easyenglishlearn.Constants.EMPTY_STRING;
 
@@ -25,20 +31,23 @@ public class CategoryEditViewModel extends ViewModel {
     private SingleLiveEvent<Integer> mMessageLiveData;
     private SingleLiveEvent<Void> mFragmentCloseLiveData;
     private MutableLiveData<List<Word>> mWordsLiveData;
-    private CategoryRepository mRepository;
+    private WordDao mRepository;
+    private CompositeDisposable mDisposable;
     private String mOldCategoryName;
     private int mWordIndex;
 
 
     public CategoryEditViewModel(String categoryName) {
-        mRepository = CategoryRepositoryImpl.getInstance();
+        mRepository = App.getInstance().getDatabase().wordDao();
         mOldCategoryName = categoryName;
         this.categoryName.set(categoryName);
         mWordsLiveData = new MutableLiveData<>();
-        mWordsLiveData.setValue(mRepository.getWordsByCategory(categoryName));
         mMessageLiveData = new SingleLiveEvent<>();
         mFragmentCloseLiveData = new SingleLiveEvent<>();
+        mDisposable = new CompositeDisposable();
+
         cleanTextFields();
+        subscribeWordsToData();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -99,6 +108,13 @@ public class CategoryEditViewModel extends ViewModel {
                 !TextUtils.isEmpty(translation.get().trim());
     }
 
+    private void subscribeWordsToData() {
+        Disposable disposable = mRepository.getWordsByCategory(mOldCategoryName)
+                .subscribeOn(Schedulers.io())
+                .subscribe(words -> mWordsLiveData.postValue(words));
+        mDisposable.add(disposable);
+    }
+
     private void cleanTextFields() {
         lexeme.set(EMPTY_STRING);
         translation.set(EMPTY_STRING);
@@ -110,11 +126,27 @@ public class CategoryEditViewModel extends ViewModel {
     }
 
     private void addNewCategory(String categoryName, List<Word> wordList) {
-        mRepository.addNewCategory(categoryName, wordList);
+        Disposable disposable = Completable
+                .fromAction(() -> mRepository.addNewCategory(wordList, categoryName))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> showMessage(R.string.category_added));
+        mDisposable.add(disposable);
     }
 
     private void updateCategory(String oldCategoryName, String newCategoryName, List<Word> wordList) {
-        mRepository.updateCategory(oldCategoryName, newCategoryName, wordList);
+        Disposable disposable = Completable
+                .fromAction(() -> mRepository.updateCategory(oldCategoryName, newCategoryName, wordList))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> showMessage(R.string.category_edited));
+        mDisposable.add(disposable);
+    }
+
+    @Override
+    protected void onCleared() {
+        mDisposable.dispose();
+
     }
 
     LiveData<List<Word>> getWordsLiveData() {
