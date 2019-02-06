@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.vladimir.easyenglishlearn.category_select.CategoryViewModel"/>
+            type="com.example.vladimir.easyenglishlearn.category_select.CategoryViewModel" />
 
     </data>
 
@@ -27,26 +27,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_category_select"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="@dimen/layout_margin"
-            app:layout_constraintBottom_toTopOf="@id/fab_category_add"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_category_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/layout_margin"
-            android:src="@drawable/ic_action_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="@{v -> viewModel.onFabClick()}"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_category_select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/layout_margin" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_category_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/layout_margin"
+                android:onClick="@{v -> viewModel.onFabClick()}"
+                android:src="@drawable/ic_action_add" />
+        </android.support.design.widget.CoordinatorLayout>
 
     </android.support.constraint.ConstraintLayout>
 

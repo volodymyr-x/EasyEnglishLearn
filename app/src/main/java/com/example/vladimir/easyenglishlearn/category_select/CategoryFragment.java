@@ -62,6 +62,17 @@ public class CategoryFragment extends Fragment {
                 R.layout.fragment_category_select,
                 container,
                 false);
+        mBinding.rvCategorySelect.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && mBinding.fabCategoryAdd.getVisibility() == View.VISIBLE) {
+                    mBinding.fabCategoryAdd.hide();
+                } else if (dy < 0 && mBinding.fabCategoryAdd.getVisibility() != View.VISIBLE) {
+                    mBinding.fabCategoryAdd.show();
+                }
+            }
+        });
         return mBinding.getRoot();
     }
 
