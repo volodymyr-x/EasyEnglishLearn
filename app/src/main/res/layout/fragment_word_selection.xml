@@ -57,7 +57,7 @@
             android:text="@string/wsa_cb_choose_all"
             android:textSize="@dimen/text_size" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/wsf_rv_words_choice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

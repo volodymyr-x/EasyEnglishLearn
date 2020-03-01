@@ -12,7 +12,7 @@
 
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> viewModel.onRvItemClick(category_name)}">
@@ -53,6 +53,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:onClick="@{() -> viewModel.onRemoveIconClick(category_name)}"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

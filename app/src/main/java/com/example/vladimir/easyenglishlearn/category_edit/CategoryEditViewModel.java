@@ -1,10 +1,10 @@
 package com.example.vladimir.easyenglishlearn.category_edit;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.databinding.ObservableField;
-import android.support.annotation.StringRes;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.databinding.ObservableField;
+import androidx.annotation.StringRes;
 import android.text.TextUtils;
 
 import com.example.vladimir.easyenglishlearn.App;

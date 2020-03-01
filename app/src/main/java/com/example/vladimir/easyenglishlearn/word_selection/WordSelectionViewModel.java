@@ -1,8 +1,8 @@
 package com.example.vladimir.easyenglishlearn.word_selection;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.vladimir.easyenglishlearn.App;
 import com.example.vladimir.easyenglishlearn.Constants.Exercises;

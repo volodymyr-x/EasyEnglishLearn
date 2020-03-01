@@ -1,6 +1,6 @@
 package com.example.vladimir.easyenglishlearn;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 

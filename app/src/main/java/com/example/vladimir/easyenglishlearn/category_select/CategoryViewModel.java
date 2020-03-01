@@ -1,7 +1,7 @@
 package com.example.vladimir.easyenglishlearn.category_select;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.vladimir.easyenglishlearn.App;
 import com.example.vladimir.easyenglishlearn.R;

@@ -1,10 +1,10 @@
 package com.example.vladimir.easyenglishlearn;
 
 import android.app.Application;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.support.annotation.NonNull;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.annotation.NonNull;
 
 import com.example.vladimir.easyenglishlearn.db.AppDatabase;
 

@@ -1,8 +1,8 @@
 package com.example.vladimir.easyenglishlearn.exercises;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.databinding.ObservableField;
 
 import java.util.ArrayList;
 import java.util.Collections;
