@@ -1,11 +1,14 @@
 package com.example.vladimir.easyenglishlearn.exercises;
 
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.databinding.DataBindingUtil;
+
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +50,7 @@ public class WordQuizFragment extends Fragment {
                 R.layout.fragment_word_quiz,
                 container,
                 false);
-        WordQuizViewModel viewModel = ViewModelProviders.of(this).get(WordQuizViewModel.class);
+        WordQuizViewModel viewModel = new ViewModelProvider(this).get(WordQuizViewModel.class);
         mBinding.setViewModel(viewModel);
         subscribeToLiveData(viewModel);
 
@@ -60,9 +63,9 @@ public class WordQuizFragment extends Fragment {
     }
 
     private void subscribeToLiveData(@NonNull WordQuizViewModel viewModel) {
-        viewModel.getExerciseCloseLiveData().observe(this, aVoid -> closeFragment());
-        viewModel.getMessageLiveData().observe(this, this::showMessage);
-        viewModel.getClearRadioGroupLiveData().observe(this, aVoid -> clearRadioGroup());
+        viewModel.getExerciseCloseLiveData().observe(getViewLifecycleOwner(), aVoid -> closeFragment());
+        viewModel.getMessageLiveData().observe(getViewLifecycleOwner(), this::showMessage);
+        viewModel.getClearRadioGroupLiveData().observe(getViewLifecycleOwner(), aVoid -> clearRadioGroup());
     }
 
     private void clearRadioGroup() {

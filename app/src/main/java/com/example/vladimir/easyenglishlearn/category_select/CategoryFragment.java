@@ -1,9 +1,13 @@
 package com.example.vladimir.easyenglishlearn.category_select;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.content.Context;
+
 import androidx.databinding.DataBindingUtil;
+
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -11,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,15 +38,12 @@ public class CategoryFragment extends Fragment {
     private FragmentCategorySelectBinding mBinding;
     private CategoryAdapter mAdapter;
 
-
-    /**
-     * This interface must be implemented by activities that contain this fragment
-     */
     public interface Callbacks {
         void onCategorySelected(String categoryName);
 
         void onCategoryEdit(String categoryName);
     }
+
 
     @NonNull
     public static Fragment newInstance() {
@@ -49,7 +51,7 @@ public class CategoryFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mCallbacks = (Callbacks) context;
     }
@@ -80,7 +82,7 @@ public class CategoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         mBinding.setViewModel(mViewModel);
 
         mBinding.rvCategorySelect.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -96,14 +98,14 @@ public class CategoryFragment extends Fragment {
     }
 
     private void subscribeToLiveData() {
-        mViewModel.getCategoriesLiveData().observe(this, mAdapter::setCategoryList);
-        mViewModel.getEditCategoryLiveData().observe(this, mCallbacks::onCategoryEdit);
-        mViewModel.getRemoveDialogLiveData().observe(this, this::showDialog);
-        mViewModel.getOpenCategoryLiveData().observe(this, mCallbacks::onCategorySelected);
-        mViewModel.getMessageLiveData().observe(this, this::showMessage);
+        mViewModel.getCategoriesLiveData().observe(getViewLifecycleOwner(), mAdapter::setCategoryList);
+        mViewModel.getEditCategoryLiveData().observe(getViewLifecycleOwner(), mCallbacks::onCategoryEdit);
+        mViewModel.getRemoveDialogLiveData().observe(getViewLifecycleOwner(), this::showDialog);
+        mViewModel.getOpenCategoryLiveData().observe(getViewLifecycleOwner(), mCallbacks::onCategorySelected);
+        mViewModel.getMessageLiveData().observe(getViewLifecycleOwner(), this::showMessage);
     }
 
-    public void showMessage(@StringRes int resId) {
+    private void showMessage(@StringRes int resId) {
         Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 

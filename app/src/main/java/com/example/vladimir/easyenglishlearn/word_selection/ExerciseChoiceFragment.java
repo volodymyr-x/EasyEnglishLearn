@@ -1,7 +1,7 @@
 package com.example.vladimir.easyenglishlearn.word_selection;
 
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -37,11 +37,10 @@ public class ExerciseChoiceFragment extends DialogFragment {
                 container,
                 false);
         String categoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
-        WordSelectionViewModel viewModel = ViewModelProviders
-                .of(this, ModelFactory.getInstance(categoryName))
+        WordSelectionViewModel viewModel = new ViewModelProvider(this, ModelFactory.getInstance(categoryName))
                 .get(WordSelectionViewModel.class);
         binding.setViewModel(viewModel);
-        viewModel.getCloseDialogLiveData().observe(this, aVoid -> closeDialog());
+        viewModel.getCloseDialogLiveData().observe(getViewLifecycleOwner(), aVoid -> closeDialog());
         return binding.getRoot();
     }
 

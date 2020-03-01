@@ -1,10 +1,13 @@
 package com.example.vladimir.easyenglishlearn.exercises;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.databinding.DataBindingUtil;
+
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,7 +59,7 @@ public class WordConstructorFragment extends Fragment {
                 R.layout.fragment_word_constructor,
                 container,
                 false);
-        mViewModel = ViewModelProviders.of(this).get(WordConstructorViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(WordConstructorViewModel.class);
         mBinding.setViewModel(mViewModel);
         subscribeToLiveData(mViewModel);
 
@@ -69,9 +72,9 @@ public class WordConstructorFragment extends Fragment {
     }
 
     private void subscribeToLiveData(@NonNull WordConstructorViewModel viewModel) {
-        viewModel.getExerciseCloseLiveData().observe(this, aVoid -> closeFragment());
-        viewModel.getMessageLiveData().observe(this, this::showMessage);
-        viewModel.getCharArrayLiveData().observe(this, this::createButtons);
+        viewModel.getExerciseCloseLiveData().observe(getViewLifecycleOwner(), aVoid -> closeFragment());
+        viewModel.getMessageLiveData().observe(getViewLifecycleOwner(), this::showMessage);
+        viewModel.getCharArrayLiveData().observe(getViewLifecycleOwner(), this::createButtons);
     }
 
     private void closeFragment() {

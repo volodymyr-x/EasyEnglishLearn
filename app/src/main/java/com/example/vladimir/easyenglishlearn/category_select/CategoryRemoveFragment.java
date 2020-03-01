@@ -1,11 +1,14 @@
 package com.example.vladimir.easyenglishlearn.category_select;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.databinding.DataBindingUtil;
+
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,17 +45,17 @@ public class CategoryRemoveFragment extends DialogFragment {
                 false);
         String categoryName = Objects.requireNonNull(getArguments()).getString(CATEGORY_NAME);
         binding.setCategoryName(categoryName);
-        mViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         binding.setViewModel(mViewModel);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mViewModel.getRemoveCategoryLiveData().observe(this, aVoid -> closeDialog());
+        mViewModel.getRemoveCategoryLiveData().observe(getViewLifecycleOwner(), aVoid -> closeDialog());
     }
 
-    public void closeDialog() {
+    private void closeDialog() {
         dismiss();
     }
 }

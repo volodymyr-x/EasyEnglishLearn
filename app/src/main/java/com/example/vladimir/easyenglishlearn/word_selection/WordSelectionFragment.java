@@ -1,6 +1,6 @@
 package com.example.vladimir.easyenglishlearn.word_selection;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -70,23 +70,22 @@ public class WordSelectionFragment extends Fragment {
         mAdapter = new WordSelectionAdapter();
         mBinding.wsfRvWordsChoice.setAdapter(mAdapter);
 
-        mViewModel = ViewModelProviders
-                .of(this, ModelFactory.getInstance(categoryName))
+        mViewModel = new ViewModelProvider(this, ModelFactory.getInstance(categoryName))
                 .get(WordSelectionViewModel.class);
         mBinding.setViewModel(mViewModel);
         subscribeToLiveData();
     }
 
-    public void showMessage(@StringRes int resId) {
+    private void showMessage(@StringRes int resId) {
         String message = getString(resId, ANSWERS_COUNT);
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void subscribeToLiveData() {
-        mViewModel.getWordsLiveData().observe(this, mAdapter::setWordList);
-        mViewModel.getMessageLiveData().observe(this, this::showMessage);
-        mViewModel.getChoiceDialogLiveData().observe(this, this::showDialog);
-        mViewModel.getSelectedWordsLiveData().observe(this, this::startExercise);
+        mViewModel.getWordsLiveData().observe(getViewLifecycleOwner(), mAdapter::setWordList);
+        mViewModel.getMessageLiveData().observe(getViewLifecycleOwner(), this::showMessage);
+        mViewModel.getChoiceDialogLiveData().observe(getViewLifecycleOwner(), this::showDialog);
+        mViewModel.getSelectedWordsLiveData().observe(getViewLifecycleOwner(), this::startExercise);
     }
 
     private void showDialog(String categoryName) {

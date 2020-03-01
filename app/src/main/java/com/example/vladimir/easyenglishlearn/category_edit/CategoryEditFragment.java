@@ -1,14 +1,17 @@
 package com.example.vladimir.easyenglishlearn.category_edit;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.databinding.DataBindingUtil;
+
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +62,7 @@ public class CategoryEditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String oldCategoryName = Objects.requireNonNull(getArguments()).getString(ARG_CATEGORY_NAME);
-        mViewModel = ViewModelProviders.of(this, ModelFactory.getInstance(oldCategoryName))
+        mViewModel = new ViewModelProvider(this, ModelFactory.getInstance(oldCategoryName))
                 .get(CategoryEditViewModel.class);
         mBinding.setViewModel(mViewModel);
 
@@ -77,16 +80,16 @@ public class CategoryEditFragment extends Fragment {
     }
 
     private void subscribeToLiveData() {
-        mViewModel.getWordsLiveData().observe(this, mAdapter::setWordList);
-        mViewModel.getMessageLiveData().observe(this, this::showMessage);
-        mViewModel.getFragmentCloseLiveData().observe(this, aVoid -> closeFragment());
+        mViewModel.getWordsLiveData().observe(getViewLifecycleOwner(), mAdapter::setWordList);
+        mViewModel.getMessageLiveData().observe(getViewLifecycleOwner(), this::showMessage);
+        mViewModel.getFragmentCloseLiveData().observe(getViewLifecycleOwner(), aVoid -> closeFragment());
     }
 
     private void closeFragment() {
         Objects.requireNonNull(getActivity()).onBackPressed();
     }
 
-    public void showMessage(@StringRes int resId) {
+    private void showMessage(@StringRes int resId) {
         Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
