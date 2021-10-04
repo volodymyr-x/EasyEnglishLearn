@@ -5,7 +5,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.vladimir.easyenglishlearn.word_selection.WordSelectionViewModel" />
+            type="com.vladimir_x.easyenglishlearn.word_selection.WordSelectionViewModel" />
 
     </data>
 

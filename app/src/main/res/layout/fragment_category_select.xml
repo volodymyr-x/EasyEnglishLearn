@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.vladimir.easyenglishlearn.category_select.CategoryViewModel" />
+            type="com.vladimir_x.easyenglishlearn.category_select.CategoryViewModel" />
 
     </data>
 

@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.vladimir.easyenglishlearn.exercises.WordConstructorViewModel" />
+            type="com.vladimir_x.easyenglishlearn.exercises.WordConstructorViewModel" />
     </data>
 
     <LinearLayout

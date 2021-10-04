@@ -7,11 +7,11 @@
 
         <variable
             name="viewModel"
-            type="com.example.vladimir.easyenglishlearn.category_edit.CategoryEditViewModel" />
+            type="com.vladimir_x.easyenglishlearn.category_edit.CategoryEditViewModel" />
 
         <variable
             name="word"
-            type="com.example.vladimir.easyenglishlearn.model.Word" />
+            type="com.vladimir_x.easyenglishlearn.model.Word" />
 
     </data>
 
