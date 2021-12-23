@@ -1,146 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <data>
+    <TextView
+        android:id="@+id/cef_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/layout_margin"
+        android:text="@string/eca_tv_edit_category"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <variable
-            name="viewModel"
-            type="com.vladimir_x.easyenglishlearn.category_edit.CategoryEditViewModel" />
+    <EditText
+        android:id="@+id/cef_et_category_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin"
+        android:ems="10"
+        android:hint="@string/category_name"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:text="@={viewModel.categoryName}"
+        android:textSize="@dimen/text_size"
+        tools:targetApi="o" />
 
-    </data>
+    <Button
+        android:id="@+id/cef_btn_save_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/layout_margin"
+        android:onClick="@{() -> viewModel.onBtnSaveCategoryClick()}"
+        android:text="@string/eca_btn_save_and_exit"
+        android:textSize="@dimen/text_size" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cef_tv_lexeme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="@string/eca_tv_lexeme"
+            android:textSize="@dimen/text_size" />
+
+        <TextView
+            android:id="@+id/cef_tv_translation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="@string/eca_tv_translation"
+            android:textSize="@dimen/text_size" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/cef_tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/layout_margin"
-            android:text="@string/eca_tv_edit_category"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/cef_et_category_name"
+            android:id="@+id/cef_et_lexeme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
-            android:ems="10"
-            android:hint="@string/category_name"
+            android:layout_weight="1"
             android:importantForAutofill="no"
             android:inputType="text"
-            android:text="@={viewModel.categoryName}"
+            android:text="@={viewModel.lexeme}"
             android:textSize="@dimen/text_size"
+            tools:ignore="LabelFor"
             tools:targetApi="o" />
 
+        <EditText
+            android:id="@+id/cef_et_translation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="1"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@={viewModel.translation}"
+            android:textSize="@dimen/text_size"
+            tools:ignore="LabelFor"
+            tools:targetApi="o" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <Button
-            android:id="@+id/cef_btn_save_category"
+            android:id="@+id/cef_btn_save_word"
+            style="?android:attr/buttonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/layout_margin"
-            android:onClick="@{() -> viewModel.onBtnSaveCategoryClick()}"
-            android:text="@string/eca_btn_save_and_exit"
+            android:onClick="@{() -> viewModel.onBtnSaveWordClick()}"
+            android:text="@string/eca_btn_save_word"
             android:textSize="@dimen/text_size" />
 
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <Button
+            android:id="@+id/cef_btn_clean"
+            style="?android:attr/buttonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/cef_tv_lexeme"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/layout_margin"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="@string/eca_tv_lexeme"
-                android:textSize="@dimen/text_size" />
-
-            <TextView
-                android:id="@+id/cef_tv_translation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/layout_margin"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:text="@string/eca_tv_translation"
-                android:textSize="@dimen/text_size" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/cef_et_lexeme"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/layout_margin"
-                android:layout_weight="1"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                android:text="@={viewModel.lexeme}"
-                android:textSize="@dimen/text_size"
-                tools:ignore="LabelFor"
-                tools:targetApi="o" />
-
-            <EditText
-                android:id="@+id/cef_et_translation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/layout_margin"
-                android:layout_weight="1"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                android:text="@={viewModel.translation}"
-                android:textSize="@dimen/text_size"
-                tools:ignore="LabelFor"
-                tools:targetApi="o" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/cef_btn_save_word"
-                style="?android:attr/buttonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/layout_margin"
-                android:onClick="@{() -> viewModel.onBtnSaveWordClick()}"
-                android:text="@string/eca_btn_save_word"
-                android:textSize="@dimen/text_size" />
-
-            <Button
-                android:id="@+id/cef_btn_clean"
-                style="?android:attr/buttonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/layout_margin"
-                android:onClick="@{() -> viewModel.onBtnCleanClick()}"
-                android:text="@string/eca_btn_clean"
-                android:textSize="@dimen/text_size" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/cef_rv_category_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
-
+            android:layout_margin="@dimen/layout_margin"
+            android:onClick="@{() -> viewModel.onBtnCleanClick()}"
+            android:text="@string/eca_btn_clean"
+            android:textSize="@dimen/text_size" />
     </LinearLayout>
 
-</layout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cef_rv_category_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>
 
