@@ -1,38 +1,39 @@
 package com.vladimir_x.easyenglishlearn.exercises
 
 import androidx.lifecycle.LiveData
-import com.vladimir_x.easyenglishlearn.Constants
+import androidx.lifecycle.MutableLiveData
 import com.vladimir_x.easyenglishlearn.SingleLiveEvent
 import com.vladimir_x.easyenglishlearn.model.Word
-import java.util.*
 
 class WordQuizViewModel : ExerciseViewModel() {
-    private val _clearRadioGroupLiveData: SingleLiveEvent<Unit>
-    var answers: List<String> = emptyList()
-
+    private val _clearRadioGroupLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
     val clearRadioGroupLiveData: LiveData<Unit?>
         get() = _clearRadioGroupLiveData
 
-    init {
-        _clearRadioGroupLiveData = SingleLiveEvent()
-    }
+    private val _questionLiveData = MutableLiveData<Pair<String, List<String>>>()
+    val questionLiveData: LiveData<Pair<String, List<String>>>
+        get() = _questionLiveData
 
-    fun onAnswerChecked(answer: String?) {
-        answerBuilder.append(answer)
+    private var answers: List<String> = emptyList()
+
+    fun onAnswerChecked(answerIndex: Int) {
+        answerBuilder.append(answers[answerIndex])
         checkAnswer()
     }
 
     override fun prepareQuestionAndAnswers() {
         super.prepareQuestionAndAnswers()
-        val answerList: MutableList<String> = ArrayList()
-        addAnswer(answerList, currentWord)
-        while (answerList.size < Constants.ANSWERS_COUNT) {
-            val randomIndex = Random().nextInt(wordList.size)
-            val tempWord: Word = wordList[randomIndex]
-            if (isWordNotInAnswerList(answerList, tempWord)) addAnswer(answerList, tempWord)
-        }
-        answerList.shuffle()
-        answers = answerList
+        val answerList = wordList
+            .filter { it != currentWord }
+            .take(2)
+            .toMutableList()
+        currentWord?.let { answerList.add(it) }
+        answers = answerList.map { convertWordToAnswer(it) }.shuffled()
+
+        _questionLiveData.value = Pair(
+            convertWordToQuestion(currentWord),
+            answers
+        )
     }
 
     override fun cleanPreviousData() {
@@ -40,13 +41,11 @@ class WordQuizViewModel : ExerciseViewModel() {
         _clearRadioGroupLiveData.call()
     }
 
-    private fun isWordNotInAnswerList(answerList: List<String?>, word: Word): Boolean {
-        return !answerList.contains(if (translationDirection) word.translation else word.lexeme)
+    private fun convertWordToAnswer(word: Word): String {
+        return if (translationDirection) word.translation else word.lexeme
     }
 
-    private fun addAnswer(answerList: MutableList<String>, word: Word?) {
-        word?.let {
-            if (translationDirection) it.translation else it.lexeme?.let { it1 -> answerList.add(it1) }
-        }
+    private fun convertWordToQuestion(word: Word?): String {
+        return if (translationDirection) word?.lexeme ?: "" else word?.translation ?: ""
     }
 }

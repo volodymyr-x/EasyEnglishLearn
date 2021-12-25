@@ -15,26 +15,25 @@ class Word : Comparable<Word>, Parcelable {
     var id: Long = 0
 
     @ColumnInfo(name = "lexeme")
-    var lexeme: String?
+    var lexeme: String
 
     @ColumnInfo(name = "translation")
-    var translation: String?
+    var translation: String
 
     @ColumnInfo(name = "category")
-    var category: String?
+    var category: String
 
     @Ignore
     var isChecked = false
 
     @Ignore
-    constructor(lexeme: String?, translation: String?) : this(
+    constructor(lexeme: String, translation: String) : this(
         lexeme,
         translation,
         Constants.EMPTY_STRING
-    ) {
-    }
+    )
 
-    constructor(lexeme: String?, translation: String?, category: String?) {
+    constructor(lexeme: String, translation: String, category: String) {
         this.lexeme = lexeme
         this.translation = translation
         this.category = category
@@ -43,34 +42,34 @@ class Word : Comparable<Word>, Parcelable {
 
     @Ignore
     private constructor(`in`: Parcel) {
-        lexeme = `in`.readString()
-        translation = `in`.readString()
-        this.category = `in`.readString()
+        lexeme = `in`.readString() ?: Constants.EMPTY_STRING
+        translation = `in`.readString() ?: Constants.EMPTY_STRING
+        this.category = `in`.readString() ?: Constants.EMPTY_STRING
     }
 
-    override fun compareTo(o: Word): Int {
-        var result = this.category!!.compareTo(o.category!!)
+    override fun compareTo(other: Word): Int {
+        var result = this.category.compareTo(other.category)
         return if (result != 0) {
             result
         } else {
-            result = lexeme!!.compareTo(o.lexeme!!)
+            result = lexeme.compareTo(other.lexeme)
             if (result != 0) {
                 result
-            } else translation!!.compareTo(o.translation!!)
+            } else translation.compareTo(other.translation)
         }
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val word = o as Word
-        if (if (lexeme != null) lexeme != word.lexeme else word.lexeme != null) return false
-        return if (translation != null) translation == word.translation else word.translation == null
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val word = other as Word
+        if (lexeme != word.lexeme) return false
+        return translation == word.translation
     }
 
     override fun hashCode(): Int {
-        var result = if (lexeme != null) lexeme.hashCode() else 0
-        result = 31 * result + if (translation != null) translation.hashCode() else 0
+        var result = lexeme.hashCode()
+        result = 31 * result + translation.hashCode()
         return result
     }
 

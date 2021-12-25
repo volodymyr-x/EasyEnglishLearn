@@ -77,12 +77,12 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
         word.isChecked = checked
     }
 
-    fun onBtnConstructorClick() {
-        sendDTO(Constants.WORD_CONSTRUCTOR)
+    fun onBtnConstructorClick(isFromEnglish: Boolean) {
+        sendDTO(Constants.WORD_CONSTRUCTOR, isFromEnglish)
     }
 
-    fun onBtnQuizClick() {
-        sendDTO(Constants.WORD_QUIZ)
+    fun onBtnQuizClick(isFromEnglish: Boolean) {
+        sendDTO(Constants.WORD_QUIZ, isFromEnglish)
     }
 
     fun onBtnCancelClick() {
@@ -90,11 +90,9 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
     }
 
     fun onDirectionChanged(checkedId: Int) {
-        when (checkedId) {
-            R.id.ecf_rb_en_ru -> translationDirection = true
-            R.id.ecf_rb_ru_en -> translationDirection = false
-            else -> {
-            }
+        translationDirection = when (checkedId) {
+            R.id.ecf_rb_en_ru -> true
+            else -> false
         }
     }
 
@@ -107,13 +105,14 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
         compositeDisposable.add(disposable)
     }
 
-    private fun sendDTO(@Exercises exerciseType: String) {
-        _closeDialogLiveData.call()
+    private fun sendDTO(@Exercises exerciseType: String, isFromEnglish: Boolean) {
         val dto = WordSelectionDto(
-            translationDirection,
+            isFromEnglish,
             selectedWordList, exerciseType
         )
+        translationDirection = isFromEnglish
         _selectedWordsLiveData.value = dto
+        _closeDialogLiveData.call()
     }
 
     private fun showMessage() {

@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.ModelFactory
+import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentExerciseChoiceBinding
 
 class ExerciseChoiceFragment : DialogFragment() {
@@ -26,7 +27,7 @@ class ExerciseChoiceFragment : DialogFragment() {
         )
         val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
         viewModel = ModelFactory.getInstance(categoryName)?.let {
-            ViewModelProvider(this, it).get(WordSelectionViewModel::class.java)
+            ViewModelProvider(this, it)[WordSelectionViewModel::class.java]
         }
         initView()
 
@@ -39,8 +40,8 @@ class ExerciseChoiceFragment : DialogFragment() {
             ecfRgTranslationDirection.setOnCheckedChangeListener { _, checkedId ->
                 viewModel?.onDirectionChanged(checkedId)
             }
-            ecfBtnQuiz.setOnClickListener { viewModel?.onBtnQuizClick() }
-            ecfBtnConstructor.setOnClickListener { viewModel?.onBtnConstructorClick() }
+            ecfBtnQuiz.setOnClickListener { viewModel?.onBtnQuizClick(isFromEnglish()) }
+            ecfBtnConstructor.setOnClickListener { viewModel?.onBtnConstructorClick(isFromEnglish()) }
             ecfBtnCancel.setOnClickListener { viewModel?.onBtnCancelClick() }
         }
     }
@@ -48,6 +49,9 @@ class ExerciseChoiceFragment : DialogFragment() {
     private fun closeDialog() {
         dismiss()
     }
+
+    private fun isFromEnglish(): Boolean =
+        binding.ecfRgTranslationDirection.checkedRadioButtonId == R.id.ecf_rb_en_ru
 
     companion object {
         @JvmStatic

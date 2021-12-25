@@ -7,14 +7,14 @@ import com.vladimir_x.easyenglishlearn.model.Answer
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.lang.StringBuilder
 
-abstract class ExerciseViewModel internal constructor() : ViewModel() {
-    private val _exerciseCloseLiveData: SingleLiveEvent<Unit>
-    private val _messageLiveData: SingleLiveEvent<Int>
+abstract class ExerciseViewModel : ViewModel() {
+    private val _exerciseCloseLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
+    private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
     private var iteration = 0
     private var errorCount = 0
-    var translationDirection = false
+    var translationDirection = true
     var wordList: List<Word> = listOf()
-    var answerBuilder: StringBuilder
+    var answerBuilder: StringBuilder = StringBuilder()
     var currentWord: Word? = null
     var question: String? = null
 
@@ -26,20 +26,14 @@ abstract class ExerciseViewModel internal constructor() : ViewModel() {
     private val isExerciseOver: Boolean
         get() {
             val answer = Answer(currentWord, answerBuilder, translationDirection)
-            if (answer.isCorrect) {
-                return ++iteration >= wordList.size
+            return if (answer.isCorrect) {
+                ++iteration >= wordList.size
             } else {
                 showMessage(-1)
                 errorCount++
+                false
             }
-            return false
         }
-
-    init {
-        answerBuilder = StringBuilder()
-        _exerciseCloseLiveData = SingleLiveEvent()
-        _messageLiveData = SingleLiveEvent()
-    }
 
     /**
      * This method must be called from fragment  when it is first started
@@ -78,6 +72,6 @@ abstract class ExerciseViewModel internal constructor() : ViewModel() {
     }
 
     private fun showMessage(errorsCount: Int) {
-        _messageLiveData.setValue(errorsCount)
+        _messageLiveData.value = errorsCount
     }
 }

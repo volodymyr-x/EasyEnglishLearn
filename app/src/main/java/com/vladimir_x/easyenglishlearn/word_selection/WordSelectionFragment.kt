@@ -40,7 +40,7 @@ class WordSelectionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
         viewModel = ModelFactory.getInstance(categoryName)?.let {
-            ViewModelProvider(this, it).get(WordSelectionViewModel::class.java)
+            ViewModelProvider(this, it)[WordSelectionViewModel::class.java]
         }
         initView()
         subscribeToLiveData()
@@ -57,7 +57,7 @@ class WordSelectionFragment : Fragment() {
             }
             tvCategoryName.text = viewModel?.categoryName
             btnStart.setOnClickListener { viewModel?.onBtnStartClick() }
-            cbChooseAll.setOnCheckedChangeListener { view, checked ->
+            cbChooseAll.setOnCheckedChangeListener { _, checked ->
                 viewModel?.onChooseAllChange(checked)
             }
         }
@@ -70,17 +70,21 @@ class WordSelectionFragment : Fragment() {
 
     private fun subscribeToLiveData() {
         viewModel?.let {
-            it.wordsLiveData.observe(viewLifecycleOwner)
-            { wordList: List<Word> -> wordSelectionAdapter?.setWordList(wordList) }
+            it.wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
+                wordSelectionAdapter?.setWordList(wordList)
+            }
 
-            it.messageLiveData.observe(viewLifecycleOwner)
-            { resId -> resId?.let { showMessage(resId) } }
+            it.messageLiveData.observe(viewLifecycleOwner) { resId ->
+                resId?.let { showMessage(resId) }
+            }
 
-            it.choiceDialogLiveData.observe(viewLifecycleOwner)
-            { categoryName -> categoryName?.let { showDialog(categoryName) } }
+            it.choiceDialogLiveData.observe(viewLifecycleOwner) { categoryName ->
+                categoryName?.let { showDialog(categoryName) }
+            }
 
-            it.selectedWordsLiveData.observe(viewLifecycleOwner)
-            { dto -> dto?.let { startExercise(dto) } }
+            it.selectedWordsLiveData.observe(viewLifecycleOwner) { dto ->
+                dto?.let { startExercise(dto) }
+            }
         }
     }
 

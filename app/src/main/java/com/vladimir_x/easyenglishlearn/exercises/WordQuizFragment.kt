@@ -17,6 +17,8 @@ class WordQuizFragment : Fragment() {
     private var _binding: FragmentWordQuizBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var viewModel: WordQuizViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,38 +34,33 @@ class WordQuizFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val viewModel: WordQuizViewModel = ViewModelProvider(this)[WordQuizViewModel::class.java]
+        viewModel = ViewModelProvider(this)[WordQuizViewModel::class.java]
         subscribeToLiveData(viewModel)
         if (savedInstanceState == null) {
             val translationDirection =
-                arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: false
+                arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
             val wordList: List<Word> =
                 arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as List<Word>
             viewModel.startExercise(wordList, translationDirection)
         }
-
-        binding.wqfTvQuestion.text = viewModel.question
-        binding.wqfRbFirst.text = viewModel.answers[0]
-        binding.wqfRbFirst.setOnClickListener { viewModel.onAnswerChecked(viewModel.answers[0]) }
-        binding.wqfRbSecond.text = viewModel.answers[1]
-        binding.wqfRbSecond.setOnClickListener { viewModel.onAnswerChecked(viewModel.answers[1]) }
-        binding.wqfRbThird.text = viewModel.answers[2]
-        binding.wqfRbThird.setOnClickListener { viewModel.onAnswerChecked(viewModel.answers[2]) }
     }
 
     private fun subscribeToLiveData(viewModel: WordQuizViewModel) {
-        viewModel.exerciseCloseLiveData.observe(viewLifecycleOwner) {
-            closeFragment()
-        }
-        viewModel.messageLiveData.observe(viewLifecycleOwner) {
-            it?.let { errorsCount: Int ->
-                showMessage(errorsCount)
+        with(viewModel) {
+            exerciseCloseLiveData.observe(viewLifecycleOwner) {
+                closeFragment()
             }
+            messageLiveData.observe(viewLifecycleOwner) {
+                it?.let { errorsCount: Int ->
+                    showMessage(errorsCount)
+                }
+            }
+            clearRadioGroupLiveData.observe(viewLifecycleOwner) {
+                clearRadioGroup()
+            }
+            questionLiveData.observe(viewLifecycleOwner, ::fillFields)
         }
-        viewModel.clearRadioGroupLiveData.observe(viewLifecycleOwner) {
-            clearRadioGroup()
-        }
+
     }
 
     override fun onDestroyView() {
@@ -86,6 +83,19 @@ class WordQuizFragment : Fragment() {
             getString(R.string.errors_count, errorsCount)
         }
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun fillFields(pair: Pair<String, List<String>>) {
+        val answers = pair.second
+        with(binding) {
+            wqfTvQuestion.text = pair.first
+            wqfRbFirst.text = answers[0]
+            wqfRbFirst.setOnClickListener { viewModel.onAnswerChecked(0) }
+            wqfRbSecond.text = answers[1]
+            wqfRbSecond.setOnClickListener { viewModel.onAnswerChecked(1) }
+            wqfRbThird.text = answers[2]
+            wqfRbThird.setOnClickListener { viewModel.onAnswerChecked(2) }
+        }
     }
 
     companion object {
