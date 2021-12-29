@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.ModelFactory
 import com.vladimir_x.easyenglishlearn.R
@@ -39,33 +38,55 @@ class CategoryEditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val oldCategoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME)
         viewModel = ModelFactory.getInstance(oldCategoryName ?: "")?.let {
-            ViewModelProvider(this, it)
-                .get(CategoryEditViewModel::class.java)
+            ViewModelProvider(this, it)[CategoryEditViewModel::class.java]
         }
-        binding.cefRvCategoryEdit.layoutManager = LinearLayoutManager(activity)
-        adapter = CategoryEditAdapter { viewModel?.onIconRemoveWordClick(it)}
-        binding.cefRvCategoryEdit.adapter = adapter
-        val stringId =
-            if (Constants.EMPTY_STRING == oldCategoryName) R.string.eca_tv_new_category else R.string.eca_tv_edit_category
-        binding.cefTvTitle.text = getString(stringId)
-        binding.cefEtCategoryName.setText(oldCategoryName)
+        initView(oldCategoryName)
         subscribeToLiveData()
+    }
+
+    private fun getCorrectTitleId(oldCategoryName: String?): Int {
+        return if (Constants.EMPTY_STRING == oldCategoryName) R.string.eca_tv_new_category
+        else R.string.eca_tv_edit_category
+    }
+
+
+    private fun initView(oldCategoryName: String?) {
+        with(binding) {
+            adapter = CategoryEditAdapter(
+                clickListener = { viewModel?.onItemClick(it) },
+                removeClickListener = { viewModel?.onIconRemoveWordClick(it) }
+            )
+            rvCategoryEdit.adapter = adapter
+
+            tvTitle.text = getString(getCorrectTitleId(oldCategoryName))
+            etCategoryName.setText(oldCategoryName)
+            btnSaveCategory.setOnClickListener {
+                viewModel?.onBtnSaveCategoryClick(etCategoryName.text.toString())
+            }
+            btnSaveWord.setOnClickListener {
+                viewModel?.onBtnSaveWordClick(
+                    etCategoryName.text.toString(),
+                    etLexeme.text.toString(),
+                    etTranslation.text.toString()
+                )
+            }
+            btnClean.setOnClickListener { viewModel?.onBtnCleanClick() }
+        }
     }
 
     private fun subscribeToLiveData() {
         viewModel?.let { it ->
-            it.wordsLiveData.observe(
-                viewLifecycleOwner
-            )
-            { wordList: List<Word> -> adapter?.setWordList(wordList) }
-            it.messageLiveData.observe(
-                viewLifecycleOwner
-            )
-            { resId: Int? -> resId?.let(::showMessage) }
-            it.fragmentCloseLiveData.observe(
-                viewLifecycleOwner
-            )
-            { closeFragment() }
+            it.wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
+                adapter?.setWordList(wordList)
+            }
+            it.messageLiveData.observe(viewLifecycleOwner) { resId: Int? ->
+                resId?.let(::showMessage)
+            }
+            it.fragmentCloseLiveData.observe(viewLifecycleOwner) { closeFragment() }
+            it.currentWordLiveData.observe(viewLifecycleOwner) { (lexeme, translation) ->
+                binding.etLexeme.setText(lexeme)
+                binding.etTranslation.setText(translation)
+            }
         }
     }
 
@@ -83,7 +104,6 @@ class CategoryEditFragment : Fragment() {
     }
 
     companion object {
-        @JvmStatic
         fun newInstance(categoryName: String?): Fragment {
             val args = Bundle()
             args.putString(Constants.ARG_CATEGORY_NAME, categoryName)

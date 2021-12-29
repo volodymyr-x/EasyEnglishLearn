@@ -18,29 +18,34 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class CategoryEditViewModel(categoryName: String) : ViewModel() {
-    var categoryName: String = ""
-    var lexeme: String = ""
-    var translation: String = ""
     private val _messageLiveData: SingleLiveEvent<Int>
     private val _fragmentCloseLiveData: SingleLiveEvent<Unit>
     private val _wordsLiveData: MutableLiveData<List<Word>>
-    private val repository: WordDao?
+    private val _currentWordLiveData: MutableLiveData<Pair<String, String>>
+    private val repository: WordDao? = App.instance?.database?.wordDao()
     private val disposable: CompositeDisposable
-    private val oldCategoryName: String
+    private val oldCategoryName: String = categoryName
     private var wordIndex = 0
+    private var categoryName: String = ""
+    private var lexeme: String = ""
+    private var translation: String = ""
 
     val wordsLiveData: LiveData<List<Word>>
         get() = _wordsLiveData
+
+    val currentWordLiveData: LiveData<Pair<String, String>>
+        get() = _currentWordLiveData
+
     val messageLiveData: LiveData<Int?>
         get() = _messageLiveData
+
     val fragmentCloseLiveData: LiveData<Unit?>
         get() = _fragmentCloseLiveData
 
     init {
-        repository = App.instance?.database?.wordDao()
-        oldCategoryName = categoryName
         this.categoryName = categoryName
         _wordsLiveData = MutableLiveData<List<Word>>()
+        _currentWordLiveData = MutableLiveData<Pair<String, String>>()
         _messageLiveData = SingleLiveEvent()
         _fragmentCloseLiveData = SingleLiveEvent()
         disposable = CompositeDisposable()
@@ -48,7 +53,7 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
         subscribeWordsToData()
     }
 
-    fun onBtnSaveCategoryClick() {
+    fun onBtnSaveCategoryClick(categoryName: String) {
         val newCategoryName: String = categoryName.trim()
         if (TextUtils.isEmpty(newCategoryName)) {
             showMessage(R.string.cef_toast_save_edit_category)
@@ -62,7 +67,10 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
         }
     }
 
-    fun onBtnSaveWordClick() {
+    fun onBtnSaveWordClick(categoryName: String, lexeme: String, translation: String) {
+        this.categoryName = categoryName
+        this.lexeme = lexeme
+        this.translation = translation
         if (isTextFieldsNotEmpty) {
             val newWord = Word(lexeme.trim(), translation.trim())
             _wordsLiveData.value?.let { list ->
@@ -98,9 +106,10 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
     }
 
     fun onItemClick(word: Word) {
-        lexeme = word.lexeme ?: Constants.EMPTY_STRING
-        translation = word.translation ?: Constants.EMPTY_STRING
+        lexeme = word.lexeme
+        translation = word.translation
         wordIndex = _wordsLiveData.value?.indexOf(word) ?: -1
+        updateCurrentWord()
     }
 
     private val isTextFieldsNotEmpty: Boolean
@@ -119,6 +128,7 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
         lexeme = Constants.EMPTY_STRING
         translation = Constants.EMPTY_STRING
         wordIndex = -1
+        updateCurrentWord()
     }
 
     private fun showMessage(@StringRes resId: Int) {
@@ -151,6 +161,10 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { showMessage(R.string.category_edited) }
         this.disposable.add(disposable)
+    }
+
+    private fun updateCurrentWord() {
+        _currentWordLiveData.value = Pair(lexeme, translation)
     }
 
     override fun onCleared() {
