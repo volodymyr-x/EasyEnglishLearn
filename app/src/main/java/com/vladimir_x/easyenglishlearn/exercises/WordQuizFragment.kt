@@ -58,7 +58,9 @@ class WordQuizFragment : Fragment() {
             clearRadioGroupLiveData.observe(viewLifecycleOwner) {
                 clearRadioGroup()
             }
-            questionLiveData.observe(viewLifecycleOwner, ::fillFields)
+            questionLiveData.observe(viewLifecycleOwner) { (question, answers) ->
+                fillFields(question, answers)
+            }
         }
 
     }
@@ -85,10 +87,9 @@ class WordQuizFragment : Fragment() {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun fillFields(pair: Pair<String, List<String>>) {
-        val answers = pair.second
+    private fun fillFields(question: String, answers: List<String>) {
         with(binding) {
-            wqfTvQuestion.text = pair.first
+            wqfTvQuestion.text = question
             wqfRbFirst.text = answers[0]
             wqfRbFirst.setOnClickListener { viewModel.onAnswerChecked(0) }
             wqfRbSecond.text = answers[1]
