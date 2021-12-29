@@ -69,7 +69,7 @@ class WordQuizFragment : Fragment() {
     }
 
     private fun clearRadioGroup() {
-        _binding!!.wqfRgAnswers.clearCheck()
+        binding.wqfRgAnswers.clearCheck()
     }
 
     private fun closeFragment() {

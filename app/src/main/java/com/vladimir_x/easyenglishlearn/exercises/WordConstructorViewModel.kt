@@ -19,12 +19,14 @@ class WordConstructorViewModel : ExerciseViewModel() {
         letterList.remove(Character.valueOf(letter[0]))
         if (letterList.isEmpty()) {
             checkAnswer()
+        } else {
+            _charArrayLiveData.value = letterList
         }
     }
 
     fun onButtonUndoClick() {
         if (answerBuilder.isNotEmpty()) {
-            val lastCharIndex = answerBuilder.length - 1
+            val lastCharIndex = answerBuilder.lastIndex
             val letterFromButton = answerBuilder[lastCharIndex]
             answerBuilder.deleteCharAt(lastCharIndex)
             answer = answerBuilder.toString()

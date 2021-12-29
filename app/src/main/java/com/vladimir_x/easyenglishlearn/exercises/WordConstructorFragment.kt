@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +21,7 @@ class WordConstructorFragment : Fragment() {
     private val newButtonListener = View.OnClickListener { v: View ->
         val letter = (v as Button).text.toString()
         viewModel?.onNewButtonClick(letter)
-        binding.wcfGridContainer.removeView(v)
+        //binding.wcfGridContainer.removeView(v)
     }
 
     override fun onCreateView(
@@ -45,9 +44,7 @@ class WordConstructorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(WordConstructorViewModel::class.java)
-        subscribeToLiveData()
+        viewModel = ViewModelProvider(this)[WordConstructorViewModel::class.java]
         if (savedInstanceState == null) {
             val translationDirection =
                 arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
@@ -55,12 +52,16 @@ class WordConstructorFragment : Fragment() {
                 arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as List<Word>
             viewModel?.startExercise(wordList, translationDirection)
         }
-        binding.wcfBtnClean.setOnClickListener {
-            viewModel?.onButtonUndoClick()
-        }
+        initView()
+        subscribeToLiveData()
+    }
 
-        binding.wcfTvQuestion.text = viewModel?.question
-        binding.wcfTvAnswer.text = viewModel?.answer
+    private fun initView() {
+        with(binding) {
+            wcfBtnClean.setOnClickListener {
+                viewModel?.onButtonUndoClick()
+            }
+        }
     }
 
     private fun subscribeToLiveData() {
@@ -70,10 +71,10 @@ class WordConstructorFragment : Fragment() {
                 showMessage(errorsCount)
             }
         }
-        viewModel?.charArrayLiveData?.observe(
-            viewLifecycleOwner
-        )
-        { letters: List<Char> -> createButtons(letters) }
+        viewModel?.charArrayLiveData?.observe(viewLifecycleOwner) { letters: List<Char> ->
+            createButtons(letters)
+            fillTexFields()
+        }
     }
 
     private fun closeFragment() {
@@ -92,16 +93,23 @@ class WordConstructorFragment : Fragment() {
     private fun createButtons(letters: List<Char>) {
         binding.wcfGridContainer.removeAllViews()
         for (letter in letters) {
-            val button = Button(activity)
-            button.text = letter.toString()
-            button.setOnClickListener(newButtonListener)
-            /*button.setTextSize(Objects.requireNonNull(getActivity())
-                .getBaseContext()
-                .getResources()
-                .getDimension(R.dimen.text_size));*/_binding!!.wcfGridContainer.addView(
-                button,
-                LinearLayout.LayoutParams(150, 150)
-            )
+            val button = layoutInflater.inflate(
+                R.layout.letter_button,
+                binding.wcfGridContainer,
+                false
+            ) as Button
+            button.apply {
+                text = letter.toString()
+                setOnClickListener(newButtonListener)
+            }
+            binding.wcfGridContainer.addView(button)
+        }
+    }
+
+    private fun fillTexFields() {
+        with(binding) {
+            wcfTvQuestion.text = viewModel?.question
+            wcfTvAnswer.text = viewModel?.answer
         }
     }
 
