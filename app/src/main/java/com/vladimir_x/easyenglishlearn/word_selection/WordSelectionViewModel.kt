@@ -3,6 +3,7 @@ package com.vladimir_x.easyenglishlearn.word_selection
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.Constants.Exercises
@@ -10,9 +11,7 @@ import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.SingleLiveEvent
 import com.vladimir_x.easyenglishlearn.db.WordDao
 import com.vladimir_x.easyenglishlearn.model.Word
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 class WordSelectionViewModel(val categoryName: String) : ViewModel() {
@@ -22,7 +21,6 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
     private val _selectedWordsLiveData: SingleLiveEvent<WordSelectionDto>
     private val _closeDialogLiveData: SingleLiveEvent<Void>
     private val selectedWordList: ArrayList<Word>
-    private val compositeDisposable: CompositeDisposable
     private var translationDirection = true
 
     val messageLiveData: LiveData<Int?>
@@ -43,8 +41,7 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
         _choiceDialogLiveData = SingleLiveEvent()
         _wordsLiveData = MutableLiveData()
         _closeDialogLiveData = SingleLiveEvent()
-        selectedWordList = ArrayList()
-        compositeDisposable = CompositeDisposable()
+        selectedWordList = arrayListOf()
         subscribeWordsToData(repository)
     }
 
@@ -97,12 +94,9 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
     }
 
     private fun subscribeWordsToData(repository: WordDao?) {
-        val disposable: Disposable = repository!!.getWordsByCategory(
-            categoryName
-        )
-            .subscribeOn(Schedulers.io())
-            .subscribe { words: List<Word> -> _wordsLiveData.postValue(words) }
-        compositeDisposable.add(disposable)
+        viewModelScope.launch {
+            _wordsLiveData.value = repository?.getWordsByCategory(categoryName)
+        }
     }
 
     private fun sendDTO(@Exercises exerciseType: String, isFromEnglish: Boolean) {
@@ -117,9 +111,5 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
 
     private fun showMessage() {
         _messageLiveData.value = R.string.wsa_toast_min_words_count
-    }
-
-    override fun onCleared() {
-        compositeDisposable.dispose()
     }
 }

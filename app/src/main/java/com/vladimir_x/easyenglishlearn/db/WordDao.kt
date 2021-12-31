@@ -6,18 +6,17 @@ import androidx.lifecycle.LiveData
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import io.reactivex.Single
 
 @Dao
 abstract class WordDao {
     @Query("SELECT * FROM word WHERE category = :categoryName")
-    abstract fun getWordsByCategory(categoryName: String?): Single<List<Word>>
+    abstract suspend fun getWordsByCategory(categoryName: String?): List<Word>
 
     @Query("SELECT DISTINCT category FROM word")
     abstract fun getAllCategories(): LiveData<List<String>>
 
     @Transaction
-    open fun updateCategory(
+    open suspend fun updateCategory(
         oldCategoryName: String?,
         newCategoryName: String,
         wordList: List<Word>
@@ -28,15 +27,17 @@ abstract class WordDao {
     }
 
     @Query("DELETE from word WHERE category = :categoryName")
-    abstract fun removeCategory(categoryName: String?)
+    abstract suspend fun removeCategory(categoryName: String?)
+
     @Transaction
-    open fun addNewCategory(wordList: List<Word>, newCategoryName: String) {
+    open suspend fun addNewCategory(wordList: List<Word>, newCategoryName: String) {
         setCategory(wordList, newCategoryName)
         insertNewCategory(wordList)
     }
 
     @Insert
-    abstract fun insertNewCategory(wordList: List<Word>?)
+    abstract suspend fun insertNewCategory(wordList: List<Word>)
+
     private fun setCategory(wordList: List<Word>, newCategoryName: String) {
         for (word in wordList) {
             word.category = newCategoryName

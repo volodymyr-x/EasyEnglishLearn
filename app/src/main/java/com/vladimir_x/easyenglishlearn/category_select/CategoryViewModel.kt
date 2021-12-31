@@ -1,26 +1,24 @@
 package com.vladimir_x.easyenglishlearn.category_select
 
-import androidx.lifecycle.ViewModel
-import com.vladimir_x.easyenglishlearn.db.WordDao
 import androidx.lifecycle.LiveData
-import com.vladimir_x.easyenglishlearn.SingleLiveEvent
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import com.vladimir_x.easyenglishlearn.R
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
+import com.vladimir_x.easyenglishlearn.R
+import com.vladimir_x.easyenglishlearn.SingleLiveEvent
+import com.vladimir_x.easyenglishlearn.db.WordDao
+import kotlinx.coroutines.launch
 
 class CategoryViewModel : ViewModel() {
-    private val repository: WordDao?
-    val categoriesLiveData: LiveData<List<String>>?
-    private val _editCategoryLiveData: SingleLiveEvent<String>
-    private val _removeDialogLiveData: SingleLiveEvent<String>
-    private val _openCategoryLiveData: SingleLiveEvent<String>
-    private val _removeCategoryLiveData: SingleLiveEvent<Unit>
-    private val _messageLiveData: SingleLiveEvent<Int>
-    private val disposable: CompositeDisposable
+    private val repository: WordDao? = App.instance?.database?.wordDao()
+    private val _editCategoryLiveData: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _removeDialogLiveData: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _openCategoryLiveData: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _removeCategoryLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
+    private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
+    val categoriesLiveData = MediatorLiveData<List<String>>()
 
     val openCategoryLiveData: LiveData<String?>
         get() = _openCategoryLiveData
@@ -34,14 +32,11 @@ class CategoryViewModel : ViewModel() {
         get() = _messageLiveData
 
     init {
-        repository = App.instance?.database?.wordDao()
-        categoriesLiveData = repository?.getAllCategories()
-        _editCategoryLiveData = SingleLiveEvent()
-        _removeDialogLiveData = SingleLiveEvent()
-        _openCategoryLiveData = SingleLiveEvent()
-        _removeCategoryLiveData = SingleLiveEvent()
-        _messageLiveData = SingleLiveEvent()
-        disposable = CompositeDisposable()
+        viewModelScope.launch {
+            categoriesLiveData.addSource(repository?.getAllCategories()!!) {
+                categoriesLiveData.value = it
+            }
+        }
     }
 
     fun onFabClick() {
@@ -61,13 +56,11 @@ class CategoryViewModel : ViewModel() {
     }
 
     fun removeCategory(categoryName: String?) {
-        val disposable = Completable
-            .fromAction { repository?.removeCategory(categoryName) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { showMessage() }
-        _removeCategoryLiveData.call()
-        this.disposable.add(disposable)
+        viewModelScope.launch {
+            repository?.removeCategory(categoryName)
+            showMessage()
+            _removeCategoryLiveData.call()
+        }
     }
 
     fun cancelRemoving() {
@@ -76,9 +69,5 @@ class CategoryViewModel : ViewModel() {
 
     private fun showMessage() {
         _messageLiveData.value = R.string.category_removed
-    }
-
-    override fun onCleared() {
-        disposable.dispose()
     }
 }

@@ -1,11 +1,9 @@
 package com.vladimir_x.easyenglishlearn
 
 import androidx.annotation.StringDef
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 
 interface Constants {
-    @Retention(RetentionPolicy.SOURCE)
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     @StringDef(WORD_CONSTRUCTOR, WORD_QUIZ)
     annotation class Exercises
     companion object {

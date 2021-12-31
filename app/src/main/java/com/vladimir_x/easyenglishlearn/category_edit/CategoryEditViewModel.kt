@@ -5,17 +5,16 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.SingleLiveEvent
 import com.vladimir_x.easyenglishlearn.db.WordDao
 import com.vladimir_x.easyenglishlearn.model.Word
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CategoryEditViewModel(categoryName: String) : ViewModel() {
     private val _messageLiveData: SingleLiveEvent<Int>
@@ -23,7 +22,6 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
     private val _wordsLiveData: MutableLiveData<List<Word>>
     private val _currentWordLiveData: MutableLiveData<Pair<String, String>>
     private val repository: WordDao? = App.instance?.database?.wordDao()
-    private val disposable: CompositeDisposable
     private val oldCategoryName: String = categoryName
     private var wordIndex = 0
     private var categoryName: String = ""
@@ -48,7 +46,6 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
         _currentWordLiveData = MutableLiveData<Pair<String, String>>()
         _messageLiveData = SingleLiveEvent()
         _fragmentCloseLiveData = SingleLiveEvent()
-        disposable = CompositeDisposable()
         cleanTextFields()
         subscribeWordsToData()
     }
@@ -118,10 +115,9 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
                 !TextUtils.isEmpty(translation.trim())
 
     private fun subscribeWordsToData() {
-        val disposable: Disposable? = repository?.getWordsByCategory(oldCategoryName)
-            ?.subscribeOn(Schedulers.io())
-            ?.subscribe { words: List<Word>? -> _wordsLiveData.postValue(words) }
-        disposable?.let { this.disposable.add(it) }
+        viewModelScope.launch {
+            _wordsLiveData.value = repository?.getWordsByCategory(oldCategoryName)
+        }
     }
 
     private fun cleanTextFields() {
@@ -136,12 +132,12 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
     }
 
     private fun addNewCategory(categoryName: String, wordList: List<Word>) {
-        val disposable: Disposable = Completable
-            .fromAction { repository?.addNewCategory(wordList, categoryName) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { showMessage(R.string.category_added) }
-        this.disposable.add(disposable)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository?.addNewCategory(wordList, categoryName)
+            }
+            showMessage(R.string.category_added)
+        }
     }
 
     private fun updateCategory(
@@ -149,25 +145,19 @@ class CategoryEditViewModel(categoryName: String) : ViewModel() {
         newCategoryName: String,
         wordList: List<Word>
     ) {
-        val disposable: Disposable = Completable
-            .fromAction {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
                 repository?.updateCategory(
                     oldCategoryName,
                     newCategoryName,
                     wordList
                 )
             }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { showMessage(R.string.category_edited) }
-        this.disposable.add(disposable)
+            showMessage(R.string.category_edited)
+        }
     }
 
     private fun updateCurrentWord() {
         _currentWordLiveData.value = Pair(lexeme, translation)
-    }
-
-    override fun onCleared() {
-        disposable.dispose()
     }
 }
