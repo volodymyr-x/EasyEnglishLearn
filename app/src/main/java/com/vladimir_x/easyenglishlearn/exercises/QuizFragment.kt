@@ -1,7 +1,9 @@
 package com.vladimir_x.easyenglishlearn.exercises
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -13,7 +15,7 @@ import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.util.ArrayList
 
-class QuizFragment : Fragment(R.layout.fragment_quiz) {
+class QuizFragment : Fragment() {
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
 
@@ -22,6 +24,19 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
     }
 
     lateinit var viewModel: QuizViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentQuizBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

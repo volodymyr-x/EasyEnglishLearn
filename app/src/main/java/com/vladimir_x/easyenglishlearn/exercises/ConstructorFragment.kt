@@ -10,13 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.databinding.FragmentWordConstructorBinding
+import com.vladimir_x.easyenglishlearn.State
+import com.vladimir_x.easyenglishlearn.databinding.FragmentConstructorBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.util.ArrayList
 
-class WordConstructorFragment : Fragment() {
-    private var viewModel: WordConstructorViewModel? = null
-    private var _binding: FragmentWordConstructorBinding? = null
+class ConstructorFragment : Fragment() {
+    private var viewModel: ConstructorViewModel? = null
+    private var _binding: FragmentConstructorBinding? = null
     private val binding get() = _binding!!
     private val newButtonListener = View.OnClickListener { v: View ->
         val letter = (v as Button).text.toString()
@@ -29,7 +30,7 @@ class WordConstructorFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentWordConstructorBinding.inflate(
+        _binding = FragmentConstructorBinding.inflate(
             inflater,
             container,
             false
@@ -37,14 +38,9 @@ class WordConstructorFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[WordConstructorViewModel::class.java]
+        viewModel = ViewModelProvider(this)[ConstructorViewModel::class.java]
         if (savedInstanceState == null) {
             val translationDirection =
                 arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
@@ -56,24 +52,34 @@ class WordConstructorFragment : Fragment() {
         subscribeToLiveData()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun initView() {
         with(binding) {
-            wcfBtnClean.setOnClickListener {
+            btnClean.setOnClickListener {
                 viewModel?.onButtonUndoClick()
             }
         }
     }
 
     private fun subscribeToLiveData() {
-        viewModel?.exerciseCloseLiveData?.observe(viewLifecycleOwner) { closeFragment() }
-        viewModel?.messageLiveData?.observe(viewLifecycleOwner) {
-            it?.let { errorsCount: Int ->
-                showMessage(errorsCount)
+        viewModel?.exerciseState?.observe(viewLifecycleOwner) {
+            when (it) {
+                is State.DataState<*> -> {
+                    val dataState = it.data as Triple<String, String, List<Char>>
+                    createButtons(dataState.third)
+                    fillTexFields(dataState.first, dataState.second)
+                }
+                is State.ErrorState -> showError()
+                is State.CompletedState<*> -> {
+                    showFinalMessage(it.data as Int)
+                    closeFragment()
+                }
+                else -> {}
             }
-        }
-        viewModel?.charArrayLiveData?.observe(viewLifecycleOwner) { letters: List<Char> ->
-            createButtons(letters)
-            fillTexFields()
         }
     }
 
@@ -81,35 +87,38 @@ class WordConstructorFragment : Fragment() {
         requireActivity().onBackPressed()
     }
 
-    private fun showMessage(errorsCount: Int) {
-        val message = if (errorsCount < 0) {
-            getString(R.string.wrong_answer)
-        } else {
-            getString(R.string.errors_count, errorsCount)
-        }
+    private fun showFinalMessage(errorsCount: Int) {
+        showMessage(getString(R.string.errors_count, errorsCount))
+    }
+
+    private fun showError() {
+        showMessage(getString(R.string.wrong_answer))
+    }
+
+    private fun showMessage(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun createButtons(letters: List<Char>) {
-        binding.wcfGridContainer.removeAllViews()
+        binding.gridContainer.removeAllViews()
         for (letter in letters) {
             val button = layoutInflater.inflate(
                 R.layout.letter_button,
-                binding.wcfGridContainer,
+                binding.gridContainer,
                 false
             ) as Button
             button.apply {
                 text = letter.toString()
                 setOnClickListener(newButtonListener)
             }
-            binding.wcfGridContainer.addView(button)
+            binding.gridContainer.addView(button)
         }
     }
 
-    private fun fillTexFields() {
+    private fun fillTexFields(question: String, answer: String) {
         with(binding) {
-            wcfTvQuestion.text = viewModel?.question
-            wcfTvAnswer.text = viewModel?.answer
+            tvQuestion.text = question
+            tvAnswer.text = answer
         }
     }
 
@@ -117,7 +126,7 @@ class WordConstructorFragment : Fragment() {
         fun newInstance(
             selectedWordList: ArrayList<Word>,
             translationDirection: Boolean
-        ) = WordConstructorFragment().apply {
+        ) = ConstructorFragment().apply {
             arguments = createBundle(selectedWordList, translationDirection)
         }
 
