@@ -9,7 +9,6 @@ import com.vladimir_x.easyenglishlearn.State.DataState
 import com.vladimir_x.easyenglishlearn.State.ErrorState
 import com.vladimir_x.easyenglishlearn.model.Answer
 import com.vladimir_x.easyenglishlearn.model.Word
-import java.lang.StringBuilder
 
 abstract class ExerciseViewModel : ViewModel() {
     private var iteration = 0
@@ -78,5 +77,5 @@ abstract class ExerciseViewModel : ViewModel() {
     }
 
     private fun isAnswerCorrect(answer: CharSequence): Boolean =
-        Answer(currentWord, StringBuilder(answer), translationDirection).isCorrect
+        Answer(currentWord, answer, translationDirection).isCorrect
 }
