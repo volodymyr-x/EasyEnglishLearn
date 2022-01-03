@@ -8,7 +8,7 @@ import com.vladimir_x.easyenglishlearn.State.IdleState
 import com.vladimir_x.easyenglishlearn.model.Answer
 import com.vladimir_x.easyenglishlearn.model.Word
 
-class WordQuizViewModel : ViewModel() {
+class QuizViewModel : ViewModel() {
     private var answers: List<String> = emptyList()
     private var iteration = 0
     private var errorCount = 0

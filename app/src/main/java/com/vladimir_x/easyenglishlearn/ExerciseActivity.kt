@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.vladimir_x.easyenglishlearn.databinding.ActivityExerciseBinding
 import com.vladimir_x.easyenglishlearn.exercises.WordConstructorFragment
-import com.vladimir_x.easyenglishlearn.exercises.WordQuizFragment
+import com.vladimir_x.easyenglishlearn.exercises.QuizFragment
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.util.ArrayList
 
@@ -27,7 +27,7 @@ class ExerciseActivity : AppCompatActivity() {
             fragment = when (exerciseType) {
                 Constants.WORD_CONSTRUCTOR -> WordConstructorFragment
                     .newInstance(selectedWordList, translationDirection)
-                else -> WordQuizFragment
+                else -> QuizFragment
                     .newInstance(selectedWordList, translationDirection)
             }
             fm.beginTransaction()

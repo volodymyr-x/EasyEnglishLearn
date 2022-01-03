@@ -9,25 +9,25 @@ import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.State
-import com.vladimir_x.easyenglishlearn.databinding.FragmentWordQuizBinding
+import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.util.ArrayList
 
-class WordQuizFragment : Fragment(R.layout.fragment_word_quiz) {
-    private var _binding: FragmentWordQuizBinding? = null
+class QuizFragment : Fragment(R.layout.fragment_quiz) {
+    private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
 
     private val clickListener = View.OnClickListener {
         viewModel.onAnswerChecked((it as RadioButton).text)
     }
 
-    lateinit var viewModel: WordQuizViewModel
+    lateinit var viewModel: QuizViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentWordQuizBinding.bind(view)
-        viewModel = ViewModelProvider(this)[WordQuizViewModel::class.java]
+        _binding = FragmentQuizBinding.bind(view)
+        viewModel = ViewModelProvider(this)[QuizViewModel::class.java]
         initView()
         initObservers(viewModel)
 
@@ -49,7 +49,7 @@ class WordQuizFragment : Fragment(R.layout.fragment_word_quiz) {
         }
     }
 
-    private fun initObservers(viewModel: WordQuizViewModel) {
+    private fun initObservers(viewModel: QuizViewModel) {
         with(viewModel) {
             exerciseState.observe(viewLifecycleOwner) {
                 clearRadioGroup()
@@ -107,7 +107,7 @@ class WordQuizFragment : Fragment(R.layout.fragment_word_quiz) {
         fun newInstance(
             selectedWordList: ArrayList<Word>?,
             translationDirection: Boolean
-        ) = WordQuizFragment().apply {
+        ) = QuizFragment().apply {
             arguments = createBundle(selectedWordList, translationDirection)
         }
 
