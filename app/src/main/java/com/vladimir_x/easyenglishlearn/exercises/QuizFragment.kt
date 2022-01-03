@@ -70,10 +70,10 @@ class QuizFragment : Fragment() {
                 clearRadioGroup()
                 when(it) {
                     is State.DataState<*> -> {
-                        val dataState = it.data as Pair<String, List<String>>
-                        fillFields(dataState.first, dataState.second)
+                        val dataDto = it.data as DataDto.QuizDto
+                        fillFields(dataDto.question, dataDto.answers)
                     }
-                    is State.ErrorState -> showError()
+                    is State.ErrorState -> showErrorMessage()
                     is State.CompletedState<*> -> {
                         showFinalMessage(it.data as Int)
                         closeFragment()
@@ -101,7 +101,7 @@ class QuizFragment : Fragment() {
         showMessage(getString(R.string.errors_count, errorsCount))
     }
 
-    private fun showError() {
+    private fun showErrorMessage() {
         showMessage(getString(R.string.wrong_answer))
     }
 

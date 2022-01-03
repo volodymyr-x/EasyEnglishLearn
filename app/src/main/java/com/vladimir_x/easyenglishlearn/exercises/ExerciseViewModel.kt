@@ -1,77 +1,82 @@
 package com.vladimir_x.easyenglishlearn.exercises
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.vladimir_x.easyenglishlearn.SingleLiveEvent
+import com.vladimir_x.easyenglishlearn.State
+import com.vladimir_x.easyenglishlearn.State.CompletedState
+import com.vladimir_x.easyenglishlearn.State.DataState
+import com.vladimir_x.easyenglishlearn.State.ErrorState
 import com.vladimir_x.easyenglishlearn.model.Answer
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.lang.StringBuilder
 
 abstract class ExerciseViewModel : ViewModel() {
-    private val _exerciseCloseLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
-    private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
     private var iteration = 0
     private var errorCount = 0
+    private var question: String = ""
     var translationDirection = true
-    var wordList: List<Word> = listOf()
-    var answerBuilder: StringBuilder = StringBuilder()
     var currentWord: Word? = null
-    var question: String? = null
+    val wordList = mutableListOf<Word>()
 
-    val exerciseCloseLiveData: LiveData<Unit?>
-        get() = _exerciseCloseLiveData
-    val messageLiveData: LiveData<Int?>
-        get() = _messageLiveData
+    private val _exerciseState = MutableLiveData<State>(State.IdleState)
+    val exerciseState: LiveData<State>
+        get() = _exerciseState
 
     private val isExerciseOver: Boolean
-        get() {
-            val answer = Answer(currentWord, answerBuilder, translationDirection)
-            return if (answer.isCorrect) {
-                ++iteration >= wordList.size
-            } else {
-                showMessage(-1)
-                errorCount++
-                false
-            }
+        get() = iteration >= wordList.size
+
+    open fun prepareQuestionAndAnswers() {
+        currentWord = wordList[iteration].also {
+            question = if (translationDirection) it.lexeme else it.translation
         }
+    }
 
     /**
-     * This method must be called from fragment  when it is first started
+     * This method must be called from fragment when it is first started
      */
     fun startExercise(wordList: List<Word>, translationDirection: Boolean) {
-        this.wordList = wordList
+        this.wordList.addAll(wordList)
         this.translationDirection = translationDirection
         errorCount = 0
         iteration = 0
         prepareQuestionAndAnswers()
     }
 
-    open fun prepareQuestionAndAnswers() {
-        currentWord = wordList[iteration]
-        currentWord?.let {
-            question = if (translationDirection) it.lexeme else it.translation
-            cleanPreviousData()
-        }
-    }
+    fun convertWordToQuestion(word: Word?): String =
+        if (translationDirection) word?.lexeme ?: "" else word?.translation ?: ""
 
-    fun checkAnswer() {
-        if (isExerciseOver) {
-            finishExercise()
+    fun checkAnswer(answer: CharSequence) {
+        if (isAnswerCorrect(answer)) {
+            iteration++
+            if (isExerciseOver) {
+                finishExercise()
+            } else {
+                prepareQuestionAndAnswers()
+            }
         } else {
+            errorCount++
+            showError()
             prepareQuestionAndAnswers()
         }
     }
 
-    open fun cleanPreviousData() {
-        answerBuilder.delete(0, answerBuilder.length)
+    fun sendData(data: DataDto) {
+        changeState(DataState(data))
+    }
+
+    private fun changeState(state: State) {
+        _exerciseState.value = state
     }
 
     private fun finishExercise() {
-        showMessage(errorCount)
-        _exerciseCloseLiveData.call()
+        changeState(CompletedState(errorCount))
     }
 
-    private fun showMessage(errorsCount: Int) {
-        _messageLiveData.value = errorsCount
+    private fun showError() {
+        changeState(ErrorState())
     }
+
+    private fun isAnswerCorrect(answer: CharSequence): Boolean =
+        Answer(currentWord, StringBuilder(answer), translationDirection).isCorrect
 }

@@ -69,9 +69,9 @@ class ConstructorFragment : Fragment() {
         viewModel?.exerciseState?.observe(viewLifecycleOwner) {
             when (it) {
                 is State.DataState<*> -> {
-                    val dataState = it.data as Triple<String, String, List<Char>>
-                    createButtons(dataState.third)
-                    fillTexFields(dataState.first, dataState.second)
+                    val dataDto = it.data as DataDto.ConstructorDto
+                    createButtons(dataDto.letters)
+                    fillTexFields(dataDto.question, dataDto.answer)
                 }
                 is State.ErrorState -> showError()
                 is State.CompletedState<*> -> {
