@@ -8,7 +8,7 @@
     tools:context="exercises.WordQuizFragment">
 
     <TextView
-        android:id="@+id/wqf_tv_question"
+        android:id="@+id/tv_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin"
@@ -16,13 +16,13 @@
         tools:text="@string/question" />
 
     <RadioGroup
-        android:id="@+id/wqf_rg_answers"
+        android:id="@+id/rg_answers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin">
 
         <RadioButton
-            android:id="@+id/wqf_rb_first"
+            android:id="@+id/rb_first"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
@@ -30,7 +30,7 @@
             tools:text="First Answer" />
 
         <RadioButton
-            android:id="@+id/wqf_rb_second"
+            android:id="@+id/rb_second"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
@@ -38,7 +38,7 @@
             tools:text="Second Answer" />
 
         <RadioButton
-            android:id="@+id/wqf_rb_third"
+            android:id="@+id/rb_third"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"

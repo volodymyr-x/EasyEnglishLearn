@@ -1,68 +1,72 @@
 package com.vladimir_x.easyenglishlearn.exercises
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
+import com.vladimir_x.easyenglishlearn.State
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.util.ArrayList
 
-class WordQuizFragment : Fragment() {
+class WordQuizFragment : Fragment(R.layout.fragment_word_quiz) {
     private var _binding: FragmentWordQuizBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var viewModel: WordQuizViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentWordQuizBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-        return binding.root
+    private val clickListener = View.OnClickListener {
+        viewModel.onAnswerChecked((it as RadioButton).text)
     }
+
+    lateinit var viewModel: WordQuizViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        _binding = FragmentWordQuizBinding.bind(view)
         viewModel = ViewModelProvider(this)[WordQuizViewModel::class.java]
-        subscribeToLiveData(viewModel)
+        initView()
+        initObservers(viewModel)
+
         if (savedInstanceState == null) {
             val translationDirection =
                 arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
             val wordList: List<Word> =
-                arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as List<Word>
+                arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as? List<Word>
+                    ?: emptyList()
             viewModel.startExercise(wordList, translationDirection)
         }
     }
 
-    private fun subscribeToLiveData(viewModel: WordQuizViewModel) {
+    private fun initView() {
+        with(binding) {
+            rbFirst.setOnClickListener(clickListener)
+            rbSecond.setOnClickListener(clickListener)
+            rbThird.setOnClickListener(clickListener)
+        }
+    }
+
+    private fun initObservers(viewModel: WordQuizViewModel) {
         with(viewModel) {
-            exerciseCloseLiveData.observe(viewLifecycleOwner) {
-                closeFragment()
-            }
-            messageLiveData.observe(viewLifecycleOwner) {
-                it?.let { errorsCount: Int ->
-                    showMessage(errorsCount)
+            exerciseState.observe(viewLifecycleOwner) {
+                clearRadioGroup()
+                when(it) {
+                    is State.DataState<*> -> {
+                        val dataState = it.data as Pair<String, List<String>>
+                        fillFields(dataState.first, dataState.second)
+                    }
+                    is State.ErrorState -> showError()
+                    is State.CompletedState<*> -> {
+                        showFinalMessage(it.data as Int)
+                        closeFragment()
+                    }
+                    else -> {}
                 }
             }
-            clearRadioGroupLiveData.observe(viewLifecycleOwner) {
-                clearRadioGroup()
-            }
-            questionLiveData.observe(viewLifecycleOwner) { (question, answers) ->
-                fillFields(question, answers)
-            }
         }
-
     }
 
     override fun onDestroyView() {
@@ -71,31 +75,31 @@ class WordQuizFragment : Fragment() {
     }
 
     private fun clearRadioGroup() {
-        binding.wqfRgAnswers.clearCheck()
+        binding.rgAnswers.clearCheck()
     }
 
     private fun closeFragment() {
-        requireActivity().onBackPressed()
+        activity?.onBackPressed()
     }
 
-    private fun showMessage(errorsCount: Int) {
-        val message: String = if (errorsCount < 0) {
-            getString(R.string.wrong_answer)
-        } else {
-            getString(R.string.errors_count, errorsCount)
-        }
+    private fun showFinalMessage(errorsCount: Int) {
+        showMessage(getString(R.string.errors_count, errorsCount))
+    }
+
+    private fun showError() {
+        showMessage(getString(R.string.wrong_answer))
+    }
+
+    private fun showMessage(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun fillFields(question: String, answers: List<String>) {
         with(binding) {
-            wqfTvQuestion.text = question
-            wqfRbFirst.text = answers[0]
-            wqfRbFirst.setOnClickListener { viewModel.onAnswerChecked(0) }
-            wqfRbSecond.text = answers[1]
-            wqfRbSecond.setOnClickListener { viewModel.onAnswerChecked(1) }
-            wqfRbThird.text = answers[2]
-            wqfRbThird.setOnClickListener { viewModel.onAnswerChecked(2) }
+            tvQuestion.text = question
+            rbFirst.text = answers[0]
+            rbSecond.text = answers[1]
+            rbThird.text = answers[2]
         }
     }
 

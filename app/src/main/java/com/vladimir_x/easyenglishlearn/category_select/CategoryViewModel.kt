@@ -33,7 +33,7 @@ class CategoryViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            categoriesLiveData.addSource(repository?.getAllCategories()!!) {
+            categoriesLiveData.addSource(repository!!.getAllCategories()) {
                 categoriesLiveData.value = it
             }
         }

@@ -55,7 +55,7 @@ class WordSelectionViewModel(val categoryName: String) : ViewModel() {
 
     fun onChooseAllChange(checked: Boolean) {
         selectedWordList.clear()
-        val wordList = _wordsLiveData.value!!
+        val wordList = _wordsLiveData.value ?: emptyList()
         if (checked) {
             selectedWordList.addAll(wordList)
         }
