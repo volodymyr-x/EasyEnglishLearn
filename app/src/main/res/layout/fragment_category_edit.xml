@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="category_edit.CategoryEditFragment">
+    tools:context=".ui.category_edit.CategoryEditFragment">
 
     <TextView
         android:id="@+id/tv_title"
