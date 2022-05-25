@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
-import com.vladimir_x.easyenglishlearn.util.ModelFactory
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentExerciseChoiceBinding
-import com.vladimir_x.easyenglishlearn.ui.category_edit.CategoryEditViewModel
 
 class ExerciseChoiceFragment : DialogFragment() {
     private var viewModel: WordSelectionViewModel? = null
@@ -27,11 +25,7 @@ class ExerciseChoiceFragment : DialogFragment() {
             false
         )
         val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
-        /*viewModel = ModelFactory.getInstance(categoryName)?.let {
-            ViewModelProvider(this, it)[WordSelectionViewModel::class.java]
-        }*/
-        viewModel = ViewModelProvider(this)[WordSelectionViewModel::class.java]
-        viewModel?.init(categoryName)
+        viewModel = ViewModelProvider(requireActivity())[WordSelectionViewModel::class.java]
         initView()
 
         viewModel?.closeDialogLiveData?.observe(viewLifecycleOwner) { closeDialog() }

@@ -11,11 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladimir_x.easyenglishlearn.Constants
-import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
-import com.vladimir_x.easyenglishlearn.util.ModelFactory
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.vladimir_x.easyenglishlearn.model.Word
-import com.vladimir_x.easyenglishlearn.ui.category_edit.CategoryEditViewModel
+import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
 
 class WordSelectionFragment : Fragment() {
     private var _binding: FragmentWordSelectionBinding? = null
@@ -40,10 +38,7 @@ class WordSelectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
-        /*viewModel = ModelFactory.getInstance(categoryName)?.let {
-            ViewModelProvider(this, it)[WordSelectionViewModel::class.java]
-        }*/
-        viewModel = ViewModelProvider(this)[WordSelectionViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[WordSelectionViewModel::class.java]
         viewModel?.init(categoryName)
         initView()
         subscribeToLiveData()

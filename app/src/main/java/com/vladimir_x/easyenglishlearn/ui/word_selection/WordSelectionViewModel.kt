@@ -8,14 +8,12 @@ import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.Constants.Exercises
 import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
-import com.vladimir_x.easyenglishlearn.data.db.WordDao
 import com.vladimir_x.easyenglishlearn.data.repository.WordsRepositoryImpl
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
 import com.vladimir_x.easyenglishlearn.model.Word
+import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 
 class WordSelectionViewModel(
     private val wordsInteractor: WordsInteractor = WordsInteractorImpl(WordsRepositoryImpl(App.instance.database.wordDao()))
@@ -41,7 +39,6 @@ class WordSelectionViewModel(
         get() = _selectedWordsLiveData
 
     fun init(categoryName: String?) {
-        //val repository = App.instance?.database?.wordDao()
         categoryName?.let {
             this.categoryName = categoryName
             subscribeWordsToData()
@@ -105,7 +102,8 @@ class WordSelectionViewModel(
     private fun sendDTO(@Exercises exerciseType: String, isFromEnglish: Boolean) {
         val dto = WordSelectionDto(
             isFromEnglish,
-            selectedWordList, exerciseType
+            selectedWordList,
+            exerciseType
         )
         translationDirection = isFromEnglish
         _selectedWordsLiveData.value = dto
