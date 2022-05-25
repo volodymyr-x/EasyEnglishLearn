@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context="word_selection.ExerciseChoiceFragment">
+    tools:context=".ui.word_selection.ExerciseChoiceFragment">
 
     <TextView
         android:layout_width="wrap_content"

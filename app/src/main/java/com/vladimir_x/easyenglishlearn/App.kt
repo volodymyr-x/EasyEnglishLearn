@@ -1,15 +1,14 @@
 package com.vladimir_x.easyenglishlearn
 
 import android.app.Application
-import com.vladimir_x.easyenglishlearn.db.AppDatabase
-import com.vladimir_x.easyenglishlearn.App
+import com.vladimir_x.easyenglishlearn.data.db.AppDatabase
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import java.util.concurrent.Executors
 
 class App : Application() {
-    var database: AppDatabase? = null
+    lateinit var database: AppDatabase
         private set
 
     override fun onCreate() {
@@ -44,6 +43,6 @@ class App : Application() {
     }
 
     companion object {
-        var instance: App? = null
+        lateinit var instance: App
     }
 }

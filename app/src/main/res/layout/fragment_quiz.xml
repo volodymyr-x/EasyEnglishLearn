@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="exercises.QuizFragment">
+    tools:context=".ui.exercises.QuizFragment">
 
     <TextView
         android:id="@+id/tv_question"
