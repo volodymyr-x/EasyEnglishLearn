@@ -1,37 +1,18 @@
 package com.vladimir_x.easyenglishlearn.util
 
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
 import androidx.lifecycle.ViewModel
-import com.vladimir_x.easyenglishlearn.ui.category_edit.CategoryEditViewModel
-import com.vladimir_x.easyenglishlearn.ui.word_selection.WordSelectionViewModel
-import java.lang.IllegalArgumentException
-import java.util.HashMap
+import androidx.lifecycle.ViewModelProvider
+import javax.inject.Inject
+import javax.inject.Provider
 
-class ModelFactory private constructor(private val mCategoryName: String) : NewInstanceFactory() {
-    private var mViewModel: ViewModel? = null
+@Suppress("UNCHECKED_CAST")
+class ViewModelFactory @Inject constructor(
+    private val viewModels: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
+): ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass == CategoryEditViewModel::class.java) {
-            if (mViewModel == null || mViewModel!!.javaClass != CategoryEditViewModel::class.java) {
-                /*mViewModel = CategoryEditViewModel(mCategoryName)*/
-            }
-            return mViewModel as T
-        } else if (modelClass == WordSelectionViewModel::class.java) {
-            if (mViewModel == null || mViewModel!!.javaClass != WordSelectionViewModel::class.java) {
-                /*mViewModel = WordSelectionViewModel(mCategoryName)*/
-            }
-            return mViewModel as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-
-    companion object {
-        private val sFactoriesMap: MutableMap<String, ModelFactory> = HashMap()
-        fun getInstance(categoryName: String): ModelFactory? {
-            if (!sFactoriesMap.containsKey(categoryName)) {
-                sFactoriesMap[categoryName] = ModelFactory(categoryName)
-            }
-            return sFactoriesMap[categoryName]
-        }
+        val viewModelProvider = viewModels[modelClass]
+            ?: throw IllegalArgumentException("View model class $modelClass not found")
+        return viewModelProvider.get() as T
     }
 }

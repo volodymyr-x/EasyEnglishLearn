@@ -2,10 +2,10 @@ package com.vladimir_x.easyenglishlearn.ui.exercises
 
 import com.vladimir_x.easyenglishlearn.ui.exercises.DataDto.QuizDto
 import com.vladimir_x.easyenglishlearn.model.Word
+import javax.inject.Inject
 
-class QuizViewModel : ExerciseViewModel() {
+class QuizViewModel @Inject constructor() : ExerciseViewModel() {
     private var answers: List<String> = emptyList()
-
 
     override fun prepareQuestionAndAnswers() {
         super.prepareQuestionAndAnswers()

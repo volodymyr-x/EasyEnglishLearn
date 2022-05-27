@@ -6,24 +6,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.ui.State
 import com.vladimir_x.easyenglishlearn.databinding.FragmentConstructorBinding
 import com.vladimir_x.easyenglishlearn.model.Word
-import java.util.ArrayList
+import com.vladimir_x.easyenglishlearn.ui.State
+import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
+import javax.inject.Inject
 
-class ConstructorFragment : Fragment() {
-    private var viewModel: ConstructorViewModel? = null
+class ConstructorFragment : BaseFragment<ConstructorViewModel>() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentConstructorBinding? = null
     private val binding get() = _binding!!
     private val newButtonListener = View.OnClickListener { v: View ->
         val letter = (v as Button).text.toString()
-        viewModel?.onNewButtonClick(letter)
+        viewModel.onNewButtonClick(letter)
         //binding.wcfGridContainer.removeView(v)
     }
+
+    override fun provideViewModel(): ConstructorViewModel =
+        ViewModelProvider(requireActivity(), factory)[ConstructorViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,13 +44,12 @@ class ConstructorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ConstructorViewModel::class.java]
         if (savedInstanceState == null) {
             val translationDirection =
                 arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
             val wordList =
                 arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as List<Word>
-            viewModel?.startExercise(wordList, translationDirection)
+            viewModel.startExercise(wordList, translationDirection)
         }
         initView()
         subscribeToLiveData()
@@ -60,13 +63,13 @@ class ConstructorFragment : Fragment() {
     private fun initView() {
         with(binding) {
             btnClean.setOnClickListener {
-                viewModel?.onButtonUndoClick()
+                viewModel.onButtonUndoClick()
             }
         }
     }
 
     private fun subscribeToLiveData() {
-        viewModel?.exerciseState?.observe(viewLifecycleOwner) {
+        viewModel.exerciseState.observe(viewLifecycleOwner) {
             when (it) {
                 is State.DataState<*> -> {
                     val dataDto = it.data as DataDto.ConstructorDto

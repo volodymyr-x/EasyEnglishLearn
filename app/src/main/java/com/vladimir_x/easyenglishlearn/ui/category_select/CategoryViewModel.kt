@@ -4,20 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
-import com.vladimir_x.easyenglishlearn.data.db.WordDao
-import com.vladimir_x.easyenglishlearn.data.repository.WordsRepositoryImpl
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
-import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
+import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoryViewModel(
-    private val wordsInteractor: WordsInteractor = WordsInteractorImpl(WordsRepositoryImpl(App.instance.database.wordDao()))
+class CategoryViewModel @Inject constructor(
+    private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
-    //private val repository: WordDao? = App.instance?.database?.wordDao()
     private val _editCategoryLiveData: SingleLiveEvent<String> = SingleLiveEvent()
     private val _removeDialogLiveData: SingleLiveEvent<String> = SingleLiveEvent()
     private val _openCategoryLiveData: SingleLiveEvent<String> = SingleLiveEvent()

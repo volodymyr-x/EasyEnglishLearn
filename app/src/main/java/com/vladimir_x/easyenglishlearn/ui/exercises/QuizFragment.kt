@@ -6,16 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.ui.State
 import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
-import java.util.ArrayList
+import com.vladimir_x.easyenglishlearn.ui.State
+import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
+import javax.inject.Inject
 
-class QuizFragment : Fragment() {
+class QuizFragment : BaseFragment<QuizViewModel>() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
 
@@ -23,7 +25,8 @@ class QuizFragment : Fragment() {
         viewModel.onAnswerChecked((it as RadioButton).text)
     }
 
-    lateinit var viewModel: QuizViewModel
+    override fun provideViewModel(): QuizViewModel =
+        ViewModelProvider(this, factory)[QuizViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +43,7 @@ class QuizFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentQuizBinding.bind(view)
-        viewModel = ViewModelProvider(this)[QuizViewModel::class.java]
         initView()
         initObservers(viewModel)
 
@@ -68,7 +69,7 @@ class QuizFragment : Fragment() {
         with(viewModel) {
             exerciseState.observe(viewLifecycleOwner) {
                 clearRadioGroup()
-                when(it) {
+                when (it) {
                     is State.DataState<*> -> {
                         val dataDto = it.data as DataDto.QuizDto
                         fillFields(dataDto.question, dataDto.answers)
