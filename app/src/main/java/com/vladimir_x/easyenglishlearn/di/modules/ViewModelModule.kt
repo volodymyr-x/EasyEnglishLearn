@@ -19,27 +19,22 @@ abstract class ViewModelModule {
     internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
     @Binds
-    @IntoMap
-    @ViewModelKey(WordSelectionViewModel::class)
+    @[IntoMap ViewModelKey(WordSelectionViewModel::class)]
     internal abstract fun bindWordSelectionViewModel(viewModel: WordSelectionViewModel): ViewModel
 
     @Binds
-    @IntoMap
-    @ViewModelKey(CategoryViewModel::class)
+    @[IntoMap ViewModelKey(CategoryViewModel::class)]
     internal abstract fun bindCategoryViewModel(viewModel: CategoryViewModel): ViewModel
 
     @Binds
-    @IntoMap
-    @ViewModelKey(CategoryEditViewModel::class)
+    @[IntoMap ViewModelKey(CategoryEditViewModel::class)]
     internal abstract fun bindCategoryEditViewModel(viewModel: CategoryEditViewModel): ViewModel
 
     @Binds
-    @IntoMap
-    @ViewModelKey(ConstructorViewModel::class)
+    @[IntoMap ViewModelKey(ConstructorViewModel::class)]
     internal abstract fun bindConstructorViewModel(viewModel: ConstructorViewModel): ViewModel
 
     @Binds
-    @IntoMap
-    @ViewModelKey(QuizViewModel::class)
+    @[IntoMap ViewModelKey(QuizViewModel::class)]
     internal abstract fun bindQuizViewModel(viewModel: QuizViewModel): ViewModel
 }
