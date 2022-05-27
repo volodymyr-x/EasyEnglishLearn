@@ -14,9 +14,10 @@ import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WordSelectionViewModel(
-    private val wordsInteractor: WordsInteractor = WordsInteractorImpl(WordsRepositoryImpl(App.instance.database.wordDao()))
+class WordSelectionViewModel @Inject constructor(
+    private val wordsInteractor: WordsInteractor
     ) : ViewModel() {
     private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
     private val _choiceDialogLiveData: SingleLiveEvent<String> = SingleLiveEvent()

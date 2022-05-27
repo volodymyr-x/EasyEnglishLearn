@@ -8,11 +8,17 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentRemoveCategoryBinding
+import com.vladimir_x.easyenglishlearn.ui.base.BaseDialogFragment
+import javax.inject.Inject
 
-class CategoryRemoveFragment : DialogFragment() {
-    private var viewModel: CategoryViewModel? = null
+class CategoryRemoveFragment : BaseDialogFragment<CategoryViewModel>() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentRemoveCategoryBinding? = null
     private val binding get() = _binding!!
+
+    override fun provideViewModel(): CategoryViewModel =
+        ViewModelProvider(this, factory)[CategoryViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,19 +34,18 @@ class CategoryRemoveFragment : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
         val categoryName = requireArguments().getString(Constants.CATEGORY_NAME) ?: ""
         binding.rcfTvRemoveCategory.text = categoryName
 
         binding.rcfBtnYes.setOnClickListener {
-            viewModel?.removeCategory(categoryName)
+            viewModel.removeCategory(categoryName)
         }
 
         binding.rcfBtnNo.setOnClickListener {
-            viewModel?.cancelRemoving()
+            viewModel.cancelRemoving()
         }
 
-        viewModel?.removeCategoryLiveData?.observe(
+        viewModel.removeCategoryLiveData.observe(
             viewLifecycleOwner
         )
         { closeDialog() }

@@ -3,11 +3,11 @@ package com.vladimir_x.easyenglishlearn.ui.exercises
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.ui.exercises.DataDto.ConstructorDto
 import java.util.ArrayList
+import javax.inject.Inject
 
-class ConstructorViewModel : ExerciseViewModel() {
+class ConstructorViewModel @Inject constructor() : ExerciseViewModel() {
     private var answer: String = ""
     private val letterList: MutableList<Char> = ArrayList()
-
 
     override fun prepareQuestionAndAnswers() {
         super.prepareQuestionAndAnswers()

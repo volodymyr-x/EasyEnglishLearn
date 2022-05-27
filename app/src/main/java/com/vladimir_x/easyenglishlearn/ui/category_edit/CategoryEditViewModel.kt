@@ -6,27 +6,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
-import com.vladimir_x.easyenglishlearn.data.db.WordDao
-import com.vladimir_x.easyenglishlearn.data.repository.WordsRepositoryImpl
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
-import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
 import com.vladimir_x.easyenglishlearn.model.Word
+import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CategoryEditViewModel(
-    private val wordsInteractor: WordsInteractor = WordsInteractorImpl(WordsRepositoryImpl(App.instance.database.wordDao()))
+class CategoryEditViewModel @Inject constructor(
+    private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
     private val _fragmentCloseLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
     private val _wordsLiveData: MutableLiveData<List<Word>> = MutableLiveData<List<Word>>()
     private val _currentWordLiveData: MutableLiveData<Pair<String, String>> = MutableLiveData<Pair<String, String>>()
-    //private val repository: WordDao? = App.instance?.database?.wordDao()
     private var oldCategoryName: String = ""
     private var wordIndex = 0
     private var categoryName: String = ""

@@ -9,11 +9,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentExerciseChoiceBinding
+import com.vladimir_x.easyenglishlearn.ui.base.BaseDialogFragment
+import javax.inject.Inject
 
-class ExerciseChoiceFragment : DialogFragment() {
-    private var viewModel: WordSelectionViewModel? = null
+class ExerciseChoiceFragment : BaseDialogFragment<WordSelectionViewModel>() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentExerciseChoiceBinding? = null
     private val binding get() = _binding!!
+
+    override fun provideViewModel(): WordSelectionViewModel =
+        ViewModelProvider(requireActivity(), factory)[WordSelectionViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,21 +31,20 @@ class ExerciseChoiceFragment : DialogFragment() {
             false
         )
         val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
-        viewModel = ViewModelProvider(requireActivity())[WordSelectionViewModel::class.java]
         initView()
 
-        viewModel?.closeDialogLiveData?.observe(viewLifecycleOwner) { closeDialog() }
+        viewModel.closeDialogLiveData.observe(viewLifecycleOwner) { closeDialog() }
         return binding.root
     }
 
     private fun initView() {
         with(binding) {
             ecfRgTranslationDirection.setOnCheckedChangeListener { _, checkedId ->
-                viewModel?.onDirectionChanged(checkedId)
+                viewModel.onDirectionChanged(checkedId)
             }
-            ecfBtnQuiz.setOnClickListener { viewModel?.onBtnQuizClick(isFromEnglish()) }
-            ecfBtnConstructor.setOnClickListener { viewModel?.onBtnConstructorClick(isFromEnglish()) }
-            ecfBtnCancel.setOnClickListener { viewModel?.onBtnCancelClick() }
+            ecfBtnQuiz.setOnClickListener { viewModel.onBtnQuizClick(isFromEnglish()) }
+            ecfBtnConstructor.setOnClickListener { viewModel.onBtnConstructorClick(isFromEnglish()) }
+            ecfBtnCancel.setOnClickListener { viewModel.onBtnCancelClick() }
         }
     }
 

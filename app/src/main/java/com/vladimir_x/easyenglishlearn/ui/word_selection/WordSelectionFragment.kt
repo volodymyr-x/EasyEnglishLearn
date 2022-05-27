@@ -14,12 +14,18 @@ import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
+import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
+import javax.inject.Inject
 
-class WordSelectionFragment : Fragment() {
+class WordSelectionFragment : BaseFragment<WordSelectionViewModel>() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentWordSelectionBinding? = null
     private val binding get() = _binding!!
     private var wordSelectionAdapter: WordSelectionAdapter? = null
-    private var viewModel: WordSelectionViewModel? = null
+
+    override fun provideViewModel(): WordSelectionViewModel =
+        ViewModelProvider(requireActivity(), factory)[WordSelectionViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,8 +44,7 @@ class WordSelectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
-        viewModel = ViewModelProvider(requireActivity())[WordSelectionViewModel::class.java]
-        viewModel?.init(categoryName)
+        viewModel.init(categoryName)
         initView()
         subscribeToLiveData()
     }
@@ -49,14 +54,14 @@ class WordSelectionFragment : Fragment() {
             rvWordsChoice.apply {
                 layoutManager = LinearLayoutManager(activity)
                 wordSelectionAdapter = WordSelectionAdapter { checked, word ->
-                    viewModel?.onItemCheckBoxChange(checked, word)
+                    viewModel.onItemCheckBoxChange(checked, word)
                 }
                 adapter = wordSelectionAdapter
             }
-            tvCategoryName.text = viewModel?.categoryName
-            btnStart.setOnClickListener { viewModel?.onBtnStartClick() }
+            tvCategoryName.text = viewModel.categoryName
+            btnStart.setOnClickListener { viewModel.onBtnStartClick() }
             cbChooseAll.setOnCheckedChangeListener { _, checked ->
-                viewModel?.onChooseAllChange(checked)
+                viewModel.onChooseAllChange(checked)
             }
         }
     }
@@ -67,20 +72,20 @@ class WordSelectionFragment : Fragment() {
     }
 
     private fun subscribeToLiveData() {
-        viewModel?.let {
-            it.wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
+        with(viewModel) {
+            wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
                 wordSelectionAdapter?.setWordList(wordList)
             }
 
-            it.messageLiveData.observe(viewLifecycleOwner) { resId ->
+            messageLiveData.observe(viewLifecycleOwner) { resId ->
                 resId?.let { showMessage(resId) }
             }
 
-            it.choiceDialogLiveData.observe(viewLifecycleOwner) { categoryName ->
+            choiceDialogLiveData.observe(viewLifecycleOwner) { categoryName ->
                 categoryName?.let { showDialog(categoryName) }
             }
 
-            it.selectedWordsLiveData.observe(viewLifecycleOwner) { dto ->
+            selectedWordsLiveData.observe(viewLifecycleOwner) { dto ->
                 dto?.let { startExercise(dto) }
             }
         }

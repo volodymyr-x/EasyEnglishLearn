@@ -1,23 +1,25 @@
 package com.vladimir_x.easyenglishlearn.ui.category_select
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.annotation.StringRes
-import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
+import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
+import javax.inject.Inject
 
-class CategoryFragment : Fragment() {
-
+class CategoryFragment : BaseFragment<CategoryViewModel>() {
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private var callbacks: Callbacks? = null
-    private var viewModel: CategoryViewModel? = null
     private var adapter: CategoryAdapter? = null
     private var _binding: FragmentCategorySelectBinding? = null
     private val binding get() = _binding!!
@@ -27,6 +29,9 @@ class CategoryFragment : Fragment() {
         fun onCategorySelected(categoryName: String?)
         fun onCategoryEdit(categoryName: String?)
     }
+
+    override fun provideViewModel(): CategoryViewModel =
+        ViewModelProvider(this, factory)[CategoryViewModel::class.java]
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -43,6 +48,18 @@ class CategoryFragment : Fragment() {
             container,
             false
         )
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.rvCategorySelect.layoutManager = LinearLayoutManager(activity)
+        adapter = CategoryAdapter(
+            { viewModel.onItemClick(it) },
+            { viewModel.onEditClick(it) },
+            { viewModel.onRemoveClick(it) }
+        )
+        binding.rvCategorySelect.adapter = adapter
         binding.rvCategorySelect.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -53,20 +70,8 @@ class CategoryFragment : Fragment() {
                 }
             }
         })
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
-        binding.rvCategorySelect.layoutManager = LinearLayoutManager(activity)
-        adapter = CategoryAdapter(
-            { viewModel?.onItemClick(it) },
-            { viewModel?.onEditClick(it) },
-            { viewModel?.onRemoveClick(it) }
-        )
-        binding.rvCategorySelect.adapter = adapter
-        binding.fabCategoryAdd.setOnClickListener { viewModel?.onFabClick() }
+        binding.fabCategoryAdd.setOnClickListener { viewModel.onFabClick() }
         subscribeToLiveData()
     }
 
@@ -81,36 +86,38 @@ class CategoryFragment : Fragment() {
     }
 
     private fun subscribeToLiveData() {
-        viewModel?.categoriesLiveData?.observe(
-            viewLifecycleOwner
-        )
-        { categoryList: List<String?> -> adapter?.setCategoryList(categoryList) }
+        with(viewModel) {
+            categoriesLiveData.observe(
+                viewLifecycleOwner
+            )
+            { categoryList: List<String?> -> adapter?.setCategoryList(categoryList) }
 
-        viewModel?.editCategoryLiveData?.observe(
-            viewLifecycleOwner
-        )
-        { categoryName: String? -> callbacks?.onCategoryEdit(categoryName) }
+            editCategoryLiveData.observe(
+                viewLifecycleOwner
+            )
+            { categoryName: String? -> callbacks?.onCategoryEdit(categoryName) }
 
-        viewModel?.removeDialogLiveData?.observe(
-            viewLifecycleOwner
-        )
-        {
-            it?.let { categoryName: String ->
-                showDialog(categoryName)
+            removeDialogLiveData.observe(
+                viewLifecycleOwner
+            )
+            {
+                it?.let { categoryName: String ->
+                    showDialog(categoryName)
+                }
             }
-        }
 
-        viewModel?.openCategoryLiveData?.observe(
-            viewLifecycleOwner
-        )
-        { categoryName: String? -> callbacks?.onCategorySelected(categoryName) }
+            openCategoryLiveData.observe(
+                viewLifecycleOwner
+            )
+            { categoryName: String? -> callbacks?.onCategorySelected(categoryName) }
 
-        viewModel?.messageLiveData?.observe(
-            viewLifecycleOwner
-        )
-        {
-            it?.let { resId: Int ->
-                showMessage(resId)
+            messageLiveData.observe(
+                viewLifecycleOwner
+            )
+            {
+                it?.let { resId: Int ->
+                    showMessage(resId)
+                }
             }
         }
     }
