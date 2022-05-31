@@ -13,9 +13,11 @@ import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class WordSelectionViewModel @Inject constructor(
     private val wordsInteractor: WordsInteractor
     ) : ViewModel() {

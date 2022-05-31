@@ -8,9 +8,11 @@ import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
 import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class CategoryViewModel @Inject constructor(
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {

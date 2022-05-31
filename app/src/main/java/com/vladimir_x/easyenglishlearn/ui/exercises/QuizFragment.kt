@@ -6,27 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
-import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class QuizFragment : BaseFragment<QuizViewModel>() {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+@AndroidEntryPoint
+class QuizFragment : Fragment() {
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
-
+    private val viewModel: QuizViewModel by viewModels()
     private val clickListener = View.OnClickListener {
         viewModel.onAnswerChecked((it as RadioButton).text)
     }
-
-    override fun provideViewModel(): QuizViewModel =
-        ViewModelProvider(this, factory)[QuizViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater,

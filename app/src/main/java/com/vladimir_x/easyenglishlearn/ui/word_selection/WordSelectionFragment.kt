@@ -8,24 +8,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
-import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class WordSelectionFragment : BaseFragment<WordSelectionViewModel>() {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+@AndroidEntryPoint
+class WordSelectionFragment : Fragment() {
     private var _binding: FragmentWordSelectionBinding? = null
     private val binding get() = _binding!!
     private var wordSelectionAdapter: WordSelectionAdapter? = null
-
-    override fun provideViewModel(): WordSelectionViewModel =
-        ViewModelProvider(requireActivity(), factory)[WordSelectionViewModel::class.java]
+    private val viewModel: WordSelectionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

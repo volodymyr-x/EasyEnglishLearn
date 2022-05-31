@@ -9,15 +9,13 @@ import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
 import com.vladimir_x.easyenglishlearn.domain.repository.WordsRepository
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class AppModule {
-    @Provides
-    @Singleton
-    fun provideContext(application: App): Context {
-        return application
-    }
 
     @Provides
     fun provideWordsRepository(wordDao: WordDao) : WordsRepository {

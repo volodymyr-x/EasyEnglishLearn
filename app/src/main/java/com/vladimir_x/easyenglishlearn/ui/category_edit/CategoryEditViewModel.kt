@@ -11,11 +11,13 @@ import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class CategoryEditViewModel @Inject constructor(
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {

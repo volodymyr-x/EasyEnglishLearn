@@ -2,8 +2,10 @@ package com.vladimir_x.easyenglishlearn.ui.exercises
 
 import com.vladimir_x.easyenglishlearn.ui.exercises.DataDto.QuizDto
 import com.vladimir_x.easyenglishlearn.model.Word
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class QuizViewModel @Inject constructor() : ExerciseViewModel() {
     private var answers: List<String> = emptyList()
 

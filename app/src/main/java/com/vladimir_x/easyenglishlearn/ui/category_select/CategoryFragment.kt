@@ -8,30 +8,25 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
-import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class CategoryFragment : BaseFragment<CategoryViewModel>() {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+@AndroidEntryPoint
+class CategoryFragment : Fragment() {
     private var callbacks: Callbacks? = null
     private var adapter: CategoryAdapter? = null
     private var _binding: FragmentCategorySelectBinding? = null
     private val binding get() = _binding!!
-
+    private val viewModel: CategoryViewModel by viewModels()
 
     interface Callbacks {
         fun onCategorySelected(categoryName: String?)
         fun onCategoryEdit(categoryName: String?)
     }
-
-    override fun provideViewModel(): CategoryViewModel =
-        ViewModelProvider(this, factory)[CategoryViewModel::class.java]
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

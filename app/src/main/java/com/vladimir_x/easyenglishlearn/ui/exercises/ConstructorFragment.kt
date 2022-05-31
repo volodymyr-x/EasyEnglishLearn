@@ -6,28 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentConstructorBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
-import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class ConstructorFragment : BaseFragment<ConstructorViewModel>() {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+@AndroidEntryPoint
+class ConstructorFragment : Fragment() {
     private var _binding: FragmentConstructorBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: ConstructorViewModel by viewModels()
     private val newButtonListener = View.OnClickListener { v: View ->
         val letter = (v as Button).text.toString()
         viewModel.onNewButtonClick(letter)
         //binding.wcfGridContainer.removeView(v)
     }
-
-    override fun provideViewModel(): ConstructorViewModel =
-        ViewModelProvider(requireActivity(), factory)[ConstructorViewModel::class.java]
 
     override fun onCreateView(
         inflater: LayoutInflater,

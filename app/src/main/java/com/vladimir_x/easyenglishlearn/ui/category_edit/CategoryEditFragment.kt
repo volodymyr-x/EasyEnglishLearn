@@ -7,23 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategoryEditBinding
 import com.vladimir_x.easyenglishlearn.model.Word
-import com.vladimir_x.easyenglishlearn.ui.base.BaseFragment
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class CategoryEditFragment : BaseFragment<CategoryEditViewModel>() {
+@AndroidEntryPoint
+class CategoryEditFragment : Fragment() {
     private var _binding: FragmentCategoryEditBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
     private var adapter: CategoryEditAdapter? = null
-
-    override fun provideViewModel(): CategoryEditViewModel =
-        ViewModelProvider(this, factory)[CategoryEditViewModel::class.java]
+    private val viewModel: CategoryEditViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

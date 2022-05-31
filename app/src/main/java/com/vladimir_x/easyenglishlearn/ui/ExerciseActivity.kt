@@ -8,8 +8,10 @@ import com.vladimir_x.easyenglishlearn.databinding.ActivityExerciseBinding
 import com.vladimir_x.easyenglishlearn.ui.exercises.ConstructorFragment
 import com.vladimir_x.easyenglishlearn.ui.exercises.QuizFragment
 import com.vladimir_x.easyenglishlearn.model.Word
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.ArrayList
 
+@AndroidEntryPoint
 class ExerciseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExerciseBinding
 
