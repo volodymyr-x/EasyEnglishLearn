@@ -9,14 +9,19 @@ import com.vladimir_x.easyenglishlearn.data.db.AppDatabase
 import com.vladimir_x.easyenglishlearn.data.db.WordDao
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.Executors
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class DataBaseModule {
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): AppDatabase = createDatabaseBuilder(context).build()
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
+        createDatabaseBuilder(context).build()
 
     private fun createDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> =
         Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME)

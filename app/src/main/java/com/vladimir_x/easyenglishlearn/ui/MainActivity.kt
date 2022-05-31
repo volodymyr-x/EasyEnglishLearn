@@ -11,7 +11,9 @@ import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.ui.category_select.CategoryFragment
 import com.vladimir_x.easyenglishlearn.ui.word_selection.WordSelectionFragment
 import com.vladimir_x.easyenglishlearn.ui.category_edit.CategoryEditFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), CategoryFragment.Callbacks {
     @get:LayoutRes
     private val layoutResId: Int

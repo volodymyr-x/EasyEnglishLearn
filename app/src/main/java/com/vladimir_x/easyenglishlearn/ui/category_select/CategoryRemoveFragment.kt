@@ -5,20 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentRemoveCategoryBinding
-import com.vladimir_x.easyenglishlearn.ui.base.BaseDialogFragment
 import javax.inject.Inject
 
-class CategoryRemoveFragment : BaseDialogFragment<CategoryViewModel>() {
+class CategoryRemoveFragment : DialogFragment() {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentRemoveCategoryBinding? = null
     private val binding get() = _binding!!
-
-    override fun provideViewModel(): CategoryViewModel =
-        ViewModelProvider(this, factory)[CategoryViewModel::class.java]
+    private val viewModel: CategoryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

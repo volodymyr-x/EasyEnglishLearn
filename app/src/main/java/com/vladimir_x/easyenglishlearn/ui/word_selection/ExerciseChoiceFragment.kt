@@ -5,21 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentExerciseChoiceBinding
-import com.vladimir_x.easyenglishlearn.ui.base.BaseDialogFragment
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class ExerciseChoiceFragment : BaseDialogFragment<WordSelectionViewModel>() {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
+@AndroidEntryPoint
+class ExerciseChoiceFragment : DialogFragment() {
     private var _binding: FragmentExerciseChoiceBinding? = null
     private val binding get() = _binding!!
-
-    override fun provideViewModel(): WordSelectionViewModel =
-        ViewModelProvider(requireActivity(), factory)[WordSelectionViewModel::class.java]
+    private val viewModel: WordSelectionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
