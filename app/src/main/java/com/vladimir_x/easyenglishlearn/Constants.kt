@@ -5,6 +5,7 @@ import androidx.annotation.StringDef
 interface Constants {
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     @StringDef(WORD_CONSTRUCTOR, WORD_QUIZ)
+
     annotation class Exercises
     companion object {
         const val CATEGORY_NAME = "CATEGORY_NAME"
@@ -22,5 +23,6 @@ interface Constants {
         const val ACTION_ABOUT = 102
         const val WORD_CONSTRUCTOR = "WORD_CONSTRUCTOR"
         const val WORD_QUIZ = "WORD_QUIZ"
+        const val RESULT_KEY = "RESULT_KEY"
     }
 }

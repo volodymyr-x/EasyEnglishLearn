@@ -4,19 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.databinding.FragmentRemoveCategoryBinding
-import javax.inject.Inject
 
 class CategoryRemoveFragment : DialogFragment() {
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
     private var _binding: FragmentRemoveCategoryBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: CategoryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,17 +31,16 @@ class CategoryRemoveFragment : DialogFragment() {
         binding.rcfTvRemoveCategory.text = categoryName
 
         binding.rcfBtnYes.setOnClickListener {
-            viewModel.removeCategory(categoryName)
+            parentFragmentManager.setFragmentResult(
+                Constants.DIALOG_REMOVE_CATEGORY,
+                bundleOf(Constants.RESULT_KEY to DialogResult.Yes)
+            )
+            closeDialog()
         }
 
         binding.rcfBtnNo.setOnClickListener {
-            viewModel.cancelRemoving()
+            closeDialog()
         }
-
-        viewModel.removeCategoryLiveData.observe(
-            viewLifecycleOwner
-        )
-        { closeDialog() }
     }
 
     private fun closeDialog() {

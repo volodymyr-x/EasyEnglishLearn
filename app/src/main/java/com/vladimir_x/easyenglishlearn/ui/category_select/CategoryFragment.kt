@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.Constants
+import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -105,28 +105,34 @@ class CategoryFragment : Fragment() {
                 viewLifecycleOwner
             )
             { categoryName: String? -> callbacks?.onCategorySelected(categoryName) }
-
-            messageLiveData.observe(
-                viewLifecycleOwner
-            )
-            {
-                it?.let { resId: Int ->
-                    showMessage(resId)
-                }
-            }
         }
     }
 
-    private fun showMessage(@StringRes resId: Int) {
-        Toast.makeText(activity, resId, Toast.LENGTH_SHORT).show()
+    private fun showMessage(message: String) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showDialog(categoryName: String) {
+        childFragmentManager.setFragmentResultListener(
+            Constants.DIALOG_REMOVE_CATEGORY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            when (bundle.getSerializable(Constants.RESULT_KEY) as DialogResult) {
+                DialogResult.Yes -> dialogYesClicked(categoryName)
+                else -> {}
+            }
+        }
+
         val dialogFragment = CategoryRemoveFragment.newInstance(categoryName)
         dialogFragment.show(
-            requireActivity().supportFragmentManager,
+            childFragmentManager,
             Constants.DIALOG_REMOVE_CATEGORY
         )
+    }
+
+    private fun dialogYesClicked(categoryName: String) {
+        viewModel.removeCategory(categoryName)
+        showMessage(getString(R.string.category_removed, categoryName))
     }
 
     companion object {

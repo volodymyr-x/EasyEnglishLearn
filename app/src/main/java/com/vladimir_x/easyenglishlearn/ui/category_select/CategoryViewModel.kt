@@ -5,7 +5,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.Constants
-import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
 import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +18,6 @@ class CategoryViewModel @Inject constructor(
     private val _editCategoryLiveData: SingleLiveEvent<String> = SingleLiveEvent()
     private val _removeDialogLiveData: SingleLiveEvent<String> = SingleLiveEvent()
     private val _openCategoryLiveData: SingleLiveEvent<String> = SingleLiveEvent()
-    private val _removeCategoryLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
-    private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
     val categoriesLiveData = MediatorLiveData<List<String>>()
 
     val openCategoryLiveData: LiveData<String?>
@@ -29,10 +26,6 @@ class CategoryViewModel @Inject constructor(
         get() = _editCategoryLiveData
     val removeDialogLiveData: LiveData<String?>
         get() = _removeDialogLiveData
-    val removeCategoryLiveData: LiveData<Unit?>
-        get() = _removeCategoryLiveData
-    val messageLiveData: LiveData<Int?>
-        get() = _messageLiveData
 
     init {
         viewModelScope.launch {
@@ -61,16 +54,6 @@ class CategoryViewModel @Inject constructor(
     fun removeCategory(categoryName: String) {
         viewModelScope.launch {
             wordsInteractor.removeCategory(categoryName)
-            showMessage()
-            _removeCategoryLiveData.call()
         }
-    }
-
-    fun cancelRemoving() {
-        _removeCategoryLiveData.call()
-    }
-
-    private fun showMessage() {
-        _messageLiveData.value = R.string.category_removed
     }
 }

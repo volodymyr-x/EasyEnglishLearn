@@ -41,7 +41,7 @@
     <string name="ca_cm_on_item_click">On Item Click</string>
     <string name="category_name">Category Name</string>
     <string name="question">Question</string>
-    <string name="category_removed">Category removed</string>
+    <string name="category_removed">Category %s removed</string>
     <string name="category_edited">Category edited</string>
     <string name="category_added">Category added</string>
     <string name="ca_cm_remove_word">Remove word</string>
