@@ -4,8 +4,8 @@ import com.vladimir_x.easyenglishlearn.Constants.Exercises
 import com.vladimir_x.easyenglishlearn.model.Word
 import java.util.*
 
-class WordSelectionDto(
+data class WordSelectionDto(
     val isTranslationDirection: Boolean,
     val selectedWordList: ArrayList<Word>,
-    @field:Exercises @param:Exercises val exercise: String
+    @Exercises val exercise: String
 )

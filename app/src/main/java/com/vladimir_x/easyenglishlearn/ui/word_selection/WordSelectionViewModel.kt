@@ -4,13 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vladimir_x.easyenglishlearn.App
 import com.vladimir_x.easyenglishlearn.Constants
-import com.vladimir_x.easyenglishlearn.Constants.Exercises
-import com.vladimir_x.easyenglishlearn.R
-import com.vladimir_x.easyenglishlearn.data.repository.WordsRepositoryImpl
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
-import com.vladimir_x.easyenglishlearn.domain.WordsInteractorImpl
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,24 +15,20 @@ import javax.inject.Inject
 @HiltViewModel
 class WordSelectionViewModel @Inject constructor(
     private val wordsInteractor: WordsInteractor
-    ) : ViewModel() {
-    private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
+) : ViewModel() {
+    private val _messageLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
     private val _choiceDialogLiveData: SingleLiveEvent<String> = SingleLiveEvent()
     private val _wordsLiveData: MutableLiveData<List<Word>> = MutableLiveData()
     private val _selectedWordsLiveData: SingleLiveEvent<WordSelectionDto> = SingleLiveEvent()
-    private val _closeDialogLiveData: SingleLiveEvent<Void> = SingleLiveEvent()
     private val selectedWordList: ArrayList<Word> = arrayListOf()
-    private var translationDirection = true
     var categoryName = ""
 
-    val messageLiveData: LiveData<Int?>
+    val messageLiveData: LiveData<Unit?>
         get() = _messageLiveData
     val choiceDialogLiveData: LiveData<String?>
         get() = _choiceDialogLiveData
     val wordsLiveData: LiveData<List<Word>>
         get() = _wordsLiveData
-    val closeDialogLiveData: LiveData<Void?>
-        get() = _closeDialogLiveData
     val selectedWordsLiveData: LiveData<WordSelectionDto?>
         get() = _selectedWordsLiveData
 
@@ -50,7 +41,7 @@ class WordSelectionViewModel @Inject constructor(
 
     fun onBtnStartClick() {
         if (selectedWordList.size < Constants.ANSWERS_COUNT) {
-            showMessage()
+            showWarningMessage()
         } else {
             _choiceDialogLiveData.setValue(categoryName)
         }
@@ -77,43 +68,22 @@ class WordSelectionViewModel @Inject constructor(
         word.isChecked = checked
     }
 
-    fun onBtnConstructorClick(isFromEnglish: Boolean) {
-        sendDTO(Constants.WORD_CONSTRUCTOR, isFromEnglish)
-    }
-
-    fun onBtnQuizClick(isFromEnglish: Boolean) {
-        sendDTO(Constants.WORD_QUIZ, isFromEnglish)
-    }
-
-    fun onBtnCancelClick() {
-        _closeDialogLiveData.call()
-    }
-
-    fun onDirectionChanged(checkedId: Int) {
-        translationDirection = when (checkedId) {
-            R.id.ecf_rb_en_ru -> true
-            else -> false
-        }
-    }
-
     private fun subscribeWordsToData() {
         viewModelScope.launch {
             _wordsLiveData.value = wordsInteractor.getWordsByCategory(categoryName)
         }
     }
 
-    private fun sendDTO(@Exercises exerciseType: String, isFromEnglish: Boolean) {
+    fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto) {
         val dto = WordSelectionDto(
-            isFromEnglish,
+            exerciseChoiceDto.isTranslationDirection,
             selectedWordList,
-            exerciseType
+            exerciseChoiceDto.exercise
         )
-        translationDirection = isFromEnglish
         _selectedWordsLiveData.value = dto
-        _closeDialogLiveData.call()
     }
 
-    private fun showMessage() {
-        _messageLiveData.value = R.string.wsa_toast_min_words_count
+    private fun showWarningMessage() {
+        _messageLiveData.call()
     }
 }

@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentExerciseChoiceBinding
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class ExerciseChoiceFragment : DialogFragment() {
     private var _binding: FragmentExerciseChoiceBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: WordSelectionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,23 +23,36 @@ class ExerciseChoiceFragment : DialogFragment() {
             container,
             false
         )
-        val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
         initView()
-
-        viewModel.closeDialogLiveData.observe(viewLifecycleOwner) { closeDialog() }
         return binding.root
     }
 
     private fun initView() {
         with(binding) {
-            ecfRgTranslationDirection.setOnCheckedChangeListener { _, checkedId ->
-                viewModel.onDirectionChanged(checkedId)
+            ecfBtnQuiz.setOnClickListener {
+                prepareFragmentResult(getDto(Constants.WORD_QUIZ))
+                closeDialog()
             }
-            ecfBtnQuiz.setOnClickListener { viewModel.onBtnQuizClick(isFromEnglish()) }
-            ecfBtnConstructor.setOnClickListener { viewModel.onBtnConstructorClick(isFromEnglish()) }
-            ecfBtnCancel.setOnClickListener { viewModel.onBtnCancelClick() }
+            ecfBtnConstructor.setOnClickListener {
+                prepareFragmentResult(getDto(Constants.WORD_CONSTRUCTOR))
+                closeDialog()
+            }
+            ecfBtnCancel.setOnClickListener { closeDialog() }
         }
     }
+
+    private fun prepareFragmentResult(dto: ExerciseChoiceDto) {
+        parentFragmentManager.setFragmentResult(
+            Constants.EXERCISE_CHOICE_FRAGMENT,
+            bundleOf(Constants.EXERCISE_CHOICE_KEY to dto)
+        )
+    }
+
+    private fun getDto(@Constants.Exercises exerciseType: String): ExerciseChoiceDto =
+        ExerciseChoiceDto(
+            isFromEnglish(),
+            exerciseType
+        )
 
     private fun closeDialog() {
         dismiss()

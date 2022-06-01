@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladimir_x.easyenglishlearn.Constants
+import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
@@ -21,7 +21,7 @@ class WordSelectionFragment : Fragment() {
     private var _binding: FragmentWordSelectionBinding? = null
     private val binding get() = _binding!!
     private var wordSelectionAdapter: WordSelectionAdapter? = null
-    private val viewModel: WordSelectionViewModel by activityViewModels()
+    private val viewModel: WordSelectionViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,8 +62,8 @@ class WordSelectionFragment : Fragment() {
         }
     }
 
-    private fun showMessage(@StringRes resId: Int) {
-        val message = getString(resId, Constants.ANSWERS_COUNT)
+    private fun showMessage() {
+        val message = getString(R.string.wsa_toast_min_words_count, Constants.ANSWERS_COUNT)
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -73,9 +73,7 @@ class WordSelectionFragment : Fragment() {
                 wordSelectionAdapter?.setWordList(wordList)
             }
 
-            messageLiveData.observe(viewLifecycleOwner) { resId ->
-                resId?.let { showMessage(resId) }
-            }
+            messageLiveData.observe(viewLifecycleOwner) { showMessage() }
 
             choiceDialogLiveData.observe(viewLifecycleOwner) { categoryName ->
                 categoryName?.let { showDialog(categoryName) }
@@ -88,11 +86,21 @@ class WordSelectionFragment : Fragment() {
     }
 
     private fun showDialog(categoryName: String) {
+        childFragmentManager.setFragmentResultListener(
+            Constants.EXERCISE_CHOICE_FRAGMENT,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val exerciseChoiceDto =
+                bundle.getSerializable(Constants.EXERCISE_CHOICE_KEY) as ExerciseChoiceDto
+            viewModel.sendDTO(exerciseChoiceDto)
+        }
+
         val dialogFragment = ExerciseChoiceFragment.newInstance(categoryName)
         dialogFragment.show(
-            requireActivity().supportFragmentManager,
+            childFragmentManager,
             Constants.EXERCISE_CHOICE_FRAGMENT
         )
+
     }
 
     private fun startExercise(dto: WordSelectionDto) {
