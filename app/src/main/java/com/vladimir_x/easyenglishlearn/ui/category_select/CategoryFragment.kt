@@ -2,9 +2,7 @@ package com.vladimir_x.easyenglishlearn.ui.category_select
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,7 +14,7 @@ import com.vladimir_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CategoryFragment : Fragment() {
+class CategoryFragment : Fragment(R.layout.fragment_category_select) {
     private var callbacks: Callbacks? = null
     private var adapter: CategoryAdapter? = null
     private var _binding: FragmentCategorySelectBinding? = null
@@ -33,21 +31,9 @@ class CategoryFragment : Fragment() {
         callbacks = context as Callbacks
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCategorySelectBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentCategorySelectBinding.bind(view)
         binding.rvCategorySelect.layoutManager = LinearLayoutManager(activity)
         adapter = CategoryAdapter(
             { viewModel.onItemClick(it) },

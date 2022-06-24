@@ -1,30 +1,21 @@
 package com.vladimir_x.easyenglishlearn.ui.word_selection
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentExerciseChoiceBinding
 
-class ExerciseChoiceFragment : DialogFragment() {
+class ExerciseChoiceFragment : DialogFragment(R.layout.fragment_exercise_choice) {
     private var _binding: FragmentExerciseChoiceBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentExerciseChoiceBinding.inflate(
-            inflater,
-            container,
-            false
-        )
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentExerciseChoiceBinding.bind(view)
         initView()
-        return binding.root
     }
 
     private fun initView() {
