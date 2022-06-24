@@ -4,6 +4,7 @@ import android.text.TextUtils
 import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.Constants
@@ -19,12 +20,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryEditViewModel @Inject constructor(
+    state: SavedStateHandle,
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _messageLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
     private val _fragmentCloseLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
     private val _wordsLiveData: MutableLiveData<List<Word>> = MutableLiveData<List<Word>>()
-    private val _currentWordLiveData: MutableLiveData<Pair<String, String>> = MutableLiveData<Pair<String, String>>()
+    private val _currentWordLiveData: MutableLiveData<Pair<String, String>> =
+        MutableLiveData<Pair<String, String>>()
     private var oldCategoryName: String = ""
     private var wordIndex = 0
     private var categoryName: String = ""
@@ -43,7 +46,8 @@ class CategoryEditViewModel @Inject constructor(
     val fragmentCloseLiveData: LiveData<Unit?>
         get() = _fragmentCloseLiveData
 
-    fun init(categoryName: String?) {
+    init {
+        val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
         categoryName?.let {
             this.categoryName = categoryName
             this.oldCategoryName = categoryName

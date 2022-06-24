@@ -1,5 +1,6 @@
 package com.vladimir_x.easyenglishlearn.ui.exercises
 
+import androidx.lifecycle.SavedStateHandle
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.ui.exercises.DataDto.ConstructorDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -7,7 +8,9 @@ import java.util.ArrayList
 import javax.inject.Inject
 
 @HiltViewModel
-class ConstructorViewModel @Inject constructor() : ExerciseViewModel() {
+class ConstructorViewModel @Inject constructor(
+    state: SavedStateHandle
+) : ExerciseViewModel(state) {
     private var answer: String = ""
     private val letterList: MutableList<Char> = ArrayList()
 

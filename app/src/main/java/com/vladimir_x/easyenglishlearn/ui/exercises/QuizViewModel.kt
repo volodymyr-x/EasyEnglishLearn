@@ -1,12 +1,15 @@
 package com.vladimir_x.easyenglishlearn.ui.exercises
 
+import androidx.lifecycle.SavedStateHandle
 import com.vladimir_x.easyenglishlearn.ui.exercises.DataDto.QuizDto
 import com.vladimir_x.easyenglishlearn.model.Word
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class QuizViewModel @Inject constructor() : ExerciseViewModel() {
+class QuizViewModel @Inject constructor(
+    state: SavedStateHandle
+) : ExerciseViewModel(state) {
     private var answers: List<String> = emptyList()
 
     override fun prepareQuestionAndAnswers() {
