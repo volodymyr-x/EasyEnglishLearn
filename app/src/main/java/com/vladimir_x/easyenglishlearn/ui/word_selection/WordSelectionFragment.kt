@@ -39,8 +39,6 @@ class WordSelectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val categoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME) ?: ""
-        viewModel.init(categoryName)
         initView()
         subscribeToLiveData()
     }

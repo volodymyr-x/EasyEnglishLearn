@@ -37,7 +37,6 @@ class CategoryEditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val oldCategoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME)
-        viewModel.init(oldCategoryName)
         initView(oldCategoryName)
         subscribeToLiveData()
     }

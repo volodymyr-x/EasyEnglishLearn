@@ -2,6 +2,7 @@ package com.vladimir_x.easyenglishlearn.ui.word_selection
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.Constants
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WordSelectionViewModel @Inject constructor(
+    state: SavedStateHandle,
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _messageLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
@@ -32,7 +34,8 @@ class WordSelectionViewModel @Inject constructor(
     val selectedWordsLiveData: LiveData<WordSelectionDto?>
         get() = _selectedWordsLiveData
 
-    fun init(categoryName: String?) {
+    init {
+        val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
         categoryName?.let {
             this.categoryName = categoryName
             subscribeWordsToData()

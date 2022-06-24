@@ -2,7 +2,9 @@ package com.vladimir_x.easyenglishlearn.ui.exercises
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.ui.State
 import com.vladimir_x.easyenglishlearn.ui.State.CompletedState
 import com.vladimir_x.easyenglishlearn.ui.State.DataState
@@ -10,7 +12,9 @@ import com.vladimir_x.easyenglishlearn.ui.State.ErrorState
 import com.vladimir_x.easyenglishlearn.model.Answer
 import com.vladimir_x.easyenglishlearn.model.Word
 
-abstract class ExerciseViewModel : ViewModel() {
+abstract class ExerciseViewModel(
+    state: SavedStateHandle
+) : ViewModel() {
     private var iteration = 0
     private var errorCount = 0
     private var question: String = ""
@@ -25,21 +29,22 @@ abstract class ExerciseViewModel : ViewModel() {
     private val isExerciseOver: Boolean
         get() = iteration >= wordList.size
 
-    open fun prepareQuestionAndAnswers() {
-        currentWord = wordList[iteration].also {
-            question = if (translationDirection) it.lexeme else it.translation
-        }
-    }
-
-    /**
-     * This method must be called from fragment when it is first started
-     */
-    fun startExercise(wordList: List<Word>, translationDirection: Boolean) {
+    init {
+        val translationDirection =
+            state.get<Boolean>(Constants.TRANSLATION_DIRECTION) ?: true
+        val wordList: List<Word> =
+            state.get<ArrayList<Word>>(Constants.SELECTED_WORDS) as? List<Word>
+                ?: emptyList()
         this.wordList.addAll(wordList)
         this.translationDirection = translationDirection
         errorCount = 0
         iteration = 0
-        prepareQuestionAndAnswers()
+    }
+
+    open fun prepareQuestionAndAnswers() {
+        currentWord = wordList[iteration].also {
+            question = if (translationDirection) it.lexeme else it.translation
+        }
     }
 
     fun convertWordToQuestion(word: Word?): String =

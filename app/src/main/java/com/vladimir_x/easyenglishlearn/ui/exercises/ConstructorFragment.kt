@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
@@ -42,15 +41,9 @@ class ConstructorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null) {
-            val translationDirection =
-                arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
-            val wordList =
-                arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as List<Word>
-            viewModel.startExercise(wordList, translationDirection)
-        }
         initView()
         subscribeToLiveData()
+        viewModel.prepareQuestionAndAnswers()
     }
 
     override fun onDestroyView() {

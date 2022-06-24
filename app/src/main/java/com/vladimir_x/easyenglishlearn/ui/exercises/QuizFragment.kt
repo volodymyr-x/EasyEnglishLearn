@@ -42,15 +42,7 @@ class QuizFragment : Fragment() {
         _binding = FragmentQuizBinding.bind(view)
         initView()
         initObservers(viewModel)
-
-        if (savedInstanceState == null) {
-            val translationDirection =
-                arguments?.getBoolean(Constants.TRANSLATION_DIRECTION) ?: true
-            val wordList: List<Word> =
-                arguments?.getParcelableArrayList<Word>(Constants.SELECTED_WORDS) as? List<Word>
-                    ?: emptyList()
-            viewModel.startExercise(wordList, translationDirection)
-        }
+        viewModel.prepareQuestionAndAnswers()
     }
 
     private fun initView() {
