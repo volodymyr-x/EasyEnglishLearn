@@ -7,11 +7,11 @@ import com.vladimir_x.easyenglishlearn.databinding.RvCategoryItemBinding
 import java.util.ArrayList
 
 class CategoryAdapter(
-    private val itemClickListener: (categoryName: String?) -> (Unit),
-    private val editClickListener: (categoryName: String?) -> (Unit),
-    private val removeClickListener: (categoryName: String?) -> (Unit)
+    private val itemClickListener: (categoryName: String) -> (Unit),
+    private val editClickListener: (categoryName: String) -> (Unit),
+    private val removeClickListener: (categoryName: String) -> (Unit)
 ) : RecyclerView.Adapter<CategoryViewHolder>() {
-    private var categoryList: List<String?> = ArrayList()
+    private var categoryList: List<String> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         return CategoryViewHolder.from(parent, itemClickListener, editClickListener, removeClickListener)
@@ -25,7 +25,7 @@ class CategoryAdapter(
         return categoryList.size
     }
 
-    fun setCategoryList(categoryList: List<String?>) {
+    fun setCategoryList(categoryList: List<String>) {
         this.categoryList = categoryList
         notifyDataSetChanged()
     }
@@ -33,13 +33,13 @@ class CategoryAdapter(
 
 class CategoryViewHolder(
     private val binding: RvCategoryItemBinding,
-    private val itemClickListener: (categoryName: String?) -> (Unit),
-    private val editClickListener: (categoryName: String?) -> (Unit),
-    private val removeClickListener: (categoryName: String?) -> (Unit)
+    private val itemClickListener: (categoryName: String) -> (Unit),
+    private val editClickListener: (categoryName: String) -> (Unit),
+    private val removeClickListener: (categoryName: String) -> (Unit)
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(categoryName: String?) {
+    fun bind(categoryName: String) {
         binding.categoryName.text = categoryName
         itemView.setOnClickListener {
             itemClickListener.invoke(categoryName)
@@ -55,9 +55,9 @@ class CategoryViewHolder(
     companion object {
         fun from(
             parent: ViewGroup,
-            itemClickListener: (categoryName: String?) -> (Unit),
-            editClickListener: (categoryName: String?) -> (Unit),
-            removeClickListener: (categoryName: String?) -> (Unit)
+            itemClickListener: (categoryName: String) -> (Unit),
+            editClickListener: (categoryName: String) -> (Unit),
+            removeClickListener: (categoryName: String) -> (Unit)
         ): CategoryViewHolder {
             val binding = RvCategoryItemBinding.inflate(
                 LayoutInflater.from(parent.context),

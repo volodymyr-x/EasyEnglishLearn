@@ -6,12 +6,16 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CategoryFragment : Fragment(R.layout.fragment_category_select) {
@@ -41,6 +45,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
             { viewModel.onRemoveClick(it) }
         )
         binding.rvCategorySelect.adapter = adapter
+
         binding.rvCategorySelect.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -53,7 +58,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         })
 
         binding.fabCategoryAdd.setOnClickListener { viewModel.onFabClick() }
-        subscribeToLiveData()
+        subscribeObservers()
     }
 
     override fun onDestroyView() {
@@ -66,31 +71,33 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         callbacks = null
     }
 
-    private fun subscribeToLiveData() {
+    private fun subscribeObservers() {
         with(viewModel) {
-            categoriesLiveData.observe(
-                viewLifecycleOwner
-            )
-            { categoryList: List<String?> -> adapter?.setCategoryList(categoryList) }
-
-            editCategoryLiveData.observe(
-                viewLifecycleOwner
-            )
-            { categoryName: String? -> callbacks?.onCategoryEdit(categoryName) }
-
-            removeDialogLiveData.observe(
-                viewLifecycleOwner
-            )
-            {
-                it?.let { categoryName: String ->
-                    showDialog(categoryName)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    launch {
+                        categories.collect { categoryList ->
+                            adapter?.setCategoryList(categoryList)
+                        }
+                    }
+                    launch {
+                        categoryState.collect { state ->
+                            when (state) {
+                                is CategorySelectState.OpenCategory -> {
+                                    callbacks?.onCategorySelected(state.data)
+                                }
+                                is CategorySelectState.EditCategory -> {
+                                    callbacks?.onCategoryEdit(state.data)
+                                }
+                                is CategorySelectState.RemoveCategory -> {
+                                    showDialog(state.data)
+                                }
+                                else -> {}
+                            }
+                        }
+                    }
                 }
             }
-
-            openCategoryLiveData.observe(
-                viewLifecycleOwner
-            )
-            { categoryName: String? -> callbacks?.onCategorySelected(categoryName) }
         }
     }
 

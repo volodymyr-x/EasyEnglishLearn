@@ -1,15 +1,15 @@
 package com.vladimir_x.easyenglishlearn.data.repository
 
-import androidx.lifecycle.LiveData
 import com.vladimir_x.easyenglishlearn.data.db.WordDao
 import com.vladimir_x.easyenglishlearn.domain.repository.WordsRepository
 import com.vladimir_x.easyenglishlearn.model.Word
+import kotlinx.coroutines.flow.Flow
 
 class WordsRepositoryImpl(private val wordDao: WordDao) : WordsRepository {
     override suspend fun getWordsByCategory(categoryName: String): List<Word> =
         wordDao.getWordsByCategory(categoryName)
 
-    override fun getAllCategories(): LiveData<List<String>> = wordDao.getAllCategories()
+    override fun getAllCategories(): Flow<List<String>> = wordDao.getAllCategories()
 
     override suspend fun updateCategory(
         oldCategoryName: String,

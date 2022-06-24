@@ -1,12 +1,12 @@
 package com.vladimir_x.easyenglishlearn.domain
 
-import androidx.lifecycle.LiveData
 import com.vladimir_x.easyenglishlearn.model.Word
+import kotlinx.coroutines.flow.Flow
 
 interface WordsInteractor {
     suspend fun getWordsByCategory(categoryName: String): List<Word>
 
-    fun getAllCategories(): LiveData<List<String>>
+    fun getAllCategories(): Flow<List<String>>
 
     suspend fun updateCategory(
         oldCategoryName: String,
