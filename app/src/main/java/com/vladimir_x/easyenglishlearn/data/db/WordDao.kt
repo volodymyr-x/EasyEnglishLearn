@@ -2,7 +2,6 @@ package com.vladimir_x.easyenglishlearn.data.db
 
 import androidx.room.Dao
 import com.vladimir_x.easyenglishlearn.model.Word
-import androidx.lifecycle.LiveData
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction

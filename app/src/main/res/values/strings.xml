@@ -6,7 +6,7 @@
     <string name="about">About</string>
     <string name="cef_toast_save_edit_category">Enter category name</string>
     <string name="cef_save_word">Save word</string>
-    <string name="cef_toast_save_word_empty_fields">Fill all fields</string>
+    <string name="cef_toast_save_word_empty_fields">Fill in all fields</string>
     <string name="cef_category_edit_clean">Save word</string>
     <string name="ca_tv_category_select">Select category</string>
     <string name="btn_save_word_replace">Replace word</string>
