@@ -6,12 +6,16 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentConstructorBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
@@ -28,7 +32,7 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentConstructorBinding.bind(view)
         initView()
-        subscribeToLiveData()
+        subscribeObservers()
         viewModel.prepareQuestionAndAnswers()
     }
 
@@ -45,20 +49,24 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
         }
     }
 
-    private fun subscribeToLiveData() {
-        viewModel.exerciseState.observe(viewLifecycleOwner) {
-            when (it) {
-                is State.DataState<*> -> {
-                    val dataDto = it.data as DataDto.ConstructorDto
-                    createButtons(dataDto.letters)
-                    fillTexFields(dataDto.question, dataDto.answer)
+    private fun subscribeObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.exerciseState.collect {
+                    when (it) {
+                        is State.DataState<*> -> {
+                            val dataDto = it.data as DataDto.ConstructorDto
+                            createButtons(dataDto.letters)
+                            fillTexFields(dataDto.question, dataDto.answer)
+                        }
+                        is State.ErrorState -> showError()
+                        is State.CompletedState<*> -> {
+                            showFinalMessage(it.data as Int)
+                            closeFragment()
+                        }
+                        else -> {}
+                    }
                 }
-                is State.ErrorState -> showError()
-                is State.CompletedState<*> -> {
-                    showFinalMessage(it.data as Int)
-                    closeFragment()
-                }
-                else -> {}
             }
         }
     }

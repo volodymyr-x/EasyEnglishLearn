@@ -1,16 +1,16 @@
 package com.vladimir_x.easyenglishlearn.ui.exercises
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.vladimir_x.easyenglishlearn.Constants
+import com.vladimir_x.easyenglishlearn.model.Answer
+import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
 import com.vladimir_x.easyenglishlearn.ui.State.CompletedState
 import com.vladimir_x.easyenglishlearn.ui.State.DataState
 import com.vladimir_x.easyenglishlearn.ui.State.ErrorState
-import com.vladimir_x.easyenglishlearn.model.Answer
-import com.vladimir_x.easyenglishlearn.model.Word
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 abstract class ExerciseViewModel(
     state: SavedStateHandle
@@ -22,8 +22,8 @@ abstract class ExerciseViewModel(
     var currentWord: Word? = null
     val wordList = mutableListOf<Word>()
 
-    private val _exerciseState = MutableLiveData<State>(State.IdleState)
-    val exerciseState: LiveData<State>
+    private val _exerciseState = MutableStateFlow<State>(State.IdleState)
+    val exerciseState: StateFlow<State>
         get() = _exerciseState
 
     private val isExerciseOver: Boolean
