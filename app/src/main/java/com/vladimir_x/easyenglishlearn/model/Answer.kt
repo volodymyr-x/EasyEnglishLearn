@@ -1,7 +1,9 @@
 package com.vladimir_x.easyenglishlearn.model
 
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
+
 class Answer(
-    private val question: Word?,
+    private val question: WordUI?,
     answer: CharSequence,
     private val translationDirection: Boolean
 ) {

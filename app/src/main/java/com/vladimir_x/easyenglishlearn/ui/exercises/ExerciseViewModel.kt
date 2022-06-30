@@ -9,6 +9,7 @@ import com.vladimir_x.easyenglishlearn.ui.State
 import com.vladimir_x.easyenglishlearn.ui.State.CompletedState
 import com.vladimir_x.easyenglishlearn.ui.State.DataState
 import com.vladimir_x.easyenglishlearn.ui.State.ErrorState
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -19,8 +20,8 @@ abstract class ExerciseViewModel(
     private var errorCount = 0
     private var question: String = ""
     var translationDirection = true
-    var currentWord: Word? = null
-    val wordList = mutableListOf<Word>()
+    var currentWord: WordUI? = null
+    val wordList = mutableListOf<WordUI>()
 
     private val _exerciseState = MutableStateFlow<State>(State.IdleState)
     val exerciseState: StateFlow<State>
@@ -32,8 +33,8 @@ abstract class ExerciseViewModel(
     init {
         val translationDirection =
             state.get<Boolean>(Constants.TRANSLATION_DIRECTION) ?: true
-        val wordList: List<Word> =
-            state.get<ArrayList<Word>>(Constants.SELECTED_WORDS) as? List<Word>
+        val wordList: List<WordUI> =
+            state.get<ArrayList<WordUI>>(Constants.SELECTED_WORDS) as? List<WordUI>
                 ?: emptyList()
         this.wordList.addAll(wordList)
         this.translationDirection = translationDirection
@@ -47,7 +48,7 @@ abstract class ExerciseViewModel(
         }
     }
 
-    fun convertWordToQuestion(word: Word?): String =
+    fun convertWordToQuestion(word: WordUI?): String =
         if (translationDirection) word?.lexeme ?: "" else word?.translation ?: ""
 
     fun checkAnswer(answer: CharSequence) {

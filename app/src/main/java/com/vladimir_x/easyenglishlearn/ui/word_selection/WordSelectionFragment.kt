@@ -6,13 +6,16 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
-import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
@@ -25,34 +28,34 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentWordSelectionBinding.bind(view)
         initView()
-        subscribeToLiveData()
+        subscribeObservers()
     }
 
     private fun initView() {
         with(binding) {
             rvWordsChoice.apply {
                 layoutManager = LinearLayoutManager(activity)
-                wordSelectionAdapter = WordSelectionAdapter { checked, word ->
-                    viewModel.onItemCheckBoxChange(checked, word)
+                wordSelectionAdapter = WordSelectionAdapter { checked, wordId ->
+                    viewModel.onItemCheckBoxChange(checked, wordId)
                 }
                 adapter = wordSelectionAdapter
             }
             tvCategoryName.text = viewModel.categoryName
             btnStart.setOnClickListener { viewModel.onBtnStartClick() }
             cbChooseAll.setOnCheckedChangeListener { _, checked ->
-                viewModel.onChooseAllChange(checked)
+                viewModel.onChooseAllClick(checked)
             }
         }
     }
 
     private fun showMessage() {
-        val message = getString(R.string.wsa_toast_min_words_count, Constants.ANSWERS_COUNT)
+        val message = getString(R.string.wsa_toast_min_words_count, Constants.MIN_CHECKED_WORD_QUANTITY)
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun subscribeToLiveData() {
+    private fun subscribeObservers() {
         with(viewModel) {
-            wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
+            /*wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
                 wordSelectionAdapter?.setWordList(wordList)
             }
 
@@ -64,6 +67,29 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
 
             selectedWordsLiveData.observe(viewLifecycleOwner) { dto ->
                 dto?.let { startExercise(dto) }
+            }*/
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    launch {
+                        wordSelectionState.collect { state ->
+                            when (state) {
+                                is WordSelectionState.UpdateWords -> {
+                                    wordSelectionAdapter?.setWordList(state.words)
+                                }
+                                is WordSelectionState.ShowMessage -> {
+                                    showMessage()
+                                }
+                                is WordSelectionState.OpenDialog -> {
+                                    showDialog(state.categoryName)
+                                }
+                                is WordSelectionState.StartExercise -> {
+                                    startExercise(state.dto)
+                                }
+                                else -> {}
+                            }
+                        }
+                    }
+                }
             }
         }
     }

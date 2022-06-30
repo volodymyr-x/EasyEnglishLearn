@@ -17,7 +17,7 @@ interface Constants {
         const val SELECTED_WORDS = "SELECTED_WORDS"
         const val EMPTY_STRING = ""
         const val DATABASE_NAME = "english_learn"
-        const val ANSWERS_COUNT = 3
+        const val MIN_CHECKED_WORD_QUANTITY = 3
         const val ACTION_OPEN_CATEGORY = 100
         const val ACTION_EDIT_CATEGORY = 101
         const val ACTION_ABOUT = 102

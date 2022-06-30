@@ -14,6 +14,7 @@ import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -100,14 +101,14 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
 
     companion object {
         fun newInstance(
-            selectedWordList: ArrayList<Word>?,
+            selectedWordList: ArrayList<WordUI>,
             translationDirection: Boolean
         ) = QuizFragment().apply {
             arguments = createBundle(selectedWordList, translationDirection)
         }
 
         private fun createBundle(
-            selectedWordList: ArrayList<Word>?,
+            selectedWordList: ArrayList<WordUI>,
             translationDirection: Boolean
         ) = Bundle().apply {
             putParcelableArrayList(Constants.SELECTED_WORDS, selectedWordList)
