@@ -12,12 +12,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ExerciseActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityExerciseBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityExerciseBinding.inflate(layoutInflater)
+        val binding = ActivityExerciseBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val intent = intent
         val exerciseType = intent.getStringExtra(Constants.EXERCISE_TYPE)
@@ -25,7 +23,7 @@ class ExerciseActivity : AppCompatActivity() {
             intent.getParcelableArrayListExtra<WordUI>(Constants.SELECTED_WORDS) as ArrayList<WordUI>
         val translationDirection = intent.getBooleanExtra(Constants.TRANSLATION_DIRECTION, true)
         val fm = supportFragmentManager
-        var fragment = fm.findFragmentById(R.id.exercise_fragment_container)
+        var fragment = fm.findFragmentById(binding.exerciseFragmentContainer.id)
         if (fragment == null) {
             fragment = when (exerciseType) {
                 Constants.WORD_CONSTRUCTOR -> ConstructorFragment
