@@ -2,10 +2,10 @@ package com.vladimir_x.easyenglishlearn.data.db
 
 import androidx.room.Dao
 import com.vladimir_x.easyenglishlearn.model.Word
-import androidx.lifecycle.LiveData
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class WordDao {
@@ -13,7 +13,7 @@ abstract class WordDao {
     abstract suspend fun getWordsByCategory(categoryName: String): List<Word>
 
     @Query("SELECT DISTINCT category FROM word")
-    abstract fun getAllCategories(): LiveData<List<String>>
+    abstract fun getAllCategories(): Flow<List<String>>
 
     @Transaction
     open suspend fun updateCategory(

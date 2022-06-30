@@ -1,16 +1,18 @@
 package com.vladimir_x.easyenglishlearn.ui.word_selection
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
-import com.vladimir_x.easyenglishlearn.model.Word
-import com.vladimir_x.easyenglishlearn.util.SingleLiveEvent
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.ArrayList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,75 +20,73 @@ class WordSelectionViewModel @Inject constructor(
     state: SavedStateHandle,
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
-    private val _messageLiveData: SingleLiveEvent<Unit> = SingleLiveEvent()
-    private val _choiceDialogLiveData: SingleLiveEvent<String> = SingleLiveEvent()
-    private val _wordsLiveData: MutableLiveData<List<Word>> = MutableLiveData()
-    private val _selectedWordsLiveData: SingleLiveEvent<WordSelectionDto> = SingleLiveEvent()
-    private val selectedWordList: ArrayList<Word> = arrayListOf()
+    //private val _wordsLiveData: MutableLiveData<List<Word>> = MutableLiveData()
+    //private val selectedWordList: ArrayList<Word> = arrayListOf()
+    private var wordsByCategory: List<WordUI> = listOf()
     var categoryName = ""
 
-    val messageLiveData: LiveData<Unit?>
-        get() = _messageLiveData
-    val choiceDialogLiveData: LiveData<String?>
-        get() = _choiceDialogLiveData
-    val wordsLiveData: LiveData<List<Word>>
-        get() = _wordsLiveData
-    val selectedWordsLiveData: LiveData<WordSelectionDto?>
-        get() = _selectedWordsLiveData
+    private val _wordSelectionState =
+        MutableStateFlow<WordSelectionState>(WordSelectionState.IdleState)
+    val wordSelectionState: StateFlow<WordSelectionState>
+        get() = _wordSelectionState
 
     init {
         val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
         categoryName?.let {
             this.categoryName = categoryName
-            subscribeWordsToData()
+            loadWords()
         }
     }
 
     fun onBtnStartClick() {
-        if (selectedWordList.size < Constants.ANSWERS_COUNT) {
-            showWarningMessage()
+        if (getSelectedWords().size < Constants.MIN_CHECKED_WORD_QUANTITY) {
+            changeState(WordSelectionState.ShowMessage)
         } else {
-            _choiceDialogLiveData.setValue(categoryName)
+            changeState(WordSelectionState.OpenDialog(categoryName))
         }
     }
 
-    fun onChooseAllChange(checked: Boolean) {
-        selectedWordList.clear()
-        val wordList = _wordsLiveData.value ?: emptyList()
-        if (checked) {
-            selectedWordList.addAll(wordList)
-        }
-        for (word in wordList) {
-            word.isChecked = checked
-        }
-        _wordsLiveData.value = wordList
+    private fun getSelectedWords() = wordsByCategory.filter { it.isChecked }
+
+    fun onChooseAllClick(checked: Boolean) {
+        wordsByCategory.onEach { it.isChecked = checked }
+        changeState(WordSelectionState.UpdateWords(wordsByCategory))
     }
 
-    fun onItemCheckBoxChange(checked: Boolean, word: Word) {
-        if (checked) {
-            if (!selectedWordList.contains(word)) selectedWordList.add(word)
-        } else {
-            selectedWordList.remove(word)
+    fun onItemCheckBoxChange(checked: Boolean, wordId: Long) {
+        wordsByCategory.firstOrNull { it.id == wordId }?.let {
+            it.isChecked = checked
         }
-        word.isChecked = checked
+        changeState(WordSelectionState.UpdateWords(wordsByCategory))
     }
 
-    private fun subscribeWordsToData() {
+    private fun loadWords() {
         viewModelScope.launch {
-            _wordsLiveData.value = wordsInteractor.getWordsByCategory(categoryName)
+            val words = withContext(Dispatchers.IO) {
+                wordsInteractor.getWordsByCategory(categoryName).map { word ->
+                    WordUI(
+                        word.id,
+                        word.lexeme,
+                        word.translation
+                    )
+                }
+            }
+            wordsByCategory = words
+            changeState(WordSelectionState.UpdateWords(words))
         }
     }
 
     fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto) {
         val dto = WordSelectionDto(
             exerciseChoiceDto.isTranslationDirection,
-            selectedWordList,
+            getSelectedWords() as ArrayList<WordUI>,
             exerciseChoiceDto.exercise
         )
-        _selectedWordsLiveData.value = dto
+        changeState(WordSelectionState.StartExercise(dto))
     }
 
-    private fun showWarningMessage() {
-        _messageLiveData.call()
+    private fun changeState(state: WordSelectionState) {
+        _wordSelectionState.value = state
+        _wordSelectionState.value = WordSelectionState.IdleState
     }
 }

@@ -3,6 +3,7 @@ package com.vladimir_x.easyenglishlearn.ui.exercises
 import androidx.lifecycle.SavedStateHandle
 import com.vladimir_x.easyenglishlearn.ui.exercises.DataDto.QuizDto
 import com.vladimir_x.easyenglishlearn.model.Word
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -40,6 +41,6 @@ class QuizViewModel @Inject constructor(
         checkAnswer(answer)
     }
 
-    private fun convertWordToAnswer(word: Word): String =
+    private fun convertWordToAnswer(word: WordUI): String =
         if (translationDirection) word.translation else word.lexeme
 }

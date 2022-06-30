@@ -3,14 +3,16 @@ package com.vladimir_x.easyenglishlearn.ui.category_edit
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategoryEditBinding
-import com.vladimir_x.easyenglishlearn.model.Word
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
@@ -24,7 +26,7 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
         _binding = FragmentCategoryEditBinding.bind(view)
         val oldCategoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME)
         initView(oldCategoryName)
-        subscribeToLiveData()
+        subscribeObservers()
     }
 
     private fun getCorrectTitleId(oldCategoryName: String?): Int {
@@ -57,18 +59,33 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
         }
     }
 
-    private fun subscribeToLiveData() {
+    private fun subscribeObservers() {
         with(viewModel) {
-            wordsLiveData.observe(viewLifecycleOwner) { wordList: List<Word> ->
-                adapter?.setWordList(wordList)
-            }
-            messageLiveData.observe(viewLifecycleOwner) { resId: Int? ->
-                resId?.let(::showMessage)
-            }
-            fragmentCloseLiveData.observe(viewLifecycleOwner) { closeFragment() }
-            currentWordLiveData.observe(viewLifecycleOwner) { (lexeme, translation) ->
-                binding.etLexeme.setText(lexeme)
-                binding.etTranslation.setText(translation)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    launch {
+                        words.collect { categoryList ->
+                            adapter?.setWordList(categoryList)
+                        }
+                    }
+                    launch {
+                        categoryEditState.collect { state ->
+                            when (state) {
+                                is CategoryEditState.CloseScreenState -> {
+                                    closeFragment()
+                                }
+                                is CategoryEditState.ShowMessage -> {
+                                    showMessage(state.message)
+                                }
+                                is CategoryEditState.CurrentWord -> {
+                                    binding.etLexeme.setText(state.pair.first)
+                                    binding.etTranslation.setText(state.pair.second)
+                                }
+                                else -> {}
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -77,8 +94,8 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
         requireActivity().onBackPressed()
     }
 
-    private fun showMessage(@StringRes resId: Int) {
-        Toast.makeText(activity, resId, Toast.LENGTH_SHORT).show()
+    private fun showMessage(message: String) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

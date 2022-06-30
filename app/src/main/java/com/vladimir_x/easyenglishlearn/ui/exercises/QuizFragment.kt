@@ -6,12 +6,17 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuizFragment : Fragment(R.layout.fragment_quiz) {
@@ -26,7 +31,7 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentQuizBinding.bind(view)
         initView()
-        initObservers(viewModel)
+        subscribeObservers()
         viewModel.prepareQuestionAndAnswers()
     }
 
@@ -38,21 +43,23 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         }
     }
 
-    private fun initObservers(viewModel: QuizViewModel) {
-        with(viewModel) {
-            exerciseState.observe(viewLifecycleOwner) {
-                clearRadioGroup()
-                when (it) {
-                    is State.DataState<*> -> {
-                        val dataDto = it.data as DataDto.QuizDto
-                        fillFields(dataDto.question, dataDto.answers)
+    private fun subscribeObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.exerciseState.collect {
+                    clearRadioGroup()
+                    when (it) {
+                        is State.DataState<*> -> {
+                            val dataDto = it.data as DataDto.QuizDto
+                            fillFields(dataDto.question, dataDto.answers)
+                        }
+                        is State.ErrorState -> showErrorMessage()
+                        is State.CompletedState<*> -> {
+                            showFinalMessage(it.data as Int)
+                            closeFragment()
+                        }
+                        else -> {}
                     }
-                    is State.ErrorState -> showErrorMessage()
-                    is State.CompletedState<*> -> {
-                        showFinalMessage(it.data as Int)
-                        closeFragment()
-                    }
-                    else -> {}
                 }
             }
         }
@@ -94,14 +101,14 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
 
     companion object {
         fun newInstance(
-            selectedWordList: ArrayList<Word>?,
+            selectedWordList: ArrayList<WordUI>,
             translationDirection: Boolean
         ) = QuizFragment().apply {
             arguments = createBundle(selectedWordList, translationDirection)
         }
 
         private fun createBundle(
-            selectedWordList: ArrayList<Word>?,
+            selectedWordList: ArrayList<WordUI>,
             translationDirection: Boolean
         ) = Bundle().apply {
             putParcelableArrayList(Constants.SELECTED_WORDS, selectedWordList)
