@@ -20,8 +20,6 @@ class WordSelectionViewModel @Inject constructor(
     state: SavedStateHandle,
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
-    //private val _wordsLiveData: MutableLiveData<List<Word>> = MutableLiveData()
-    //private val selectedWordList: ArrayList<Word> = arrayListOf()
     private var wordsByCategory: List<WordUI> = listOf()
     var categoryName = ""
 
@@ -50,14 +48,15 @@ class WordSelectionViewModel @Inject constructor(
 
     fun onChooseAllClick(checked: Boolean) {
         wordsByCategory.onEach { it.isChecked = checked }
-        changeState(WordSelectionState.UpdateWords(wordsByCategory))
+        changeState(WordSelectionState.UpdateWords(wordsByCategory, checked))
     }
 
     fun onItemCheckBoxChange(checked: Boolean, wordId: Long) {
         wordsByCategory.firstOrNull { it.id == wordId }?.let {
             it.isChecked = checked
         }
-        changeState(WordSelectionState.UpdateWords(wordsByCategory))
+        val isChooseAllChecked = getSelectedWords().size == wordsByCategory.size
+        changeState(WordSelectionState.UpdateWords(wordsByCategory, isChooseAllChecked))
     }
 
     private fun loadWords() {

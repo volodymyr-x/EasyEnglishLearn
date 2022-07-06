@@ -6,6 +6,7 @@ sealed class WordSelectionState {
     object IdleState : WordSelectionState()
     object ShowMessage : WordSelectionState()
     class OpenDialog(val categoryName: String) : WordSelectionState()
-    class UpdateWords(val words: List<WordUI>) : WordSelectionState()
     class StartExercise(val dto: WordSelectionDto) : WordSelectionState()
+    class UpdateWords(val words: List<WordUI>, val isChooseAllChecked: Boolean = false) :
+        WordSelectionState()
 }
