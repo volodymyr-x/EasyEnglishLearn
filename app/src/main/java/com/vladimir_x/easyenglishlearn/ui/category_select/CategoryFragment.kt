@@ -77,7 +77,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     launch {
                         categories.collect { categoryList ->
-                            adapter?.setCategoryList(categoryList)
+                            adapter?.submitList(categoryList)
                         }
                     }
                     launch {

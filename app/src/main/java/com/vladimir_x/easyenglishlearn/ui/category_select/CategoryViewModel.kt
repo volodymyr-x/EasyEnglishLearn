@@ -17,7 +17,7 @@ class CategoryViewModel @Inject constructor(
 ) : ViewModel() {
     val categories: Flow<List<String>> = wordsInteractor.getAllCategories()
     private val _categoryState =
-        MutableStateFlow<CategorySelectState>(CategorySelectState.IdleState)
+        MutableStateFlow<CategorySelectState>(CategorySelectState.Idle)
     val categoryState: StateFlow<CategorySelectState>
         get() = _categoryState
 
@@ -45,6 +45,6 @@ class CategoryViewModel @Inject constructor(
 
     private fun changeCategoryState(state: CategorySelectState) {
         _categoryState.value = state
-        _categoryState.value = CategorySelectState.IdleState
+        _categoryState.value = CategorySelectState.Idle
     }
 }

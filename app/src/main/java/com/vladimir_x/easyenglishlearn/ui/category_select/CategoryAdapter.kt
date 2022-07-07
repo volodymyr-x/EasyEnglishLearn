@@ -2,32 +2,34 @@ package com.vladimir_x.easyenglishlearn.ui.category_select
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.databinding.RvCategoryItemBinding
-import java.util.ArrayList
+
+private val diffCallback = object : DiffUtil.ItemCallback<String>() {
+    override fun areItemsTheSame(oldItem: String, newItem: String) = oldItem == newItem
+
+    override fun areContentsTheSame(oldItem: String, newItem: String) = oldItem == newItem
+}
 
 class CategoryAdapter(
     private val itemClickListener: (categoryName: String) -> (Unit),
     private val editClickListener: (categoryName: String) -> (Unit),
     private val removeClickListener: (categoryName: String) -> (Unit)
-) : RecyclerView.Adapter<CategoryViewHolder>() {
-    private var categoryList: List<String> = ArrayList()
+) : ListAdapter<String, CategoryViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        return CategoryViewHolder.from(parent, itemClickListener, editClickListener, removeClickListener)
+        return CategoryViewHolder.from(
+            parent,
+            itemClickListener,
+            editClickListener,
+            removeClickListener
+        )
     }
 
     override fun onBindViewHolder(categoryViewHolder: CategoryViewHolder, position: Int) {
-        categoryViewHolder.bind(categoryList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return categoryList.size
-    }
-
-    fun setCategoryList(categoryList: List<String>) {
-        this.categoryList = categoryList
-        notifyDataSetChanged()
+        categoryViewHolder.bind(currentList[position])
     }
 }
 
@@ -36,8 +38,7 @@ class CategoryViewHolder(
     private val itemClickListener: (categoryName: String) -> (Unit),
     private val editClickListener: (categoryName: String) -> (Unit),
     private val removeClickListener: (categoryName: String) -> (Unit)
-) :
-    RecyclerView.ViewHolder(binding.root) {
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(categoryName: String) {
         binding.categoryName.text = categoryName
@@ -64,7 +65,12 @@ class CategoryViewHolder(
                 parent,
                 false
             )
-            return CategoryViewHolder(binding, itemClickListener, editClickListener, removeClickListener)
+            return CategoryViewHolder(
+                binding,
+                itemClickListener,
+                editClickListener,
+                removeClickListener
+            )
         }
     }
 }
