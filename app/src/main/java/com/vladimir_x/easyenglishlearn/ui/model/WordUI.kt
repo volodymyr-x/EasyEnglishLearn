@@ -5,8 +5,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class WordUI(
-    val id: Long,
+    val id: Long = 0,
     val lexeme: String,
     val translation: String,
     var isChecked: Boolean = false
-) : Parcelable
+) : Comparable<WordUI>, Parcelable {
+
+    override fun compareTo(other: WordUI): Int {
+        return id.compareTo(other.id)
+    }
+}

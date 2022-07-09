@@ -2,11 +2,14 @@ package com.vladimir_x.easyenglishlearn.domain
 
 import com.vladimir_x.easyenglishlearn.domain.repository.WordsRepository
 import com.vladimir_x.easyenglishlearn.model.Word
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import kotlinx.coroutines.flow.Flow
 
 class WordsInteractorImpl(private val wordsRepository: WordsRepository) : WordsInteractor {
-    override suspend fun getWordsByCategory(categoryName: String): List<Word> =
-        wordsRepository.getWordsByCategory(categoryName)
+    override suspend fun getWordsByCategory(categoryName: String): List<WordUI> =
+        wordsRepository.getWordsByCategory(categoryName).map { word ->
+            WordUI(id = word.id, lexeme = word.lexeme, translation = word.translation)
+        }
 
     override fun getAllCategories(): Flow<List<String>> =
         wordsRepository.getAllCategories()
@@ -14,20 +17,30 @@ class WordsInteractorImpl(private val wordsRepository: WordsRepository) : WordsI
     override suspend fun updateCategory(
         oldCategoryName: String,
         newCategoryName: String,
-        wordList: List<Word>
+        wordUIList: List<WordUI>
     ) {
-        wordsRepository.updateCategory(oldCategoryName, newCategoryName, wordList)
+        val words = wordUIList.map { wordUI ->
+            Word(
+                lexeme = wordUI.lexeme,
+                translation = wordUI.translation,
+                category = newCategoryName
+            )
+        }
+        wordsRepository.updateCategory(oldCategoryName, words)
     }
 
     override suspend fun removeCategory(categoryName: String) {
         wordsRepository.removeCategory(categoryName)
     }
 
-    override suspend fun addNewCategory(wordList: List<Word>, newCategoryName: String) {
-        wordsRepository.addNewCategory(wordList, newCategoryName)
-    }
-
-    override suspend fun insertNewCategory(wordList: List<Word>) {
-        wordsRepository.insertNewCategory(wordList)
+    override suspend fun addNewCategory(wordUIList: List<WordUI>, newCategoryName: String) {
+        val words = wordUIList.map { wordUI ->
+            Word(
+                lexeme = wordUI.lexeme,
+                translation = wordUI.translation,
+                category = newCategoryName
+            )
+        }
+        wordsRepository.addNewCategory(words)
     }
 }

@@ -64,8 +64,8 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     launch {
-                        words.collect { categoryList ->
-                            adapter?.setWordList(categoryList)
+                        words.collect { words ->
+                            adapter?.submitList(words)
                         }
                     }
                     launch {

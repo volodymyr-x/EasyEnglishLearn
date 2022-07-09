@@ -13,21 +13,16 @@ class WordsRepositoryImpl(private val wordDao: WordDao) : WordsRepository {
 
     override suspend fun updateCategory(
         oldCategoryName: String,
-        newCategoryName: String,
         wordList: List<Word>
     ) {
-        wordDao.updateCategory(oldCategoryName, newCategoryName, wordList)
+        wordDao.updateCategory(oldCategoryName, wordList)
     }
 
     override suspend fun removeCategory(categoryName: String) {
         wordDao.removeCategory(categoryName)
     }
 
-    override suspend fun addNewCategory(wordList: List<Word>, newCategoryName: String) {
-        wordDao.addNewCategory(wordList, newCategoryName)
-    }
-
-    override suspend fun insertNewCategory(wordList: List<Word>) {
+    override suspend fun addNewCategory(wordList: List<Word>) {
         wordDao.insertNewCategory(wordList)
     }
 

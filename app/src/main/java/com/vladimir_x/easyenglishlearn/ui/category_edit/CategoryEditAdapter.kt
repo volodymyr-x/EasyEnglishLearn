@@ -2,43 +2,34 @@ package com.vladimir_x.easyenglishlearn.ui.category_edit
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.databinding.RvCategoryEditItemBinding
-import com.vladimir_x.easyenglishlearn.model.Word
-import java.util.ArrayList
+import com.vladimir_x.easyenglishlearn.ui.WordUIDiff
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 
 class CategoryEditAdapter(
-    private val clickListener: (word: Word) -> Unit,
-    private val removeClickListener: (word: Word) -> Unit
-) : RecyclerView.Adapter<CategoryEditHolder>() {
-    private var wordList: List<Word> = ArrayList()
+    private val clickListener: (word: WordUI) -> Unit,
+    private val removeClickListener: (word: WordUI) -> Unit
+) : ListAdapter<WordUI, CategoryEditHolder>(WordUIDiff) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryEditHolder {
         return CategoryEditHolder.from(parent, clickListener, removeClickListener)
     }
 
     override fun onBindViewHolder(categoryEditHolder: CategoryEditHolder, position: Int) {
-        categoryEditHolder.bind(wordList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return wordList.size
-    }
-
-    fun setWordList(wordList: List<Word>) {
-        this.wordList = wordList
-        notifyDataSetChanged()
+        categoryEditHolder.bind(currentList[position])
     }
 }
 
 class CategoryEditHolder(
     private val itemBinding: RvCategoryEditItemBinding,
-    private val clickListener: (word: Word) -> (Unit),
-    private val removeClickListener: (word: Word) -> (Unit)
+    private val clickListener: (word: WordUI) -> (Unit),
+    private val removeClickListener: (word: WordUI) -> (Unit)
 ) :
     RecyclerView.ViewHolder(itemBinding.root) {
 
-    fun bind(word: Word) {
+    fun bind(word: WordUI) {
         with(itemBinding) {
             tvLexeme.text = word.lexeme
             tvTranslation.text = word.translation
@@ -50,8 +41,8 @@ class CategoryEditHolder(
     companion object {
         fun from(
             parent: ViewGroup,
-            clickListener: (word: Word) -> (Unit),
-            removeClickListener: (word: Word) -> (Unit)
+            clickListener: (word: WordUI) -> (Unit),
+            removeClickListener: (word: WordUI) -> (Unit)
         ): CategoryEditHolder {
             val binding = RvCategoryEditItemBinding.inflate(
                 LayoutInflater.from(parent.context),

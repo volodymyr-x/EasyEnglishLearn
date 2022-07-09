@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.domain.WordsInteractor
-import com.vladimir_x.easyenglishlearn.model.Word
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import com.vladimir_x.easyenglishlearn.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,8 +35,8 @@ class CategoryEditViewModel @Inject constructor(
         get() = _categoryEditState
 
     private val _words =
-        MutableStateFlow<List<Word>>(emptyList())
-    val words: StateFlow<List<Word>>
+        MutableStateFlow<List<WordUI>>(emptyList())
+    val words: StateFlow<List<WordUI>>
         get() = _words
 
     init {
@@ -68,8 +68,8 @@ class CategoryEditViewModel @Inject constructor(
         this.lexeme = lexeme
         this.translation = translation
         if (isTextFieldsNotEmpty) {
-            val newWord = Word(lexeme.trim(), translation.trim())
-            val newList = mutableListOf<Word>().apply {
+            val newWord = WordUI(lexeme = lexeme.trim(), translation = translation.trim())
+            val newList = mutableListOf<WordUI>().apply {
                 addAll(_words.value)
             }
             if (wordIndex >= 0) {
@@ -90,8 +90,8 @@ class CategoryEditViewModel @Inject constructor(
         cleanTextFields()
     }
 
-    fun onIconRemoveWordClick(word: Word) {
-        val newList = mutableListOf<Word>().apply {
+    fun onIconRemoveWordClick(word: WordUI) {
+        val newList = mutableListOf<WordUI>().apply {
             addAll(_words.value)
         }
         newList.remove(word)
@@ -101,7 +101,7 @@ class CategoryEditViewModel @Inject constructor(
         }
     }
 
-    fun onItemClick(word: Word) {
+    fun onItemClick(word: WordUI) {
         lexeme = word.lexeme
         translation = word.translation
         wordIndex = _words.value.indexOf(word)
@@ -130,7 +130,7 @@ class CategoryEditViewModel @Inject constructor(
         changeCategoryState(CategoryEditState.ShowMessage(resourceProvider.getString(resId)))
     }
 
-    private fun addNewCategory(categoryName: String, wordList: List<Word>) {
+    private fun addNewCategory(categoryName: String, wordList: List<WordUI>) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 wordsInteractor.addNewCategory(wordList, categoryName)
@@ -141,7 +141,7 @@ class CategoryEditViewModel @Inject constructor(
     private fun updateCategory(
         oldCategoryName: String,
         newCategoryName: String,
-        wordList: List<Word>
+        wordList: List<WordUI>
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

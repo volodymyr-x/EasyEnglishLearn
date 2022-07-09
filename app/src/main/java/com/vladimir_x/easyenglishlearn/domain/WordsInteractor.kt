@@ -1,22 +1,20 @@
 package com.vladimir_x.easyenglishlearn.domain
 
-import com.vladimir_x.easyenglishlearn.model.Word
+import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import kotlinx.coroutines.flow.Flow
 
 interface WordsInteractor {
-    suspend fun getWordsByCategory(categoryName: String): List<Word>
+    suspend fun getWordsByCategory(categoryName: String): List<WordUI>
 
     fun getAllCategories(): Flow<List<String>>
 
     suspend fun updateCategory(
         oldCategoryName: String,
         newCategoryName: String,
-        wordList: List<Word>
+        wordUIList: List<WordUI>
     )
 
     suspend fun removeCategory(categoryName: String)
 
-    suspend fun addNewCategory(wordList: List<Word>, newCategoryName: String)
-
-    suspend fun insertNewCategory(wordList: List<Word>)
+    suspend fun addNewCategory(wordUIList: List<WordUI>, newCategoryName: String)
 }
