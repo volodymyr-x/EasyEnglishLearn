@@ -21,25 +21,12 @@ abstract class WordDao {
         wordList: List<Word>
     ) {
         removeCategory(oldCategoryName)
-        //setCategory(wordList, newCategoryName)
         insertNewCategory(wordList)
     }
 
     @Query("DELETE from word WHERE category = :categoryName")
     abstract suspend fun removeCategory(categoryName: String)
 
-    /*@Transaction
-    open suspend fun addNewCategory(wordList: List<Word>, newCategoryName: String) {
-        //setCategory(wordList, newCategoryName)
-        insertNewCategory(wordList)
-    }*/
-
     @Insert
     abstract suspend fun insertNewCategory(wordList: List<Word>)
-
-    /*private fun setCategory(wordList: List<Word>, newCategoryName: String) {
-        for (word in wordList) {
-            word.category = newCategoryName
-        }
-    }*/
 }
