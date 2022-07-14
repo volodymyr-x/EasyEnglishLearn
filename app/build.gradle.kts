@@ -41,6 +41,8 @@ android {
 
 }
 
+val hiltVersion: String by rootProject.extra
+
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation("androidx.recyclerview:recyclerview:1.2.1")
@@ -66,12 +68,12 @@ dependencies {
     implementation("com.android.support:multidex:1.0.3")
 
     //Dagger
-    implementation("com.google.dagger:dagger:2.38.1")
-    kapt("com.google.dagger:dagger-compiler:2.38.1")
+    implementation("com.google.dagger:dagger:$hiltVersion")
+    kapt("com.google.dagger:dagger-compiler:$hiltVersion")
 
     //Hilt
-    implementation("com.google.dagger:hilt-android:2.38.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.38.1")
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
