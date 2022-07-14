@@ -2,15 +2,16 @@ package com.vladimir_x.easyenglishlearn.ui.word_selection
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.databinding.RvWordSelectionItemBinding
+import com.vladimir_x.easyenglishlearn.ui.WordUIDiff
 import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import com.vladimir_x.easyenglishlearn.ui.word_selection.WordSelectionAdapter.WordSelectionHolder
 
 class WordSelectionAdapter(
     private val listener: (checked: Boolean, wordId: Long) -> Unit
-) : RecyclerView.Adapter<WordSelectionHolder>() {
-    private var wordList: List<WordUI> = listOf()
+) : ListAdapter<WordUI, WordSelectionHolder>(WordUIDiff) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordSelectionHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
@@ -23,16 +24,7 @@ class WordSelectionAdapter(
     }
 
     override fun onBindViewHolder(wordSelectionHolder: WordSelectionHolder, position: Int) {
-        wordSelectionHolder.bind(wordList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return wordList.size
-    }
-
-    fun setWordList(wordList: List<WordUI>) {
-        this.wordList = wordList
-        notifyDataSetChanged()
+        wordSelectionHolder.bind(currentList[position])
     }
 
     class WordSelectionHolder(

@@ -66,7 +66,7 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
                         wordSelectionState.collect { state ->
                             when (state) {
                                 is WordSelectionState.UpdateWords -> {
-                                    wordSelectionAdapter?.setWordList(state.words)
+                                    wordSelectionAdapter?.submitList(state.words)
                                     chooseAllState(state.isChooseAllChecked)
                                 }
                                 is WordSelectionState.ShowMessage -> {
