@@ -12,7 +12,7 @@ class ConstructorViewModel @Inject constructor(
     state: SavedStateHandle
 ) : ExerciseViewModel(state) {
     private var answer: String = ""
-    private val letterList: MutableList<Char> = ArrayList()
+    private val letterList: MutableList<Letter> = ArrayList()
 
     override fun prepareQuestionAndAnswers() {
         super.prepareQuestionAndAnswers()
@@ -23,9 +23,9 @@ class ConstructorViewModel @Inject constructor(
         sendData(createDto())
     }
 
-    fun onNewButtonClick(letter: String) {
-        answer += letter
-        letterList.remove(letter[0])
+    fun onLetterButtonClick(letter: Letter) {
+        answer += letter.value
+        letterList.remove(letter)
         if (letterList.isEmpty()) {
             checkAnswer(answer)
         } else {
@@ -35,9 +35,9 @@ class ConstructorViewModel @Inject constructor(
 
     fun onButtonUndoClick() {
         if (answer.isNotEmpty()) {
-            val undoLetter = answer[answer.lastIndex]
+            val undoLetterValue = answer[answer.lastIndex].toString()
             answer = answer.substring(0, answer.lastIndex)
-            letterList.add(undoLetter)
+            letterList.add(Letter(value = undoLetterValue))
             sendData(createDto())
         }
     }
@@ -45,7 +45,9 @@ class ConstructorViewModel @Inject constructor(
     private fun createDto() = ConstructorDto(
         convertWordToQuestion(currentWord),
         answer,
-        letterList
+        ArrayList<Letter>().apply {
+            addAll(letterList)
+        }
     )
 
     private fun cleanPreviousData() {
@@ -55,14 +57,13 @@ class ConstructorViewModel @Inject constructor(
 
     private fun splitCurrentWord() {
         val letters = if (translationDirection) {
-            currentWord?.translation?.toCharArray()
+            prepareLetters(currentWord?.translation)
         } else {
-            currentWord?.lexeme?.toCharArray()
+            prepareLetters(currentWord?.lexeme)
         }
-        letters?.let {
-            for (letter in letters) {
-                letterList.add(letter)
-            }
-        }
+        letterList.addAll(letters)
     }
+
+    private fun prepareLetters(word: String?) =
+        word?.map { Letter(value = it.toString()) } ?: emptyList()
 }

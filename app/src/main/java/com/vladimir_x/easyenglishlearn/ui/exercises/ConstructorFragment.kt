@@ -2,13 +2,16 @@ package com.vladimir_x.easyenglishlearn.ui.exercises
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentConstructorBinding
@@ -21,12 +24,8 @@ import kotlinx.coroutines.launch
 class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
     private var _binding: FragmentConstructorBinding? = null
     private val binding get() = _binding!!
+    private var constructorAdapter: ConstructorAdapter? = null
     private val viewModel: ConstructorViewModel by viewModels()
-    private val newButtonListener = View.OnClickListener { v: View ->
-        val letter = (v as Button).text.toString()
-        viewModel.onNewButtonClick(letter)
-        //binding.wcfGridContainer.removeView(v)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,6 +45,17 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
             btnClean.setOnClickListener {
                 viewModel.onButtonUndoClick()
             }
+            rvConstructor.apply {
+                layoutManager = FlexboxLayoutManager(activity).apply {
+                    flexDirection = FlexDirection.ROW
+                    flexWrap = FlexWrap.WRAP
+                    justifyContent = JustifyContent.CENTER
+                }
+                constructorAdapter = ConstructorAdapter {
+                    viewModel.onLetterButtonClick(it)
+                }
+                adapter = constructorAdapter
+            }
         }
     }
 
@@ -56,7 +66,8 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
                     when (it) {
                         is State.DataState<*> -> {
                             val dataDto = it.data as DataDto.ConstructorDto
-                            createButtons(dataDto.letters)
+                            //createButtons(dataDto.letters)
+                            constructorAdapter?.submitList(dataDto.letters)
                             fillTexFields(dataDto.question, dataDto.answer)
                         }
                         is State.ErrorState -> showError()
@@ -85,22 +96,6 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
 
     private fun showMessage(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun createButtons(letters: List<Char>) {
-        binding.gridContainer.removeAllViews()
-        for (letter in letters) {
-            val button = layoutInflater.inflate(
-                R.layout.letter_button,
-                binding.gridContainer,
-                false
-            ) as Button
-            button.apply {
-                text = letter.toString()
-                setOnClickListener(newButtonListener)
-            }
-            binding.gridContainer.addView(button)
-        }
     }
 
     private fun fillTexFields(question: String, answer: String) {
