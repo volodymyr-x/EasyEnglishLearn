@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    compileSdk = 31
-    buildToolsVersion = "30.0.3"
+    compileSdk = 35
+    namespace = "com.vladimir_x.easyenglishlearn"
 
     defaultConfig {
         applicationId = "com.vladimir_x.easyenglishlearn"
-        minSdk = 19
-        targetSdk = 31
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
@@ -56,9 +56,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.0")
 
     //Room
-    implementation("androidx.room:room-runtime:2.4.2")
-    implementation("androidx.room:room-ktx:2.4.2")
-    kapt("androidx.room:room-compiler:2.4.2")
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
+    kapt("androidx.room:room-compiler:2.7.1")
 
     //Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
