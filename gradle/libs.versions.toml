@@ -1,6 +1,7 @@
 [versions]
-kotlin = "2.1.21"
+kotlin = "2.0.20"
 agp = "8.9.3"
+kspVersion = "2.0.20-1.0.25"
 
 appcompat = "1.7.0"
 constraintlayout = "2.2.1"
@@ -13,8 +14,7 @@ lifecycleViewmodelKtx = "2.9.0"
 material = "1.12.0"
 multidex = "1.0.3"
 recyclerview = "1.4.0"
-roomKtx = "2.7.1"
-roomRuntime = "2.7.1"
+room = "2.7.1"
 
 espressoCore = "3.6.1"
 junit = "4.13.2"
@@ -23,8 +23,8 @@ junitVersion = "1.2.1"
 [libraries]
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -41,9 +41,10 @@ lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx
 material = { module = "com.google.android.material:material", version.ref = "material" }
 multidex = { module = "com.android.support:multidex", version.ref = "multidex" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt-gradle-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
