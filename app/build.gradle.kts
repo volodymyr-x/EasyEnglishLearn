@@ -1,8 +1,8 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt.gradle.plugin)
     id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
 }
 
@@ -29,14 +29,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
     buildFeatures {
         viewBinding = true
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
 }
@@ -45,40 +48,33 @@ val hiltVersion: String by rootProject.extra
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.appcompat:appcompat:1.4.2")
-    implementation("com.google.android.material:material:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.fragment:fragment-ktx:1.5.0")
-    implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.0")
+    implementation(libs.recyclerview)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    implementation(libs.lifecycle.extensions)
+    implementation(libs.fragment.ktx)
+    implementation(libs.core.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
 
     //Room
-    implementation("androidx.room:room-runtime:2.7.1")
-    implementation("androidx.room:room-ktx:2.7.1")
-    kapt("androidx.room:room-compiler:2.7.1")
+    implementation(libs.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
 
     //Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.test)
 
-    implementation("com.android.support:multidex:1.0.3")
+    implementation(libs.multidex)
 
-    //Dagger
-    implementation("com.google.dagger:dagger:$hiltVersion")
-    kapt("com.google.dagger:dagger-compiler:$hiltVersion")
+    //Dagger Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
-    //Hilt
-    implementation("com.google.dagger:hilt-android:$hiltVersion")
-    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
-
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-}
-repositories {
-    mavenCentral()
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
