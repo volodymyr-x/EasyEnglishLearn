@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.gradle.plugin)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
 }
 
@@ -73,6 +74,9 @@ dependencies {
     //Dagger Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    //Kotlin serialization
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

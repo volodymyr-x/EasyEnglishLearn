@@ -7,8 +7,10 @@ import android.os.Parcel
 import androidx.room.Entity
 import androidx.room.Ignore
 import com.vladimir_x.easyenglishlearn.Constants
+import kotlinx.serialization.Serializable
 
 @Entity
+@Serializable
 class Word : Comparable<Word>, Parcelable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

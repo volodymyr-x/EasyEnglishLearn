@@ -3,7 +3,7 @@ package com.vladimir_x.easyenglishlearn
 import androidx.annotation.StringDef
 
 interface Constants {
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.SOURCE)
     @StringDef(WORD_CONSTRUCTOR, WORD_QUIZ)
 
     annotation class Exercises
