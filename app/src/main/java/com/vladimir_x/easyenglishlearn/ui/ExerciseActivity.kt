@@ -8,6 +8,7 @@ import com.vladimir_x.easyenglishlearn.databinding.ActivityExerciseBinding
 import com.vladimir_x.easyenglishlearn.ui.exercises.ConstructorFragment
 import com.vladimir_x.easyenglishlearn.ui.exercises.QuizFragment
 import com.vladimir_x.easyenglishlearn.ui.model.WordUI
+import com.vladimir_x.easyenglishlearn.ui.extension.getParcelableArrayList
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +21,7 @@ class ExerciseActivity : AppCompatActivity() {
         val intent = intent
         val exerciseType = intent.getStringExtra(Constants.EXERCISE_TYPE)
         val selectedWordList =
-            intent.getParcelableArrayListExtra<WordUI>(Constants.SELECTED_WORDS) as ArrayList<WordUI>
+            intent.getParcelableArrayList<WordUI>(Constants.SELECTED_WORDS) as ArrayList<WordUI>
         val translationDirection = intent.getBooleanExtra(Constants.TRANSLATION_DIRECTION, true)
         val fm = supportFragmentManager
         var fragment = fm.findFragmentById(binding.exerciseFragmentContainer.id)

@@ -1,7 +1,7 @@
 [versions]
-kotlin = "2.0.20"
+kotlin = "2.0.20" # veresion 2.1.21 doesn't not work with ksp 2.1.21
 agp = "8.9.3"
-kspVersion = "2.0.20-1.0.25"
+kspVersion = "2.0.20-1.0.25" # veresion 2.1.21 doesn't not work with ksp 2.1.21
 
 appcompat = "1.7.0"
 constraintlayout = "2.2.1"

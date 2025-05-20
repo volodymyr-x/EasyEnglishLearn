@@ -75,13 +75,15 @@ class WordSelectionViewModel @Inject constructor(
         }
     }
 
-    fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto) {
-        val dto = WordSelectionDto(
-            exerciseChoiceDto.isTranslationDirection,
-            getSelectedWords() as ArrayList<WordUI>,
-            exerciseChoiceDto.exercise
-        )
-        changeState(WordSelectionState.StartExercise(dto))
+    fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto?) {
+        exerciseChoiceDto?.let {
+            val dto = WordSelectionDto(
+                exerciseChoiceDto.isTranslationDirection,
+                getSelectedWords() as ArrayList<WordUI>,
+                exerciseChoiceDto.exercise
+            )
+            changeState(WordSelectionState.StartExercise(dto))
+        }
     }
 
     private fun changeState(state: WordSelectionState) {

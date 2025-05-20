@@ -91,7 +91,7 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
     }
 
     private fun closeFragment() {
-        requireActivity().onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     private fun showMessage(message: String) {

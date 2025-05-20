@@ -14,6 +14,7 @@ import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.vladimir_x.easyenglishlearn.ui.ExerciseActivity
+import com.vladimir_x.easyenglishlearn.ui.extension.getSerializableCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -93,7 +94,7 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
             viewLifecycleOwner
         ) { _, bundle ->
             val exerciseChoiceDto =
-                bundle.getSerializable(Constants.EXERCISE_CHOICE_KEY) as ExerciseChoiceDto
+                bundle.getSerializableCompat<ExerciseChoiceDto>(Constants.EXERCISE_CHOICE_KEY)
             viewModel.sendDTO(exerciseChoiceDto)
         }
 

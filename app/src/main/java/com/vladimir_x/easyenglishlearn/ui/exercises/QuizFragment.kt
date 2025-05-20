@@ -12,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentQuizBinding
-import com.vladimir_x.easyenglishlearn.model.Word
 import com.vladimir_x.easyenglishlearn.ui.State
 import com.vladimir_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,7 +74,7 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
     }
 
     private fun closeFragment() {
-        activity?.onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     private fun showFinalMessage(errorsCount: Int) {

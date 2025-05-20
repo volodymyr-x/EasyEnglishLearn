@@ -72,7 +72,7 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
     }
 
     private fun closeFragment() {
-        requireActivity().onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     private fun showFinalMessage(errorsCount: Int) {

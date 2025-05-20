@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.vladimir_x.easyenglishlearn.Constants
 import com.vladimir_x.easyenglishlearn.R
 import com.vladimir_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
+import com.vladimir_x.easyenglishlearn.ui.extension.getSerializableCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,7 +51,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         binding.rvCategorySelect.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && binding.fabCategoryAdd.visibility == View.VISIBLE) {
+                if (dy > 0 && binding.fabCategoryAdd.isVisible) {
                     binding.fabCategoryAdd.hide()
                 } else if (dy < 0 && binding.fabCategoryAdd.visibility != View.VISIBLE) {
                     binding.fabCategoryAdd.show()
@@ -110,7 +112,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
             Constants.DIALOG_REMOVE_CATEGORY,
             viewLifecycleOwner
         ) { _, bundle ->
-            when (bundle.getSerializable(Constants.RESULT_KEY) as DialogResult) {
+            when (bundle.getSerializableCompat<DialogResult>(Constants.RESULT_KEY)) {
                 DialogResult.Yes -> dialogYesClicked(categoryName)
                 else -> {}
             }
