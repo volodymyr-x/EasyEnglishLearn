@@ -27,8 +27,8 @@
     <string name="wsa_toast_min_words_count">select at least %d words</string>
     <string name="ecf_tv_translation_direction">select translation direction</string>
     <string name="ecf_tv_title">Choose exercise</string>
-    <string name="ecf_rb_en_ru"><![CDATA[En—>Ru]]></string>
-    <string name="ecf_rb_ru_en"><![CDATA[Ru—>En]]></string>
+    <string name="ecf_rb_en_ua"><![CDATA[En—>Ua]]></string>
+    <string name="ecf_rb_ua_en"><![CDATA[Ua—>En]]></string>
     <string name="ecf_btn_quiz">Quiz</string>
     <string name="ecf_btn_constructor">Constructor</string>
     <string name="ecf_btn_cancel">Cancel</string>

@@ -30,23 +30,23 @@ class DataBaseModule {
     @Provides
     fun provideUserDao(appDatabase: AppDatabase): WordDao = appDatabase.wordDao()
 
-    var rdc: RoomDatabase.Callback = object : RoomDatabase.Callback() {
+    private var rdc: RoomDatabase.Callback = object : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             Executors.newSingleThreadScheduledExecutor().execute {
                 db.execSQL(
                     "INSERT INTO word (lexeme, translation, category) " +
-                            "VALUES('milk', 'молоко', 'Еда и Напитки'), " +
-                            "('apple', 'яблоко', 'Еда и Напитки')," +
-                            "('bread', 'хлеб', 'Еда и Напитки')," +
-                            "('butter', 'масло', 'Еда и Напитки')," +
+                            "VALUES('milk', 'молоко', 'Їжа та напої'), " +
+                            "('apple', 'яблуко', 'Їжа та напої')," +
+                            "('bread', 'хліб', 'Їжа та напої')," +
+                            "('butter', 'масло', 'Їжа та напої')," +
                             "('football', 'футбол', 'Спорт')," +
-                            "('tennis', 'тенис', 'Спорт')," +
+                            "('tennis', 'теніс', 'Спорт')," +
                             "('basketball', 'баскетбол', 'Спорт')," +
                             "('snooker', 'снукер', 'Спорт')," +
-                            "('money', 'деньги', 'Поход в магазин')," +
-                            "('seller', 'продавец', 'Поход в магазин')," +
-                            "('queue', 'очередь', 'Поход в магазин');"
+                            "('money', 'гроші', 'В магазині')," +
+                            "('seller', 'продавець', 'В магазині')," +
+                            "('queue', 'черга', 'В магазині');"
                 )
             }
         }

@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
             android:checked="true"
-            android:text="@string/ecf_rb_en_ru"
+            android:text="@string/ecf_rb_en_ua"
             android:textSize="@dimen/text_size" />
 
         <RadioButton
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/layout_margin"
-            android:text="@string/ecf_rb_ru_en"
+            android:text="@string/ecf_rb_ua_en"
             android:textSize="@dimen/text_size" />
     </RadioGroup>
 
