@@ -9,3 +9,4 @@
 gradle/
 *.hprof
 *.log
+*.aab
