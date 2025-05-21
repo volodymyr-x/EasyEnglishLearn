@@ -1,67 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.word_selection.WordSelectionFragment">
 
-    <data>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/layout_margin"
+        android:text="@string/wsa_tv_choose_words"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/large_text_size" />
 
-        <variable
-            name="viewModel"
-            type="com.vladimir_x.easyenglishlearn.word_selection.WordSelectionViewModel" />
+    <TextView
+        android:id="@+id/tv_category_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/layout_margin"
+        android:textSize="@dimen/text_size"
+        tools:text="@string/category_name" />
 
-    </data>
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/layout_margin"
+        android:text="@string/wsa_btn_start"
+        android:textSize="@dimen/text_size" />
 
-    <LinearLayout
+    <CheckBox
+        android:id="@+id/cb_choose_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="@dimen/layout_margin"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:text="@string/wsa_cb_choose_all"
+        android:textSize="@dimen/text_size" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_words_choice"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/wsf_tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/layout_margin"
-            android:text="@string/wsa_tv_choose_words"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="@dimen/large_text_size" />
-
-        <TextView
-            android:id="@+id/wsf_tv_category_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/layout_margin"
-            android:text="@{viewModel.categoryName}"
-            android:textSize="@dimen/text_size"
-            tools:text="@string/category_name" />
-
-        <Button
-            android:id="@+id/wsf_btn_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/layout_margin"
-            android:onClick="@{() -> viewModel.onBtnStartClick()}"
-            android:text="@string/wsa_btn_start"
-            android:textSize="@dimen/text_size" />
-
-        <CheckBox
-            android:id="@+id/wsf_cb_choose_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_margin="@dimen/layout_margin"
-            android:button="@null"
-            android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-            android:onCheckedChanged="@{(view, checked) -> viewModel.onChooseAllChange(checked)}"
-            android:text="@string/wsa_cb_choose_all"
-            android:textSize="@dimen/text_size" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/wsf_rv_words_choice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-</layout>
+</LinearLayout>

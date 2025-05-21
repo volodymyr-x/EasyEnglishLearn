@@ -6,7 +6,7 @@
     <string name="about">About</string>
     <string name="cef_toast_save_edit_category">Enter category name</string>
     <string name="cef_save_word">Save word</string>
-    <string name="cef_toast_save_word_empty_fields">Fill all fields</string>
+    <string name="cef_toast_save_word_empty_fields">Fill in all fields</string>
     <string name="cef_category_edit_clean">Save word</string>
     <string name="ca_tv_category_select">Select category</string>
     <string name="btn_save_word_replace">Replace word</string>
@@ -27,8 +27,8 @@
     <string name="wsa_toast_min_words_count">select at least %d words</string>
     <string name="ecf_tv_translation_direction">select translation direction</string>
     <string name="ecf_tv_title">Choose exercise</string>
-    <string name="ecf_rb_en_ru"><![CDATA[En—>Ru]]></string>
-    <string name="ecf_rb_ru_en"><![CDATA[Ru—>En]]></string>
+    <string name="ecf_rb_en_ua"><![CDATA[En—>Ua]]></string>
+    <string name="ecf_rb_ua_en"><![CDATA[Ua—>En]]></string>
     <string name="ecf_btn_quiz">Quiz</string>
     <string name="ecf_btn_constructor">Constructor</string>
     <string name="ecf_btn_cancel">Cancel</string>
@@ -41,7 +41,7 @@
     <string name="ca_cm_on_item_click">On Item Click</string>
     <string name="category_name">Category Name</string>
     <string name="question">Question</string>
-    <string name="category_removed">Category removed</string>
+    <string name="category_removed">Category %s removed</string>
     <string name="category_edited">Category edited</string>
     <string name="category_added">Category added</string>
     <string name="ca_cm_remove_word">Remove word</string>

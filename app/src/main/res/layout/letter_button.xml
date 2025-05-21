@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/letter_button_size"
+    android:layout_height="@dimen/letter_button_size"
+    android:textSize="@dimen/text_size"
+    tools:text="X" />

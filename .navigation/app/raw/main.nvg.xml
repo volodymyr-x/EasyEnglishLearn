@@ -6,7 +6,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.vladimir_x.easyenglishlearn.MainActivity"/>
+        className = "com.vladimir_x.easyenglishlearn.ui.MainActivity"/>
       <point      
         x = "500"      
         y = "1480"/>
@@ -14,7 +14,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.vladimir_x.easyenglishlearn.word_selection.WordSelectionFragment"/>
+        className = "com.vladimir_x.easyenglishlearn.ui.word_selection.WordSelectionFragment"/>
       <point      
         x = "1768"      
         y = "100"/>
@@ -22,7 +22,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.vladimir_x.easyenglishlearn.category_edit.CategoryEditFragment"/>
+        className = "com.vladimir_x.easyenglishlearn.ui.category_edit.CategoryEditFragment"/>
       <point      
         x = "648"      
         y = "1628"/>
@@ -30,7 +30,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.vladimir_x.easyenglishlearn.exercises.WordConstructorFragment"/>
+        className = "com.vladimir_x.easyenglishlearn.ui.exercises.WordConstructorFragment"/>
       <point      
         x = "700"      
         y = "1680"/>
@@ -38,7 +38,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.vladimir_x.easyenglishlearn.exercises.WordQuizFragment"/>
+        className = "com.vladimir_x.easyenglishlearn.ui.exercises.WordQuizFragment"/>
       <point      
         x = "748"      
         y = "1728"/>
@@ -46,7 +46,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "com.vladimir_x.easyenglishlearn.category_select.CategoryFragment"/>
+        className = "com.vladimir_x.easyenglishlearn.ui.category_select.CategoryFragment"/>
       <point      
         x = "500"      
         y = "100"/>

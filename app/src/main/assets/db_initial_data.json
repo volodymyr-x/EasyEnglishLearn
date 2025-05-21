@@ -1,0 +1,57 @@
+[
+  {
+    "lexeme": "milk",
+    "translation": "молоко",
+    "category": "Їжа та напої"
+  },
+  {
+    "lexeme": "apple",
+    "translation": "яблуко",
+    "category": "Їжа та напої"
+  },
+  {
+    "lexeme": "bread",
+    "translation": "хліб",
+    "category": "Їжа та напої"
+  },
+  {
+    "lexeme": "butter",
+    "translation": "масло",
+    "category": "Їжа та напої"
+  },
+  {
+    "lexeme": "football",
+    "translation": "футбол",
+    "category": "Спорт"
+  },
+  {
+    "lexeme": "tennis",
+    "translation": "теніс",
+    "category": "Спорт"
+  },
+  {
+    "lexeme": "basketball",
+    "translation": "баскетбол",
+    "category": "Спорт"
+  },
+  {
+    "lexeme": "snooker",
+    "translation": "снукер",
+    "category": "Спорт"
+  },
+  {
+    "lexeme": "money",
+    "translation": "гроші",
+    "category": "В магазині"
+  },
+  {
+    "lexeme": "seller",
+    "translation": "продавець",
+    "category": "В магазині"
+  },
+  {
+    "lexeme": "queue",
+    "translation": "черга",
+    "category": "В магазині"
+  }
+]
