@@ -9,14 +9,14 @@ plugins {
 
 android {
     compileSdk = 35
-    namespace = "com.vladimir_x.easyenglishlearn"
+    namespace = "com.volodymyr_x.easyenglishlearn"
 
     defaultConfig {
-        applicationId = "com.vladimir_x.easyenglishlearn"
+        applicationId = "com.volodymyr_x.easyenglishlearn"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 1
+        versionName = "0.9.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
