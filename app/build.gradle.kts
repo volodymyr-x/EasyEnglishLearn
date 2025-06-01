@@ -9,10 +9,10 @@ plugins {
 
 android {
     compileSdk = 35
-    namespace = "com.vladimir_x.easyenglishlearn"
+    namespace = "com.volodymyr_x.easyenglishlearn"
 
     defaultConfig {
-        applicationId = "com.vladimir_x.easyenglishlearn"
+        applicationId = "com.volodymyr_x.easyenglishlearn"
         minSdk = 26
         targetSdk = 35
         versionCode = 2
