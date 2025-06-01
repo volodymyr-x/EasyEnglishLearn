@@ -2,7 +2,6 @@ package com.volodymyr_x.easyenglishlearn.ui.exercises
 
 import androidx.lifecycle.SavedStateHandle
 import com.volodymyr_x.easyenglishlearn.ui.exercises.DataDto.QuizDto
-import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.model.Answer
-import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.ui.State
 import com.volodymyr_x.easyenglishlearn.ui.State.CompletedState
 import com.volodymyr_x.easyenglishlearn.ui.State.DataState
