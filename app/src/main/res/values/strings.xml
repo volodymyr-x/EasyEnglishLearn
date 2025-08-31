@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">EasyEnglishLearn</string>
+    <string name="app_name">EasyLanguageLearn</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="cef_toast_save_edit_category">Enter category name</string>
