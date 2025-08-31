@@ -1,6 +1,7 @@
 package com.volodymyr_x.easyenglishlearn.ui
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
@@ -17,6 +18,7 @@ class ExerciseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityExerciseBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
         val intent = intent
         val exerciseType = intent.getStringExtra(Constants.EXERCISE_TYPE)

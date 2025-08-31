@@ -3,9 +3,8 @@ package com.volodymyr_x.easyenglishlearn.ui
 import androidx.appcompat.app.AppCompatActivity
 import androidx.annotation.LayoutRes
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.ui.category_select.CategoryFragment
@@ -21,6 +20,7 @@ class MainActivity : AppCompatActivity(), CategoryFragment.Callbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(layoutResId)
         val fm = supportFragmentManager
         var fragment = fm.findFragmentById(R.id.fragment_container)
@@ -29,24 +29,6 @@ class MainActivity : AppCompatActivity(), CategoryFragment.Callbacks {
             fm.beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.main_menu_about -> {
-                doAction(
-                    Constants.EMPTY_STRING,
-                    Constants.ACTION_ABOUT
-                )
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
