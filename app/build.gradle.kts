@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -38,6 +39,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
@@ -58,6 +60,13 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+
+    //Compose
+    implementation(libs.compose.ui)
+    implementation(libs.material3)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.activity.compose)
+    debugImplementation(libs.compose.ui.tooling)
 
     //Room
     implementation(libs.room.runtime)
