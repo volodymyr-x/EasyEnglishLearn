@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    //alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.gradle.plugin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
@@ -9,13 +9,13 @@ plugins {
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
     namespace = "com.volodymyr_x.easyenglishlearn"
 
     defaultConfig {
         applicationId = "com.volodymyr_x.easyenglishlearn"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 2
         versionName = "0.9.1"
         multiDexEnabled = true
@@ -31,20 +31,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         viewBinding = true
         compose = true
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
 }
 
 val hiltVersion: String by rootProject.extra
@@ -60,13 +54,15 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    coreLibraryDesugaring(libs.core.library.desugaring)
 
     //Compose
-    implementation(libs.compose.ui)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.material3)
-    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.activity.compose)
-    debugImplementation(libs.compose.ui.tooling)
 
     //Room
     implementation(libs.room.runtime)
@@ -78,8 +74,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.test)
 
-    implementation(libs.multidex)
-
     //Dagger Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
@@ -90,4 +84,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
