@@ -4,25 +4,23 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
 import com.volodymyr_x.easyenglishlearn.ui.extension.getSerializableCompat
+import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CategoryFragment : Fragment(R.layout.fragment_category_select) {
     private var callbacks: Callbacks? = null
-    private var adapter: CategoryAdapter? = null
     private var _binding: FragmentCategorySelectBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CategoryViewModel by viewModels()
@@ -40,26 +38,13 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCategorySelectBinding.bind(view)
-        binding.rvCategorySelect.layoutManager = LinearLayoutManager(activity)
-        adapter = CategoryAdapter(
-            { viewModel.onItemClick(it) },
-            { viewModel.onEditClick(it) },
-            { viewModel.onRemoveClick(it) }
-        )
-        binding.rvCategorySelect.adapter = adapter
-
-        binding.rvCategorySelect.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && binding.fabCategoryAdd.isVisible) {
-                    binding.fabCategoryAdd.hide()
-                } else if (dy < 0 && binding.fabCategoryAdd.visibility != View.VISIBLE) {
-                    binding.fabCategoryAdd.show()
-                }
-            }
-        })
-
-        binding.fabCategoryAdd.setOnClickListener { viewModel.onFabClick() }
+        setComposeContent(binding.root) {
+            val categoryList = viewModel.categories.collectAsState(emptyList()).value
+            CategorySelectContent(
+                categoryList = categoryList,
+                categoryClickAction = { viewModel.onCategoryAction(it) }
+            )
+        }
         subscribeObservers()
     }
 
@@ -77,11 +62,6 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         with(viewModel) {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    launch {
-                        categories.collect { categoryList ->
-                            adapter?.setCategoryList(categoryList)
-                        }
-                    }
                     launch {
                         categoryState.collect { state ->
                             when (state) {

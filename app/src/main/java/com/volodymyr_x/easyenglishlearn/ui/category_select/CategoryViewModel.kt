@@ -47,4 +47,13 @@ class CategoryViewModel @Inject constructor(
         _categoryState.value = state
         _categoryState.value = CategorySelectState.IdleState
     }
+
+    fun onCategoryAction(categoryAction: CategoryAction) {
+        when(categoryAction) {
+            is CategoryAction.Edit -> onEditClick(categoryAction.categoryName)
+            is CategoryAction.Remove -> onRemoveClick(categoryAction.categoryName)
+            is CategoryAction.Selected -> onItemClick(categoryAction.categoryName)
+            is CategoryAction.CreateNew -> onFabClick()
+        }
+    }
 }
