@@ -39,7 +39,7 @@ fun CategorySelectContent(
         topBar = {
             Text(
                 "SELECT CATEGORY",
-                fontSize = 30.sp,
+                fontSize = 24.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(16.dp)

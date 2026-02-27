@@ -3,14 +3,18 @@ package com.volodymyr_x.easyenglishlearn.ui.category_edit
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentCategoryEditBinding
+import com.volodymyr_x.easyenglishlearn.ui.category_select.CategorySelectContent
+import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,38 +29,15 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCategoryEditBinding.bind(view)
         val oldCategoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME)
-        initView(oldCategoryName)
-        subscribeObservers()
-    }
-
-    private fun getCorrectTitleId(oldCategoryName: String?): Int {
-        return if (Constants.EMPTY_STRING == oldCategoryName) R.string.eca_tv_new_category
-        else R.string.eca_tv_edit_category
-    }
-
-
-    private fun initView(oldCategoryName: String?) {
-        with(binding) {
-            adapter = CategoryEditAdapter(
-                clickListener = { viewModel.onItemClick(it) },
-                removeClickListener = { viewModel.onIconRemoveWordClick(it) }
+        setComposeContent(binding.root) {
+            val wordList = viewModel.words.collectAsStateWithLifecycle(emptyList()).value
+            CategoryEditContent(
+                categoryName = oldCategoryName ?: "",
+                categoryWords = wordList,
+                action = viewModel::onAction
             )
-            rvCategoryEdit.adapter = adapter
-
-            tvTitle.text = getString(getCorrectTitleId(oldCategoryName))
-            etCategoryName.setText(oldCategoryName)
-            btnSaveCategory.setOnClickListener {
-                viewModel.onBtnSaveCategoryClick(etCategoryName.text.toString())
-            }
-            btnSaveWord.setOnClickListener {
-                viewModel.onBtnSaveWordClick(
-                    etCategoryName.text.toString(),
-                    etLexeme.text.toString(),
-                    etTranslation.text.toString()
-                )
-            }
-            btnClean.setOnClickListener { viewModel.onBtnCleanClick() }
         }
+        subscribeObservers()
     }
 
     private fun subscribeObservers() {
@@ -78,8 +59,7 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
                                     showMessage(state.message)
                                 }
                                 is CategoryEditState.CurrentWord -> {
-                                    binding.etLexeme.setText(state.pair.first)
-                                    binding.etTranslation.setText(state.pair.second)
+
                                 }
                                 else -> {}
                             }

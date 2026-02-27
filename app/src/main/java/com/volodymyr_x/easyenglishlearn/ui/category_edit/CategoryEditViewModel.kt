@@ -162,4 +162,12 @@ class CategoryEditViewModel @Inject constructor(
         _categoryEditState.value = state
         _categoryEditState.value = CategoryEditState.IdleState
     }
+
+    fun onAction(action: CategoryEditAction) {
+        when(action) {
+            is CategoryEditAction.SaveCategory -> onBtnSaveCategoryClick(action.categoryName)
+            is CategoryEditAction.AddWord -> onBtnSaveWordClick(action.categoryName, action.lexeme, action.translation)
+            is CategoryEditAction.RemoveWord -> onIconRemoveWordClick(action.word)
+        }
+    }
 }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
@@ -39,7 +40,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCategorySelectBinding.bind(view)
         setComposeContent(binding.root) {
-            val categoryList = viewModel.categories.collectAsState(emptyList()).value
+            val categoryList = viewModel.categories.collectAsStateWithLifecycle(emptyList()).value
             CategorySelectContent(
                 categoryList = categoryList,
                 categoryClickAction = { viewModel.onCategoryAction(it) }
