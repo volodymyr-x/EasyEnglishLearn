@@ -8,5 +8,5 @@ data class WordUI(
     val id: Long,
     val lexeme: String,
     val translation: String,
-    var isChecked: Boolean = false
+    val isChecked: Boolean = false
 ) : Parcelable

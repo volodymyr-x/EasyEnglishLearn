@@ -7,14 +7,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.volodymyr_x.easyenglishlearn.ui.ExerciseActivity
 import com.volodymyr_x.easyenglishlearn.ui.extension.getSerializableCompat
+import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,14 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentWordSelectionBinding.bind(view)
-        initView()
+        setComposeContent(binding.root) {
+            val wordSelectionState =
+                viewModel.wordSelectionState.collectAsStateWithLifecycle().value
+            WordSelectionContent(
+                state = wordSelectionState,
+                action = viewModel::onAction
+            )
+        }
         subscribeObservers()
     }
 
@@ -37,25 +45,9 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
         _binding = null
     }
 
-    private fun initView() {
-        with(binding) {
-            rvWordsChoice.apply {
-                layoutManager = LinearLayoutManager(activity)
-                wordSelectionAdapter = WordSelectionAdapter { checked, wordId ->
-                    viewModel.onItemCheckBoxChange(checked, wordId)
-                }
-                adapter = wordSelectionAdapter
-            }
-            tvCategoryName.text = viewModel.categoryName
-            btnStart.setOnClickListener { viewModel.onBtnStartClick() }
-            cbChooseAll.setOnClickListener {
-                viewModel.onChooseAllClick(cbChooseAll.isChecked)
-            }
-        }
-    }
-
     private fun showMessage() {
-        val message = getString(R.string.wsa_toast_min_words_count, Constants.MIN_CHECKED_WORD_QUANTITY)
+        val message =
+            getString(R.string.wsa_toast_min_words_count, Constants.MIN_CHECKED_WORD_QUANTITY)
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -64,19 +56,19 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     launch {
-                        wordSelectionState.collect { state ->
+                        wordSelectionStateOld.collect { state ->
                             when (state) {
-                                is WordSelectionState.UpdateWords -> {
+                                is WordSelectionStateOld.UpdateWords -> {
                                     wordSelectionAdapter?.setWordList(state.words)
                                     chooseAllState(state.isChooseAllChecked)
                                 }
-                                is WordSelectionState.ShowMessage -> {
+                                is WordSelectionStateOld.ShowMessage -> {
                                     showMessage()
                                 }
-                                is WordSelectionState.OpenDialog -> {
+                                is WordSelectionStateOld.OpenDialog -> {
                                     showDialog(state.categoryName)
                                 }
-                                is WordSelectionState.StartExercise -> {
+                                is WordSelectionStateOld.StartExercise -> {
                                     startExercise(state.dto)
                                 }
                                 else -> {}
@@ -107,7 +99,7 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
     }
 
     private fun chooseAllState(isChecked: Boolean) {
-        binding.cbChooseAll.isChecked = isChecked
+        //binding.cbChooseAll.isChecked = isChecked
     }
 
     private fun startExercise(dto: WordSelectionDto) {

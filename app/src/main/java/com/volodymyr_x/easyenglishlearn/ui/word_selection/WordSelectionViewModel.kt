@@ -10,9 +10,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.ArrayList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,40 +24,55 @@ class WordSelectionViewModel @Inject constructor(
     private var wordsByCategory: List<WordUI> = listOf()
     var categoryName = ""
 
-    private val _wordSelectionState =
-        MutableStateFlow<WordSelectionState>(WordSelectionState.IdleState)
-    val wordSelectionState: StateFlow<WordSelectionState>
-        get() = _wordSelectionState
+    private val _wordSelectionStateOld =
+        MutableStateFlow<WordSelectionStateOld>(WordSelectionStateOld.IdleStateOld)
+    val wordSelectionStateOld: StateFlow<WordSelectionStateOld>
+        get() = _wordSelectionStateOld
+
+    private val _wordSelectionState = MutableStateFlow(WordSelectionState())
+    val wordSelectionState = _wordSelectionState.asStateFlow()
+
 
     init {
         val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
         categoryName?.let {
             this.categoryName = categoryName
+            _wordSelectionState.update { it.copy(categoryName = categoryName) }
             loadWords()
         }
     }
 
     fun onBtnStartClick() {
         if (getSelectedWords().size < Constants.MIN_CHECKED_WORD_QUANTITY) {
-            changeState(WordSelectionState.ShowMessage)
+            changeState(WordSelectionStateOld.ShowMessage)
         } else {
-            changeState(WordSelectionState.OpenDialog(categoryName))
+            changeState(WordSelectionStateOld.OpenDialog(categoryName))
         }
     }
 
     private fun getSelectedWords() = wordsByCategory.filter { it.isChecked }
 
-    fun onChooseAllClick(checked: Boolean) {
-        wordsByCategory.onEach { it.isChecked = checked }
-        changeState(WordSelectionState.UpdateWords(wordsByCategory, checked))
+    fun onChooseAllClick() {
+        val checked = !_wordSelectionState.value.isChooseAllChecked
+        wordsByCategory = wordsByCategory.map { it.copy(isChecked = checked) }
+        changeState(WordSelectionStateOld.UpdateWords(wordsByCategory, checked))
+        _wordSelectionState.update { it.copy(
+            categoryWords = wordsByCategory,
+            isChooseAllChecked = checked
+        ) }
     }
 
-    fun onItemCheckBoxChange(checked: Boolean, wordId: Long) {
-        wordsByCategory.firstOrNull { it.id == wordId }?.let {
-            it.isChecked = checked
+    fun onItemCheckBoxChange(checkedWord: WordUI) {
+        wordsByCategory = wordsByCategory.map {
+            if (it.id == checkedWord.id) it.copy(isChecked = !it.isChecked)
+            else it
         }
         val isChooseAllChecked = getSelectedWords().size == wordsByCategory.size
-        changeState(WordSelectionState.UpdateWords(wordsByCategory, isChooseAllChecked))
+        changeState(WordSelectionStateOld.UpdateWords(wordsByCategory, isChooseAllChecked))
+        _wordSelectionState.update { it.copy(
+            categoryWords = wordsByCategory,
+            isChooseAllChecked = isChooseAllChecked
+        ) }
     }
 
     private fun loadWords() {
@@ -71,7 +87,8 @@ class WordSelectionViewModel @Inject constructor(
                 }
             }
             wordsByCategory = words
-            changeState(WordSelectionState.UpdateWords(words))
+            changeState(WordSelectionStateOld.UpdateWords(words))
+            _wordSelectionState.update { it.copy(categoryWords = wordsByCategory) }
         }
     }
 
@@ -82,12 +99,20 @@ class WordSelectionViewModel @Inject constructor(
                 getSelectedWords() as ArrayList<WordUI>,
                 exerciseChoiceDto.exercise
             )
-            changeState(WordSelectionState.StartExercise(dto))
+            changeState(WordSelectionStateOld.StartExercise(dto))
         }
     }
 
-    private fun changeState(state: WordSelectionState) {
-        _wordSelectionState.value = state
-        _wordSelectionState.value = WordSelectionState.IdleState
+    private fun changeState(state: WordSelectionStateOld) {
+        _wordSelectionStateOld.value = state
+        _wordSelectionStateOld.value = WordSelectionStateOld.IdleStateOld
+    }
+
+    fun onAction(action: WordSelectionAction) {
+        when (action) {
+            is WordSelectionAction.OnBtnStartClick -> onBtnStartClick()
+            is WordSelectionAction.OnItemCheckBoxChange -> onItemCheckBoxChange(action.word)
+            is WordSelectionAction.OnChooseAllClick -> onChooseAllClick()
+        }
     }
 }
