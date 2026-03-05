@@ -95,9 +95,9 @@ class WordSelectionViewModel @Inject constructor(
     fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto?) {
         exerciseChoiceDto?.let {
             val dto = WordSelectionDto(
-                exerciseChoiceDto.isTranslationDirection,
+                exerciseChoiceDto.isWordToTranslation,
                 getSelectedWords() as ArrayList<WordUI>,
-                exerciseChoiceDto.exercise
+                exerciseChoiceDto.exerciseType
             )
             changeState(WordSelectionStateOld.StartExercise(dto))
         }
@@ -113,6 +113,7 @@ class WordSelectionViewModel @Inject constructor(
             is WordSelectionAction.OnBtnStartClick -> onBtnStartClick()
             is WordSelectionAction.OnItemCheckBoxChange -> onItemCheckBoxChange(action.word)
             is WordSelectionAction.OnChooseAllClick -> onChooseAllClick()
+            is WordSelectionAction.SetExerciseChoiceDto -> sendDTO(action.exerciseChoiceDto)
         }
     }
 }

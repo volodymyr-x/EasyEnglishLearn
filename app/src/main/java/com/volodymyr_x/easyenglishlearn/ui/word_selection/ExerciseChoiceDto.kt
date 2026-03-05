@@ -4,7 +4,7 @@ import com.volodymyr_x.easyenglishlearn.Constants.Exercises
 import java.io.Serializable
 
 data class ExerciseChoiceDto(
-    val isTranslationDirection: Boolean,
+    val isWordToTranslation: Boolean,
     @Exercises
-    val exercise: String
+    val exerciseType: String
 ) : Serializable

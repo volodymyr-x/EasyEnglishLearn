@@ -6,4 +6,6 @@ sealed class WordSelectionAction {
     data object OnBtnStartClick : WordSelectionAction()
     data class OnItemCheckBoxChange(val word: WordUI) : WordSelectionAction()
     data object OnChooseAllClick : WordSelectionAction()
+
+    data class SetExerciseChoiceDto(val exerciseChoiceDto: ExerciseChoiceDto) : WordSelectionAction()
 }

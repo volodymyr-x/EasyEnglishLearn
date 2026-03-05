@@ -45,6 +45,8 @@ fun WordSelectionContent(
     state: WordSelectionState,
     action: (WordSelectionAction) -> Unit = {}
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.safeDrawing)
@@ -68,6 +70,15 @@ fun WordSelectionContent(
                     .fillMaxSize()
             )
             {
+                when {
+                    showDialog -> ExerciseChoiceContent(
+                        { showDialog = false },
+                        { exerciseChoiceDto ->
+                            action(WordSelectionAction.SetExerciseChoiceDto(exerciseChoiceDto))
+                            showDialog = false
+                        }
+                    )
+                }
                 Text(
                     text = state.categoryName,
                     fontSize = 18.sp,
@@ -80,7 +91,10 @@ fun WordSelectionContent(
                 VerticalSpacer()
 
                 Button(
-                    onClick = { action(WordSelectionAction.OnBtnStartClick) },
+                    onClick = {
+                        showDialog = true
+                        //action(WordSelectionAction.OnBtnStartClick)
+                    },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(text = stringResource(R.string.wsa_btn_start))
