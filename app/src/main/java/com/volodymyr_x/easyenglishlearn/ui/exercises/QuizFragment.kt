@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
@@ -14,6 +15,8 @@ import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.volodymyr_x.easyenglishlearn.ui.State
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
+import com.volodymyr_x.easyenglishlearn.ui.word_selection.WordSelectionContent
+import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,18 +32,25 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentQuizBinding.bind(view)
-        initView()
+        setComposeContent(binding.root) {
+            val screenState =
+                viewModel.screenState.collectAsStateWithLifecycle().value
+            QuizContent(
+                state = screenState,
+                answerAction = viewModel::onAnswerChecked
+            )
+        }
         subscribeObservers()
         viewModel.prepareQuestionAndAnswers()
     }
 
-    private fun initView() {
+    /*private fun initView() {
         with(binding) {
             rbFirst.setOnClickListener(clickListener)
             rbSecond.setOnClickListener(clickListener)
             rbThird.setOnClickListener(clickListener)
         }
-    }
+    }*/
 
     private fun subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -70,7 +80,7 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
     }
 
     private fun clearRadioGroup() {
-        binding.rgAnswers.clearCheck()
+        //binding.rgAnswers.clearCheck()
     }
 
     private fun closeFragment() {
@@ -90,12 +100,12 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
     }
 
     private fun fillFields(question: String, answers: List<String>) {
-        with(binding) {
+        /*with(binding) {
             tvQuestion.text = question
             rbFirst.text = answers[0]
             rbSecond.text = answers[1]
             rbThird.text = answers[2]
-        }
+        }*/
     }
 
     companion object {

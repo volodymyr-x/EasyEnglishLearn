@@ -11,6 +11,8 @@ import com.volodymyr_x.easyenglishlearn.ui.State.ErrorState
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 abstract class ExerciseViewModel(
     state: SavedStateHandle
@@ -25,6 +27,9 @@ abstract class ExerciseViewModel(
     private val _exerciseState = MutableStateFlow<State>(State.IdleState)
     val exerciseState: StateFlow<State>
         get() = _exerciseState
+
+    private val _screenState = MutableStateFlow(DataDto.QuizDto("", emptyList()))
+    val screenState = _screenState.asStateFlow()
 
     private val isExerciseOver: Boolean
         get() = iteration >= wordList.size
@@ -67,6 +72,9 @@ abstract class ExerciseViewModel(
 
     fun sendData(data: DataDto) {
         changeState(DataState(data))
+        if (data is DataDto.QuizDto) {
+            _screenState.update { data }
+        }
     }
 
     private fun changeState(state: State) {
