@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.util.TableInfo
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
@@ -32,7 +33,6 @@ fun QuizContent(
     Column(
         modifier = modifier
             .padding(16.dp)
-            .selectableGroup()
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -44,29 +44,33 @@ fun QuizContent(
 
         VerticalSpacer()
 
-        state.answers.forEach { text ->
-            Row(
-                Modifier
-                    .height(56.dp)
-                    // Use selectable to handle the selection and interaction
-                    .selectable(
+        Column(
+            modifier = modifier.selectableGroup(),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            state.answers.forEach { text ->
+                Row(
+                    Modifier
+                        .height(56.dp)
+                        // Use selectable to handle the selection and interaction
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = {
+                                onOptionSelected(text)
+                                answerAction(text)
+                            }
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
                         selected = (text == selectedOption),
-                        onClick = {
-                            onOptionSelected(text)
-                            answerAction(text)}
+                        onClick = null // null recommended when Row handles the click
                     )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = null // null recommended when Row handles the click
-                )
-                Text(
-                    text = text,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
             }
         }
 
