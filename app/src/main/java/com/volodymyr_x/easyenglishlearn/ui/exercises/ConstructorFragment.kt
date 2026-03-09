@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
@@ -14,6 +15,7 @@ import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentConstructorBinding
 import com.volodymyr_x.easyenglishlearn.ui.State
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
+import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -22,16 +24,19 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
     private var _binding: FragmentConstructorBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ConstructorViewModel by viewModels()
-    private val newButtonListener = View.OnClickListener { v: View ->
-        val letter = (v as Button).text.toString()
-        viewModel.onNewButtonClick(letter)
-        //binding.wcfGridContainer.removeView(v)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentConstructorBinding.bind(view)
-        initView()
+        setComposeContent(binding.root) {
+            val screenState =
+                viewModel.constructorScreenState.collectAsStateWithLifecycle().value
+            ConstructorContent(
+                state = screenState,
+                letterButtonAction = viewModel::onNewButtonClick,
+                undoButtonAction = viewModel::onButtonUndoClick
+            )
+        }
         subscribeObservers()
         viewModel.prepareQuestionAndAnswers()
     }
@@ -41,14 +46,6 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
         _binding = null
     }
 
-    private fun initView() {
-        with(binding) {
-            btnClean.setOnClickListener {
-                viewModel.onButtonUndoClick()
-            }
-        }
-    }
-
     private fun subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -56,8 +53,6 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
                     when (it) {
                         is State.DataState<*> -> {
                             val dataDto = it.data as DataDto.ConstructorDto
-                            createButtons(dataDto.letters)
-                            fillTexFields(dataDto.question, dataDto.answer)
                         }
                         is State.ErrorState -> showError()
                         is State.CompletedState<*> -> {
@@ -85,29 +80,6 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
 
     private fun showMessage(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun createButtons(letters: List<Char>) {
-        binding.gridContainer.removeAllViews()
-        for (letter in letters) {
-            val button = layoutInflater.inflate(
-                R.layout.letter_button,
-                binding.gridContainer,
-                false
-            ) as Button
-            button.apply {
-                text = letter.toString()
-                setOnClickListener(newButtonListener)
-            }
-            binding.gridContainer.addView(button)
-        }
-    }
-
-    private fun fillTexFields(question: String, answer: String) {
-        with(binding) {
-            tvQuestion.text = question
-            tvAnswer.text = answer
-        }
     }
 
     companion object {

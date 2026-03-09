@@ -28,8 +28,11 @@ abstract class ExerciseViewModel(
     val exerciseState: StateFlow<State>
         get() = _exerciseState
 
-    private val _screenState = MutableStateFlow(DataDto.QuizDto("", emptyList()))
-    val screenState = _screenState.asStateFlow()
+    private val _quizScreenState = MutableStateFlow(DataDto.QuizDto("", emptyList()))
+    val quizScreenState = _quizScreenState.asStateFlow()
+
+    private val _constructorScreenState = MutableStateFlow(DataDto.ConstructorDto("", "", emptyList()))
+    val constructorScreenState = _constructorScreenState.asStateFlow()
 
     private val isExerciseOver: Boolean
         get() = iteration >= wordList.size
@@ -73,7 +76,9 @@ abstract class ExerciseViewModel(
     fun sendData(data: DataDto) {
         changeState(DataState(data))
         if (data is DataDto.QuizDto) {
-            _screenState.update { data }
+            _quizScreenState.update { data }
+        } else if (data is DataDto.ConstructorDto) {
+            _constructorScreenState.update { data }
         }
     }
 

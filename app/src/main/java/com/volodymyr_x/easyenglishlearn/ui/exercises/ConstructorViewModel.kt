@@ -23,9 +23,9 @@ class ConstructorViewModel @Inject constructor(
         sendData(createDto())
     }
 
-    fun onNewButtonClick(letter: String) {
+    fun onNewButtonClick(letter: Char) {
         answer += letter
-        letterList.remove(letter[0])
+        letterList.remove(letter)
         if (letterList.isEmpty()) {
             checkAnswer(answer)
         } else {

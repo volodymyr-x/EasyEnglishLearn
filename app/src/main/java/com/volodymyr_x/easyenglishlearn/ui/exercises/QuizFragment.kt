@@ -15,7 +15,6 @@ import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.volodymyr_x.easyenglishlearn.ui.State
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
-import com.volodymyr_x.easyenglishlearn.ui.word_selection.WordSelectionContent
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,16 +24,13 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
     private val viewModel: QuizViewModel by viewModels()
-    private val clickListener = View.OnClickListener {
-        viewModel.onAnswerChecked((it as RadioButton).text)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentQuizBinding.bind(view)
         setComposeContent(binding.root) {
             val screenState =
-                viewModel.screenState.collectAsStateWithLifecycle().value
+                viewModel.quizScreenState.collectAsStateWithLifecycle().value
             QuizContent(
                 state = screenState,
                 answerAction = viewModel::onAnswerChecked
@@ -44,23 +40,13 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         viewModel.prepareQuestionAndAnswers()
     }
 
-    /*private fun initView() {
-        with(binding) {
-            rbFirst.setOnClickListener(clickListener)
-            rbSecond.setOnClickListener(clickListener)
-            rbThird.setOnClickListener(clickListener)
-        }
-    }*/
-
     private fun subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.exerciseState.collect {
-                    clearRadioGroup()
                     when (it) {
                         is State.DataState<*> -> {
                             val dataDto = it.data as DataDto.QuizDto
-                            fillFields(dataDto.question, dataDto.answers)
                         }
                         is State.ErrorState -> showErrorMessage()
                         is State.CompletedState<*> -> {
@@ -79,10 +65,6 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         _binding = null
     }
 
-    private fun clearRadioGroup() {
-        //binding.rgAnswers.clearCheck()
-    }
-
     private fun closeFragment() {
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }
@@ -97,15 +79,6 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
 
     private fun showMessage(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun fillFields(question: String, answers: List<String>) {
-        /*with(binding) {
-            tvQuestion.text = question
-            rbFirst.text = answers[0]
-            rbSecond.text = answers[1]
-            rbThird.text = answers[2]
-        }*/
     }
 
     companion object {
