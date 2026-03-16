@@ -3,7 +3,6 @@ package com.volodymyr_x.easyenglishlearn.ui.category_edit
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentCategoryEditBinding
-import com.volodymyr_x.easyenglishlearn.ui.category_select.CategorySelectContent
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

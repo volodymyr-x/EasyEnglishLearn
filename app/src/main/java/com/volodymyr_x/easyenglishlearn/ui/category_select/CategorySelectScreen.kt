@@ -28,7 +28,7 @@ import com.volodymyr_x.easyenglishlearn.R
 
 @Composable
 fun CategorySelectContent(
-    categoryList: List<String>,
+    state: CategorySelectState,
     categoryClickAction: (CategoryAction) -> Unit = {}
 ) {
     Scaffold(
@@ -65,9 +65,16 @@ fun CategorySelectContent(
                     .padding(16.dp)
                     .fillMaxSize()
             ) {
+                when {
+                    state.showDeleteDialog -> CategoryRemoveDialog(
+                    categoryName = state.selectedCategoryName,
+                        onDismissRequest = { categoryClickAction(CategoryAction.HideDeleteDialog) },
+                        onConfirm = { categoryClickAction(CategoryAction.Remove(state.selectedCategoryName)) }
+                )
+            }
                 LazyColumn {
-                    items(categoryList.size) { index ->
-                        CategoryItem(categoryList[index], categoryClickAction)
+                    items(state.categoryList.size) { index ->
+                        CategoryItem(state.categoryList[index], categoryClickAction)
                     }
                 }
             }
@@ -103,7 +110,7 @@ fun CategoryItem(
             contentDescription = stringResource(id = R.string.ca_cm_remove_category),
             modifier = Modifier
                 .padding(start = 16.dp)
-                .clickable { clickAction(CategoryAction.Remove(categoryName)) }
+                .clickable { clickAction(CategoryAction.ShowDeleteDialog(categoryName)) }
         )
     }
 }
@@ -111,5 +118,7 @@ fun CategoryItem(
 @Preview(showSystemUi = true)
 @Composable
 fun CategorySelectScreenPreview() {
-    CategorySelectContent(categoryList = listOf("Category #1", "Category #2", "Category #3"))
+    CategorySelectContent(state = CategorySelectState(
+        categoryList = listOf("Category #1", "Category #2", "Category #3")
+    ))
 }

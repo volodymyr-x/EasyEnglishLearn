@@ -4,20 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
 import com.volodymyr_x.easyenglishlearn.ui.extension.getSerializableCompat
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CategoryFragment : Fragment(R.layout.fragment_category_select) {
@@ -40,13 +36,30 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCategorySelectBinding.bind(view)
         setComposeContent(binding.root) {
-            val categoryList = viewModel.categories.collectAsStateWithLifecycle(emptyList()).value
+            LaunchedEffect(binding.root) {
+                viewModel.categoryAction.collect { action ->
+                    when (action) {
+                        CategoryAction.CreateNew -> {
+                            callbacks?.onCategoryEdit("")
+                        }
+                        is CategoryAction.Edit -> {
+                            callbacks?.onCategoryEdit(action.categoryName)
+                        }
+                        is CategoryAction.Selected -> {
+                            callbacks?.onCategorySelected(action.categoryName)
+                        }
+                        is CategoryAction.Remove -> {}
+                        is CategoryAction.ShowDeleteDialog -> {}
+                        CategoryAction.HideDeleteDialog -> {}
+                    }
+                }
+            }
+            val categoryState = viewModel.categoryState.collectAsStateWithLifecycle().value
             CategorySelectContent(
-                categoryList = categoryList,
+                state = categoryState,
                 categoryClickAction = { viewModel.onCategoryAction(it) }
             )
         }
-        subscribeObservers()
     }
 
     override fun onDestroyView() {
@@ -57,31 +70,6 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
     override fun onDetach() {
         super.onDetach()
         callbacks = null
-    }
-
-    private fun subscribeObservers() {
-        with(viewModel) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    launch {
-                        categoryState.collect { state ->
-                            when (state) {
-                                is CategorySelectState.OpenCategory -> {
-                                    callbacks?.onCategorySelected(state.data)
-                                }
-                                is CategorySelectState.EditCategory -> {
-                                    callbacks?.onCategoryEdit(state.data)
-                                }
-                                is CategorySelectState.RemoveCategory -> {
-                                    showDialog(state.data)
-                                }
-                                else -> {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun showMessage(message: String) {
@@ -107,7 +95,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
     }
 
     private fun dialogYesClicked(categoryName: String) {
-        viewModel.removeCategory(categoryName)
+        //viewModel.removeCategory(categoryName)
         showMessage(getString(R.string.category_removed, categoryName))
     }
 

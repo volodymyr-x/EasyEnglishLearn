@@ -6,4 +6,8 @@ sealed class CategoryAction {
      data class Remove(val categoryName: String) : CategoryAction()
 
     data object CreateNew : CategoryAction()
+
+    data class ShowDeleteDialog(val categoryName: String) : CategoryAction()
+
+    data object HideDeleteDialog : CategoryAction()
 }
