@@ -29,7 +29,7 @@ import com.volodymyr_x.easyenglishlearn.R
 @Composable
 fun CategorySelectContent(
     state: CategorySelectState,
-    categoryClickAction: (CategoryAction) -> Unit = {}
+    onEvent: (CategoryEvent) -> Unit = {}
 ) {
     Scaffold(
         modifier = Modifier
@@ -49,7 +49,7 @@ fun CategorySelectContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    categoryClickAction(CategoryAction.CreateNew)
+                    onEvent(CategoryEvent.OnFabClick)
                 },
             ) {
                 Image(
@@ -68,13 +68,13 @@ fun CategorySelectContent(
                 when {
                     state.showDeleteDialog -> CategoryRemoveDialog(
                     categoryName = state.selectedCategoryName,
-                        onDismissRequest = { categoryClickAction(CategoryAction.HideDeleteDialog) },
-                        onConfirm = { categoryClickAction(CategoryAction.Remove(state.selectedCategoryName)) }
+                        onDismissRequest = { onEvent(CategoryEvent.HideDeleteDialog) },
+                        onConfirm = { onEvent(CategoryEvent.OnRemoveClick(state.selectedCategoryName)) }
                 )
             }
                 LazyColumn {
                     items(state.categoryList.size) { index ->
-                        CategoryItem(state.categoryList[index], categoryClickAction)
+                        CategoryItem(state.categoryList[index], onEvent)
                     }
                 }
             }
@@ -85,13 +85,13 @@ fun CategorySelectContent(
 @Composable
 fun CategoryItem(
     categoryName: String,
-    clickAction: (CategoryAction) -> Unit = {}
+    onEvent: (CategoryEvent) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp)
-            .clickable { clickAction(CategoryAction.Selected(categoryName)) }
+            .clickable { onEvent(CategoryEvent.OnItemClick(categoryName)) }
     ) {
         Text(
             categoryName,
@@ -103,14 +103,14 @@ fun CategoryItem(
             contentDescription = stringResource(id = R.string.ca_cm_edit_category),
             modifier = Modifier
                 .padding(start = 16.dp)
-                .clickable { clickAction(CategoryAction.Edit(categoryName)) }
+                .clickable { onEvent(CategoryEvent.OnEditClick(categoryName)) }
         )
         Image(
             painter = painterResource(id = R.drawable.ic_action_remove),
             contentDescription = stringResource(id = R.string.ca_cm_remove_category),
             modifier = Modifier
                 .padding(start = 16.dp)
-                .clickable { clickAction(CategoryAction.ShowDeleteDialog(categoryName)) }
+                .clickable { onEvent(CategoryEvent.ShowDeleteDialog(categoryName)) }
         )
     }
 }

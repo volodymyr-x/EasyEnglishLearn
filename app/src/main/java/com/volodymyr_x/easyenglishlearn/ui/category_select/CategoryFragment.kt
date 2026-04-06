@@ -8,10 +8,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentCategorySelectBinding
-import com.volodymyr_x.easyenglishlearn.ui.extension.getSerializableCompat
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -48,17 +46,13 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
                         is CategoryAction.Selected -> {
                             callbacks?.onCategorySelected(action.categoryName)
                         }
-                        is CategoryAction.Remove -> {}
-                        is CategoryAction.ShowDeleteDialog -> {}
-                        CategoryAction.HideDeleteDialog -> {}
+                        is CategoryAction.Removed -> categoryRemovedYesClicked(action.categoryName)
                     }
                 }
             }
             val categoryState = viewModel.categoryState.collectAsStateWithLifecycle().value
             CategorySelectContent(
-                state = categoryState,
-                categoryClickAction = { viewModel.onCategoryAction(it) }
-            )
+                state = categoryState, onEvent = { viewModel.onCategoryEvent(it) })
         }
     }
 
@@ -76,26 +70,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showDialog(categoryName: String) {
-        childFragmentManager.setFragmentResultListener(
-            Constants.DIALOG_REMOVE_CATEGORY,
-            viewLifecycleOwner
-        ) { _, bundle ->
-            when (bundle.getSerializableCompat<DialogResult>(Constants.RESULT_KEY)) {
-                DialogResult.Yes -> dialogYesClicked(categoryName)
-                else -> {}
-            }
-        }
-
-        val dialogFragment = CategoryRemoveFragment.newInstance(categoryName)
-        dialogFragment.show(
-            childFragmentManager,
-            Constants.DIALOG_REMOVE_CATEGORY
-        )
-    }
-
-    private fun dialogYesClicked(categoryName: String) {
-        //viewModel.removeCategory(categoryName)
+    private fun categoryRemovedYesClicked(categoryName: String) {
         showMessage(getString(R.string.category_removed, categoryName))
     }
 

@@ -2,7 +2,6 @@ package com.volodymyr_x.easyenglishlearn.ui.category_select
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -36,27 +35,31 @@ class CategoryViewModel @Inject constructor(
         }
     }
 
-    private fun onFabClick() {
+    private fun createNewCategory() {
         viewModelScope.launch {
             _categoryAction.send(CategoryAction.Edit(""))
         }
     }
 
-    private fun onEditClick(categoryName: String) {
+    private fun editCategory(categoryName: String) {
         viewModelScope.launch {
             _categoryAction.send(CategoryAction.Edit(categoryName))
         }
     }
 
-    private fun onItemClick(categoryName: String) {
+    private fun openCategory(categoryName: String) {
         viewModelScope.launch {
             _categoryAction.send(CategoryAction.Selected(categoryName))
         }
     }
 
     private fun removeCategory(categoryName: String) {
+        _categoryState.update { state ->
+            state.copy(showDeleteDialog = false, selectedCategoryName = "")
+        }
         viewModelScope.launch {
             wordsInteractor.removeCategory(categoryName)
+            _categoryAction.send(CategoryAction.Removed(categoryName))
         }
     }
 
@@ -72,14 +75,14 @@ class CategoryViewModel @Inject constructor(
         }
     }
 
-    fun onCategoryAction(categoryAction: CategoryAction) {
-        when(categoryAction) {
-            is CategoryAction.Edit -> onEditClick(categoryAction.categoryName)
-            is CategoryAction.Remove -> removeCategory(categoryAction.categoryName)
-            is CategoryAction.Selected -> onItemClick(categoryAction.categoryName)
-            is CategoryAction.CreateNew -> onFabClick()
-            is CategoryAction.ShowDeleteDialog -> showDeleteDialog(categoryAction.categoryName)
-            CategoryAction.HideDeleteDialog -> hideDeleteDialog()
+    fun onCategoryEvent(event: CategoryEvent) {
+        when(event) {
+            is CategoryEvent.OnEditClick -> editCategory(event.categoryName)
+            is CategoryEvent.OnRemoveClick -> removeCategory(event.categoryName)
+            is CategoryEvent.OnItemClick -> openCategory(event.categoryName)
+            is CategoryEvent.OnFabClick -> createNewCategory()
+            is CategoryEvent.ShowDeleteDialog -> showDeleteDialog(event.categoryName)
+            CategoryEvent.HideDeleteDialog -> hideDeleteDialog()
         }
     }
 }
