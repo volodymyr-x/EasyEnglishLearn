@@ -3,18 +3,15 @@ package com.volodymyr_x.easyenglishlearn.ui.category_edit
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentCategoryEditBinding
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
@@ -28,18 +25,26 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
         _binding = FragmentCategoryEditBinding.bind(view)
         val oldCategoryName = requireArguments().getString(Constants.ARG_CATEGORY_NAME)
         setComposeContent(binding.root) {
-            val wordList = viewModel.words.collectAsStateWithLifecycle(emptyList()).value
+            LaunchedEffect(binding.root) {
+                viewModel.categoryEditAction.collect { action ->
+                    when (action) {
+                        is CategoryEditAction.ShowMessage -> showMessage(action.message)
+                        CategoryEditAction.CloseScreen -> closeFragment()
+                    }
+                }
+            }
+            val state = viewModel.categoryEditState.collectAsStateWithLifecycle().value
             CategoryEditContent(
-                categoryName = oldCategoryName ?: "",
-                categoryWords = wordList,
-                action = viewModel::onAction
+                oldCategoryName = oldCategoryName ?: "",
+                state = state,
+                event = viewModel::onEvent
             )
         }
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
-        with(viewModel) {
+        /*with(viewModel) {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     launch {
@@ -65,7 +70,7 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private fun closeFragment() {

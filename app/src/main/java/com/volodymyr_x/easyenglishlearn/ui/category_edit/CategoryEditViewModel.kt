@@ -1,6 +1,5 @@
 package com.volodymyr_x.easyenglishlearn.ui.category_edit
 
-import android.text.TextUtils
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,8 +11,12 @@ import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,110 +27,113 @@ class CategoryEditViewModel @Inject constructor(
     private val wordsInteractor: WordsInteractor,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
-    private var oldCategoryName: String = ""
-    private var wordIndex = 0
-    private var categoryName: String = ""
-    private var lexeme: String = ""
-    private var translation: String = ""
-    private val _categoryEditState =
-        MutableStateFlow<CategoryEditState>(CategoryEditState.IdleState)
+    private val _categoryEditState = MutableStateFlow(CategoryEditState())
     val categoryEditState: StateFlow<CategoryEditState>
         get() = _categoryEditState
 
-    private val _words =
-        MutableStateFlow<List<Word>>(emptyList())
-    val words: StateFlow<List<Word>>
-        get() = _words
+    private val _categoryEditAction = Channel<CategoryEditAction>()
+    val categoryEditAction: Flow<CategoryEditAction>
+        get() = _categoryEditAction.receiveAsFlow()
 
     init {
         val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
-        categoryName?.let {
-            this.categoryName = categoryName
-            this.oldCategoryName = categoryName
-            cleanTextFields()
-            subscribeWordsToData()
+        if (categoryName != null) {
+            viewModelScope.launch {
+                val wordsByCategory = wordsInteractor.getWordsByCategory(categoryName)
+                _categoryEditState.update { state ->
+                    state.copy(
+                        categoryName = categoryName,
+                        oldCategoryName = categoryName,
+                        words = wordsByCategory
+                    )
+                }
+            }
         }
     }
 
-    fun onBtnSaveCategoryClick(categoryName: String) {
-        val newCategoryName: String = categoryName.trim()
-        if (TextUtils.isEmpty(newCategoryName)) {
+    private fun onBtnSaveCategoryClick() {
+        val state = _categoryEditState.value
+        val newCategoryName = state.categoryName
+        if (newCategoryName.isBlank()) {
             showMessage(R.string.cef_toast_save_edit_category)
         } else {
-            if (TextUtils.isEmpty(oldCategoryName)) {
-                addNewCategory(newCategoryName, _words.value)
+            if (state.oldCategoryName.isEmpty()) {
+                addNewCategory(newCategoryName, state.words)
             } else {
-                updateCategory(oldCategoryName, newCategoryName, _words.value)
+                updateCategory(state.oldCategoryName, newCategoryName, state.words)
             }
-            changeCategoryState(CategoryEditState.CloseScreenState)
+            viewModelScope.launch {
+                _categoryEditAction.send(CategoryEditAction.CloseScreen)
+            }
         }
     }
 
-    fun onBtnSaveWordClick(categoryName: String, lexeme: String, translation: String) {
-        this.categoryName = categoryName
-        this.lexeme = lexeme
-        this.translation = translation
+    private fun onBtnSaveWordClick() {
+        val state = _categoryEditState.value
         if (isTextFieldsNotEmpty) {
-            val newWord = Word(lexeme.trim(), translation.trim())
+            val newWord = Word(
+                lexeme = state.lexeme.trim(),
+                translation = state.translation.trim()
+            )
             val newList = mutableListOf<Word>().apply {
-                addAll(_words.value)
-            }
-            if (wordIndex >= 0) {
-                newList[wordIndex] = newWord
-            } else {
-                newList.add(newWord)
+                addAll(state.words)
+                if (state.wordIndex >= 0) {
+                    this[state.wordIndex] = newWord
+                } else {
+                    add(newWord)
+                }
             }
             cleanTextFields()
-            viewModelScope.launch {
-                _words.emit(newList)
+            _categoryEditState.update { state ->
+                state.copy(words = newList)
             }
         } else {
             showMessage(R.string.cef_toast_save_word_empty_fields)
         }
     }
 
-    fun onBtnCleanClick() {
-        cleanTextFields()
-    }
+    private fun onIconRemoveWordClick(word: Word) {
+        val wordsByCategory = _categoryEditState.value.words.toTypedArray()
 
-    fun onIconRemoveWordClick(word: Word) {
-        val newList = mutableListOf<Word>().apply {
-            addAll(_words.value)
-        }
-        newList.remove(word)
+        val updatedWords = listOf(*wordsByCategory) - word
         cleanTextFields()
-        viewModelScope.launch {
-            _words.emit(newList)
+        _categoryEditState.update { state ->
+            state.copy(words = updatedWords)
         }
     }
 
-    fun onItemClick(word: Word) {
-        lexeme = word.lexeme
-        translation = word.translation
-        wordIndex = _words.value.indexOf(word)
-        updateCurrentWord()
+    private fun onWordClick(word: Word) {
+        _categoryEditState.update { state ->
+            state.copy(
+                lexeme = word.lexeme,
+                translation = word.translation,
+                wordIndex = state.words.indexOf(word)
+            )
+        }
     }
 
     private val isTextFieldsNotEmpty: Boolean
-        get() = !TextUtils.isEmpty(categoryName.trim()) &&
-                !TextUtils.isEmpty(lexeme.trim()) &&
-                !TextUtils.isEmpty(translation.trim())
+        get() {
+            val state = _categoryEditState.value
+            return state.categoryName.isNotBlank()
+                    && state.lexeme.isNotBlank()
+                    && state.translation.isNotBlank()
+        }
 
-    private fun subscribeWordsToData() {
-        viewModelScope.launch {
-            _words.emit(wordsInteractor.getWordsByCategory(oldCategoryName))
+    private fun cleanTextFields() {
+        _categoryEditState.update { state ->
+            state.copy(
+                lexeme = "",
+                translation = "",
+                wordIndex = -1
+            )
         }
     }
 
-    private fun cleanTextFields() {
-        lexeme = Constants.EMPTY_STRING
-        translation = Constants.EMPTY_STRING
-        wordIndex = -1
-        updateCurrentWord()
-    }
-
     private fun showMessage(@StringRes resId: Int) {
-        changeCategoryState(CategoryEditState.ShowMessage(resourceProvider.getString(resId)))
+        viewModelScope.launch {
+            _categoryEditAction.send(CategoryEditAction.ShowMessage(resourceProvider.getString(resId)))
+        }
     }
 
     private fun addNewCategory(categoryName: String, wordList: List<Word>) {
@@ -154,20 +160,40 @@ class CategoryEditViewModel @Inject constructor(
         }
     }
 
-    private fun updateCurrentWord() {
-        changeCategoryState(CategoryEditState.CurrentWord(Pair(lexeme, translation)))
+    private fun updateCategoryName(newValue: String) {
+        _categoryEditState.update { state ->
+            state.copy(
+                categoryName = newValue
+            )
+        }
     }
 
-    private fun changeCategoryState(state: CategoryEditState) {
-        _categoryEditState.value = state
-        _categoryEditState.value = CategoryEditState.IdleState
+    private fun updateLexeme(newValue: String) {
+        _categoryEditState.update { state ->
+            state.copy(
+                lexeme = newValue
+            )
+        }
     }
 
-    fun onAction(action: CategoryEditAction) {
-        when(action) {
-            is CategoryEditAction.SaveCategory -> onBtnSaveCategoryClick(action.categoryName)
-            is CategoryEditAction.AddWord -> onBtnSaveWordClick(action.categoryName, action.lexeme, action.translation)
-            is CategoryEditAction.RemoveWord -> onIconRemoveWordClick(action.word)
+    private fun updateTranslation(newValue: String) {
+        _categoryEditState.update { state ->
+            state.copy(
+                translation = newValue
+            )
+        }
+    }
+
+    fun onEvent(event: CategoryEditEvent) {
+        when (event) {
+            CategoryEditEvent.SaveCategory -> onBtnSaveCategoryClick()
+            CategoryEditEvent.AddWord -> onBtnSaveWordClick()
+            is CategoryEditEvent.RemoveWord -> onIconRemoveWordClick(event.word)
+            is CategoryEditEvent.CategoryNameUpdate -> updateCategoryName(event.newValue)
+            is CategoryEditEvent.LexemeUpdate -> updateLexeme(event.newValue)
+            is CategoryEditEvent.TranslationUpdate -> updateTranslation(event.newValue)
+            CategoryEditEvent.CleanFields -> cleanTextFields()
+            is CategoryEditEvent.OnWordClick -> onWordClick(event.word)
         }
     }
 }

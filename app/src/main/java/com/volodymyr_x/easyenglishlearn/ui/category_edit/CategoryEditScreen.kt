@@ -18,10 +18,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -36,13 +32,10 @@ import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
 fun CategoryEditContent(
-    categoryName: String,
-    categoryWords: List<Word>,
-    action: (CategoryEditAction) -> Unit = {}
+    oldCategoryName: String,
+    state: CategoryEditState,
+    event: (CategoryEditEvent) -> Unit = {}
 ) {
-    var currentCategoryName by remember { mutableStateOf(categoryName) }
-    var currentLexeme by remember { mutableStateOf("") }
-    var currentTranslation by remember { mutableStateOf("") }
     Scaffold(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.safeDrawing)
@@ -50,7 +43,7 @@ fun CategoryEditContent(
         containerColor = Color.Transparent,
         topBar = {
             Text(
-                text = stringResource(id = getCorrectTitle(categoryName)),
+                text = stringResource(id = getCorrectTitle(oldCategoryName)),
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -67,8 +60,8 @@ fun CategoryEditContent(
             )
             {
                 OutlinedTextField(
-                    value = currentCategoryName,
-                    onValueChange = { currentCategoryName = it },
+                    value = state.categoryName,
+                    onValueChange = { event(CategoryEditEvent.CategoryNameUpdate(it)) },
                     label = { Text("Category name") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -76,7 +69,7 @@ fun CategoryEditContent(
                 VerticalSpacer()
 
                 Button(
-                    onClick = { action(CategoryEditAction.SaveCategory(currentCategoryName)) },
+                    onClick = { event(CategoryEditEvent.SaveCategory) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -91,15 +84,15 @@ fun CategoryEditContent(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     OutlinedTextField(
-                        value = currentLexeme,
-                        onValueChange = { currentLexeme = it },
+                        value = state.lexeme,
+                        onValueChange = { event(CategoryEditEvent.LexemeUpdate(it)) },
                         label = { Text(stringResource(R.string.eca_tv_lexeme)) },
                         modifier = Modifier.weight(1f)
                     )
 
                     OutlinedTextField(
-                        value = currentTranslation,
-                        onValueChange = { currentTranslation = it },
+                        value = state.translation,
+                        onValueChange = { event(CategoryEditEvent.TranslationUpdate(it)) },
                         label = { Text(stringResource(R.string.eca_tv_translation)) },
                         modifier = Modifier.weight(1f)
                     )
@@ -111,19 +104,7 @@ fun CategoryEditContent(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Button(
-                        onClick = {
-                            if (currentLexeme.isNotBlank() && currentTranslation.isNotBlank()) {
-                                action(
-                                    CategoryEditAction.AddWord(
-                                        categoryName = currentCategoryName,
-                                        lexeme = currentLexeme,
-                                        translation = currentTranslation
-                                    )
-                                )
-                                currentLexeme = ""
-                                currentTranslation = ""
-                            }
-                        },
+                        onClick = { event(CategoryEditEvent.AddWord) },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
@@ -133,7 +114,7 @@ fun CategoryEditContent(
                     }
 
                     Button(
-                        onClick = { currentLexeme = ""; currentTranslation = "" },
+                        onClick = { event(CategoryEditEvent.CleanFields) },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
@@ -146,15 +127,14 @@ fun CategoryEditContent(
                 VerticalSpacer()
 
                 LazyColumn {
-                    items(categoryWords.size) { index ->
+                    items(state.words.size) { index ->
                         WordItem(
-                            categoryWords[index],
+                            state.words[index],
                             clickAction = { word ->
-                                currentLexeme = word.lexeme
-                                currentTranslation = word.translation
+                                event(CategoryEditEvent.OnWordClick(word))
                             },
                             deleteAction = { word ->
-                                action(CategoryEditAction.RemoveWord(word))
+                                event(CategoryEditEvent.RemoveWord(word))
                             }
                         )
                     }
@@ -207,10 +187,14 @@ private fun getCorrectTitle(categoryName: String): Int =
 @Composable
 fun CategoryEditContentPreview() {
     CategoryEditContent(
-        categoryName = "Category name",
-        categoryWords = listOf(
-            Word("Lexeme #1", "Translation №1"),
-            Word("Lexeme #2", "Translation №2"),
+        oldCategoryName = "Category name",
+        state = CategoryEditState(
+            lexeme = "Lexeme",
+            translation = "Translation",
+            words = listOf(
+                Word("Lexeme #1", "Translation №1"),
+                Word("Lexeme #2", "Translation №2"),
+            )
         )
     )
 }
