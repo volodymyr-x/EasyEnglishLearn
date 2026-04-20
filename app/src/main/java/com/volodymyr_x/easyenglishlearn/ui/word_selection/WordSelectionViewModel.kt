@@ -8,9 +8,11 @@ import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,62 +23,71 @@ class WordSelectionViewModel @Inject constructor(
     state: SavedStateHandle,
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
-    private var wordsByCategory: List<WordUI> = listOf()
-    var categoryName = ""
+    private val _screenState = MutableStateFlow(WordSelectionState())
+    val screenState = _screenState.asStateFlow()
 
-    private val _wordSelectionStateOld =
-        MutableStateFlow<WordSelectionStateOld>(WordSelectionStateOld.IdleStateOld)
-    val wordSelectionStateOld: StateFlow<WordSelectionStateOld>
-        get() = _wordSelectionStateOld
-
-    private val _wordSelectionState = MutableStateFlow(WordSelectionState())
-    val wordSelectionState = _wordSelectionState.asStateFlow()
+    private val _wordSelectionAction = Channel<WordSelectionAction>()
+    val wordSelectionAction: Flow<WordSelectionAction>
+        get() = _wordSelectionAction.receiveAsFlow()
 
 
     init {
         val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
         categoryName?.let {
-            this.categoryName = categoryName
-            _wordSelectionState.update { it.copy(categoryName = categoryName) }
+            updateScreenState { it.copy(categoryName = categoryName) }
             loadWords()
         }
     }
 
-    fun onBtnStartClick() {
+    fun onAction(action: WordSelectionEvent) {
+        when (action) {
+            is WordSelectionEvent.OnBtnStartClick -> onBtnStartClick()
+            is WordSelectionEvent.OnItemCheckBoxChange -> onItemCheckBoxChange(action.word)
+            is WordSelectionEvent.OnChooseAllClick -> onChooseAllClick()
+            is WordSelectionEvent.SetExerciseChoiceDto -> sendDTO(action.exerciseChoiceDto)
+            WordSelectionEvent.HideDialog -> hideChooseExerciseDialog()
+        }
+    }
+
+    private fun onBtnStartClick() {
         if (getSelectedWords().size < Constants.MIN_CHECKED_WORD_QUANTITY) {
-            changeState(WordSelectionStateOld.ShowMessage)
+            viewModelScope.launch {
+                _wordSelectionAction.send(WordSelectionAction.ShowMessage)
+            }
         } else {
-            changeState(WordSelectionStateOld.OpenDialog(categoryName))
+            updateScreenState { it.copy(openChooseExerciseDialog = true) }
         }
     }
 
-    private fun getSelectedWords() = wordsByCategory.filter { it.isChecked }
+    private fun getSelectedWords() = _screenState.value.categoryWords.filter { it.isChecked }
 
-    fun onChooseAllClick() {
-        val checked = !_wordSelectionState.value.isChooseAllChecked
-        wordsByCategory = wordsByCategory.map { it.copy(isChecked = checked) }
-        changeState(WordSelectionStateOld.UpdateWords(wordsByCategory, checked))
-        _wordSelectionState.update { it.copy(
-            categoryWords = wordsByCategory,
-            isChooseAllChecked = checked
-        ) }
+    private fun onChooseAllClick() {
+        updateScreenState { state ->
+            val checked = !state.isChooseAllChecked
+            state.copy(
+                categoryWords = state.categoryWords.map { it.copy(isChecked = checked) },
+                isChooseAllChecked = checked
+            )
+        }
     }
 
-    fun onItemCheckBoxChange(checkedWord: WordUI) {
-        wordsByCategory = wordsByCategory.map {
-            if (it.id == checkedWord.id) it.copy(isChecked = !it.isChecked)
-            else it
+    private fun onItemCheckBoxChange(checkedWord: WordUI) {
+        updateScreenState { state ->
+            val updatedWords = state.categoryWords.map {
+                if (it.id == checkedWord.id) it.copy(isChecked = !it.isChecked)
+                else it
+            }
+            val areAllWordsChecked = updatedWords.all { it.isChecked }
+            state.copy(
+                categoryWords = updatedWords,
+                isChooseAllChecked = areAllWordsChecked
+            )
         }
-        val isChooseAllChecked = getSelectedWords().size == wordsByCategory.size
-        changeState(WordSelectionStateOld.UpdateWords(wordsByCategory, isChooseAllChecked))
-        _wordSelectionState.update { it.copy(
-            categoryWords = wordsByCategory,
-            isChooseAllChecked = isChooseAllChecked
-        ) }
     }
 
     private fun loadWords() {
         viewModelScope.launch {
+            val categoryName = _screenState.value.categoryName
             val words = withContext(Dispatchers.IO) {
                 wordsInteractor.getWordsByCategory(categoryName).map { word ->
                     WordUI(
@@ -86,34 +97,31 @@ class WordSelectionViewModel @Inject constructor(
                     )
                 }
             }
-            wordsByCategory = words
-            changeState(WordSelectionStateOld.UpdateWords(words))
-            _wordSelectionState.update { it.copy(categoryWords = wordsByCategory) }
+            updateScreenState { it.copy(categoryWords = words) }
         }
     }
 
-    fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto?) {
+    private fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto?) {
+        hideChooseExerciseDialog()
         exerciseChoiceDto?.let {
             val dto = WordSelectionDto(
                 exerciseChoiceDto.isWordToTranslation,
                 getSelectedWords() as ArrayList<WordUI>,
                 exerciseChoiceDto.exerciseType
             )
-            changeState(WordSelectionStateOld.StartExercise(dto))
+            viewModelScope.launch {
+                _wordSelectionAction.send(WordSelectionAction.StartExercise(dto))
+            }
         }
     }
 
-    private fun changeState(state: WordSelectionStateOld) {
-        _wordSelectionStateOld.value = state
-        _wordSelectionStateOld.value = WordSelectionStateOld.IdleStateOld
+    private fun hideChooseExerciseDialog() {
+        updateScreenState { it.copy(openChooseExerciseDialog = false) }
     }
 
-    fun onAction(action: WordSelectionAction) {
-        when (action) {
-            is WordSelectionAction.OnBtnStartClick -> onBtnStartClick()
-            is WordSelectionAction.OnItemCheckBoxChange -> onItemCheckBoxChange(action.word)
-            is WordSelectionAction.OnChooseAllClick -> onChooseAllClick()
-            is WordSelectionAction.SetExerciseChoiceDto -> sendDTO(action.exerciseChoiceDto)
-        }
+    private fun updateScreenState(
+        function: (WordSelectionState) -> WordSelectionState
+    ) {
+        _screenState.update(function)
     }
 }

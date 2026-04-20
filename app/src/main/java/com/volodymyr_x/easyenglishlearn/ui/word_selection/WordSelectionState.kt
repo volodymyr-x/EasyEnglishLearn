@@ -7,6 +7,6 @@ data class WordSelectionState(
     val categoryWords: List<WordUI> = emptyList(),
     val isChooseAllChecked: Boolean = false,
     val message: String? = null,
-    val openDialogCategoryName: String? = null,
+    val openChooseExerciseDialog: Boolean = false,
     val startExerciseDto: WordSelectionDto? = null
 )

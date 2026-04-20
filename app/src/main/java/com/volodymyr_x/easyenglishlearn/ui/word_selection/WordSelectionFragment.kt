@@ -4,40 +4,42 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentWordSelectionBinding
 import com.volodymyr_x.easyenglishlearn.ui.ExerciseActivity
-import com.volodymyr_x.easyenglishlearn.ui.extension.getSerializableCompat
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
     private var _binding: FragmentWordSelectionBinding? = null
     private val binding get() = _binding!!
-    private var wordSelectionAdapter: WordSelectionAdapter? = null
     private val viewModel: WordSelectionViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentWordSelectionBinding.bind(view)
         setComposeContent(binding.root) {
+            LaunchedEffect(binding.root) {
+                viewModel.wordSelectionAction.collect { action ->
+                    when (action) {
+                        WordSelectionAction.ShowMessage -> showMessage()
+                        is WordSelectionAction.StartExercise -> startExercise(action.dto)
+                    }
+                }
+            }
             val wordSelectionState =
-                viewModel.wordSelectionState.collectAsStateWithLifecycle().value
+                viewModel.screenState.collectAsStateWithLifecycle().value
             WordSelectionContent(
                 state = wordSelectionState,
                 action = viewModel::onAction
             )
         }
-        subscribeObservers()
     }
 
     override fun onDestroyView() {
@@ -49,57 +51,6 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
         val message =
             getString(R.string.wsa_toast_min_words_count, Constants.MIN_CHECKED_WORD_QUANTITY)
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun subscribeObservers() {
-        with(viewModel) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    launch {
-                        wordSelectionStateOld.collect { state ->
-                            when (state) {
-                                is WordSelectionStateOld.UpdateWords -> {
-                                    wordSelectionAdapter?.setWordList(state.words)
-                                    chooseAllState(state.isChooseAllChecked)
-                                }
-                                is WordSelectionStateOld.ShowMessage -> {
-                                    showMessage()
-                                }
-                                is WordSelectionStateOld.OpenDialog -> {
-                                    showDialog(state.categoryName)
-                                }
-                                is WordSelectionStateOld.StartExercise -> {
-                                    startExercise(state.dto)
-                                }
-                                else -> {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showDialog(categoryName: String) {
-        childFragmentManager.setFragmentResultListener(
-            Constants.EXERCISE_CHOICE_FRAGMENT,
-            viewLifecycleOwner
-        ) { _, bundle ->
-            val exerciseChoiceDto =
-                bundle.getSerializableCompat<ExerciseChoiceDto>(Constants.EXERCISE_CHOICE_KEY)
-            viewModel.sendDTO(exerciseChoiceDto)
-        }
-
-        val dialogFragment = ExerciseChoiceFragment.newInstance(categoryName)
-        dialogFragment.show(
-            childFragmentManager,
-            Constants.EXERCISE_CHOICE_FRAGMENT
-        )
-
-    }
-
-    private fun chooseAllState(isChecked: Boolean) {
-        //binding.cbChooseAll.isChecked = isChecked
     }
 
     private fun startExercise(dto: WordSelectionDto) {
