@@ -10,7 +10,6 @@ import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -138,9 +136,7 @@ class CategoryEditViewModel @Inject constructor(
 
     private fun addNewCategory(categoryName: String, wordList: List<Word>) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                wordsInteractor.addNewCategory(wordList, categoryName)
-            }
+            wordsInteractor.addNewCategory(wordList, categoryName)
         }
     }
 
@@ -150,13 +146,11 @@ class CategoryEditViewModel @Inject constructor(
         wordList: List<Word>
     ) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                wordsInteractor.updateCategory(
-                    oldCategoryName,
-                    newCategoryName,
-                    wordList
-                )
-            }
+            wordsInteractor.updateCategory(
+                oldCategoryName,
+                newCategoryName,
+                wordList
+            )
         }
     }
 

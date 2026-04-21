@@ -7,7 +7,6 @@ import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -88,14 +86,12 @@ class WordSelectionViewModel @Inject constructor(
     private fun loadWords() {
         viewModelScope.launch {
             val categoryName = _screenState.value.categoryName
-            val words = withContext(Dispatchers.IO) {
-                wordsInteractor.getWordsByCategory(categoryName).map { word ->
-                    WordUI(
-                        word.id,
-                        word.lexeme,
-                        word.translation
-                    )
-                }
+            val words = wordsInteractor.getWordsByCategory(categoryName).map { word ->
+                WordUI(
+                    word.id,
+                    word.lexeme,
+                    word.translation
+                )
             }
             updateScreenState { it.copy(categoryWords = words) }
         }
