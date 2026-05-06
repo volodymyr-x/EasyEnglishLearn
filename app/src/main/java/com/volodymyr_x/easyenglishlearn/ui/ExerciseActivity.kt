@@ -7,7 +7,7 @@ import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.ActivityExerciseBinding
 import com.volodymyr_x.easyenglishlearn.ui.exercises.ConstructorFragment
-import com.volodymyr_x.easyenglishlearn.ui.exercises.QuizFragment
+import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizFragment
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import com.volodymyr_x.easyenglishlearn.ui.extension.getParcelableArrayList
 import dagger.hilt.android.AndroidEntryPoint

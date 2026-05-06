@@ -4,15 +4,13 @@ import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 
 class Answer(
     private val question: WordUI?,
-    answer: CharSequence,
-    private val translationDirection: Boolean
+    private val answer: String,
+    private val isLexemeToTranslation: Boolean
 ) {
-    private val answer: String = answer.toString()
     val isCorrect: Boolean
-        get() = if (translationDirection) {
+        get() = if (isLexemeToTranslation) {
             question?.translation.equals(answer, ignoreCase = true)
         } else {
             question?.lexeme.equals(answer, ignoreCase = true)
         }
-
 }

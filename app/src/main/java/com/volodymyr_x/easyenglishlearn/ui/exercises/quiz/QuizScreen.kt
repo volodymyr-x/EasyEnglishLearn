@@ -1,6 +1,5 @@
-package com.volodymyr_x.easyenglishlearn.ui.exercises
+package com.volodymyr_x.easyenglishlearn.ui.exercises.quiz
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,12 +18,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.room.util.TableInfo
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
 fun QuizContent(
-    state: DataDto.QuizDto,
+    state: QuizStageState,
     answerAction: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -52,7 +50,6 @@ fun QuizContent(
                 Row(
                     Modifier
                         .height(56.dp)
-                        // Use selectable to handle the selection and interaction
                         .selectable(
                             selected = (text == selectedOption),
                             onClick = {
@@ -82,7 +79,7 @@ fun QuizContent(
 @Composable
 fun QuizContentPreview() {
     QuizContent(
-        state = DataDto.QuizDto(
+        state = QuizStageState(
             question = "What is the translation of 'cat'?",
             answers = listOf("кіт", "собака", "птиця")
         ),

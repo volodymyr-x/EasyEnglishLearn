@@ -24,11 +24,6 @@ class AppModule {
     }
 
     @Provides
-    fun provideWordsInteractor(wordsRepository: WordsRepository) : WordsInteractor {
-        return WordsInteractorImpl(wordsRepository)
-    }
-
-    @Provides
     @Singleton
     fun provideResourceProvider(@ApplicationContext context: Context): ResourceProvider {
         return ResourceProvider(context)

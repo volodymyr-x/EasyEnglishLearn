@@ -1,8 +1,8 @@
-package com.volodymyr_x.easyenglishlearn.ui.exercises
+package com.volodymyr_x.easyenglishlearn.ui.exercises.quiz
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +14,9 @@ import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentQuizBinding
 import com.volodymyr_x.easyenglishlearn.ui.State
+import com.volodymyr_x.easyenglishlearn.ui.exercises.DataDto
+import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
+import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizViewModel
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,19 +32,20 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentQuizBinding.bind(view)
         setComposeContent(binding.root) {
-            val screenState =
-                viewModel.quizScreenState.collectAsStateWithLifecycle().value
-            QuizContent(
-                state = screenState,
-                answerAction = viewModel::onAnswerChecked
-            )
+            when (val screenState = viewModel.exerciseState.collectAsStateWithLifecycle().value) {
+                is ExerciseState.LoadingState -> {}
+                is ExerciseState.CompletedState -> {}
+                is ExerciseState.StageState -> QuizContent(
+                    state = screenState.data,
+                    answerAction = viewModel::onAnswerChecked
+                )
+            }
         }
         subscribeObservers()
-        viewModel.prepareQuestionAndAnswers()
     }
 
     private fun subscribeObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        /*viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.exerciseState.collect {
                     when (it) {
@@ -57,7 +61,7 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
                     }
                 }
             }
-        }
+        }*/
     }
 
     override fun onDestroyView() {
@@ -93,8 +97,8 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
             selectedWordList: ArrayList<WordUI>,
             translationDirection: Boolean
         ) = Bundle().apply {
-            putParcelableArrayList(Constants.SELECTED_WORDS, selectedWordList)
-            putBoolean(Constants.TRANSLATION_DIRECTION, translationDirection)
+            putParcelableArrayList(Constants.Companion.SELECTED_WORDS, selectedWordList)
+            putBoolean(Constants.Companion.TRANSLATION_DIRECTION, translationDirection)
         }
     }
 }

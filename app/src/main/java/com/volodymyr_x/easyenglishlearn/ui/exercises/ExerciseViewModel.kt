@@ -95,5 +95,5 @@ abstract class ExerciseViewModel(
     }
 
     private fun isAnswerCorrect(answer: CharSequence): Boolean =
-        Answer(currentWord, answer, translationDirection).isCorrect
+        Answer(currentWord, answer.toString(), translationDirection).isCorrect
 }
