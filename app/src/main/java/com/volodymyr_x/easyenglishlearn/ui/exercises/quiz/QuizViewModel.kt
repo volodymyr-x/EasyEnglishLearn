@@ -2,6 +2,7 @@ package com.volodymyr_x.easyenglishlearn.ui.exercises.quiz
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.domain.exercises.CheckQuizAnswerUseCase
 import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,25 +29,29 @@ class QuizViewModel @Inject constructor(
         val wordList: List<WordUI> =
             state.get<ArrayList<WordUI>>(Constants.SELECTED_WORDS) as? List<WordUI>
                 ?: emptyList()
-        _exerciseState.update { state ->
-            checkQuizAnswerUseCase(
-                currentExerciseState = state,
-                wordList = wordList,
-                isLexemeToTranslation = isLexemeToTranslation
-            )
+        viewModelScope.launch {
+            _exerciseState.update { state ->
+                checkQuizAnswerUseCase(
+                    currentExerciseState = state,
+                    wordList = wordList,
+                    isLexemeToTranslation = isLexemeToTranslation
+                )
+            }
         }
     }
 
     fun onAnswerChecked(answer: String) {
-        when (val state = _exerciseState.value) {
-            is ExerciseState.StageState -> {
-                val updatedStageState = checkQuizAnswerUseCase(
-                    userAnswer = answer,
-                    currentExerciseState = state,
-                )
-                _exerciseState.update { updatedStageState }
+        viewModelScope.launch {
+            when (val state = _exerciseState.value) {
+                is ExerciseState.StageState -> {
+                    val updatedStageState = checkQuizAnswerUseCase(
+                        userAnswer = answer,
+                        currentExerciseState = state,
+                    )
+                    _exerciseState.update { updatedStageState }
+                }
+                else -> Unit
             }
-            else -> Unit
         }
     }
 }

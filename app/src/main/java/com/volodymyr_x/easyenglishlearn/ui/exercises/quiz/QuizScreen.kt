@@ -26,7 +26,7 @@ fun QuizContent(
     answerAction: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf("") }
+    val (selectedOption, _) = remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -51,17 +51,14 @@ fun QuizContent(
                     Modifier
                         .height(56.dp)
                         .selectable(
-                            selected = (text == selectedOption),
-                            onClick = {
-                                onOptionSelected(text)
-                                answerAction(text)
-                            }
+                            selected = false /*(text == selectedOption)*/,
+                            onClick = { answerAction(text) },
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
                         selected = (text == selectedOption),
-                        onClick = null // null recommended when Row handles the click
+                        onClick = null // Row handles the click
                     )
                     Text(
                         text = text,

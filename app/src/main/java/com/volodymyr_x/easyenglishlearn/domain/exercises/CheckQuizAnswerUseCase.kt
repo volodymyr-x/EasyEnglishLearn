@@ -4,16 +4,21 @@ import com.volodymyr_x.easyenglishlearn.model.Answer
 import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
 import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizStageState
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class CheckQuizAnswerUseCase {
+class CheckQuizAnswerUseCase(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
+) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         currentExerciseState: ExerciseState,
         userAnswer: String = "",
         isLexemeToTranslation: Boolean = true,
         wordList: List<WordUI> = emptyList()
-    ): ExerciseState {
-        return when (currentExerciseState) {
+    ): ExerciseState = withContext(dispatcher) {
+        when (currentExerciseState) {
             is ExerciseState.LoadingState -> getInitialQuizState(wordList, isLexemeToTranslation)
             is ExerciseState.CompletedState -> currentExerciseState
             is ExerciseState.StageState -> checkAnswer(userAnswer, currentExerciseState.data)
