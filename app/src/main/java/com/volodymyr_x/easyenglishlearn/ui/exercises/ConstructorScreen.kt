@@ -2,6 +2,7 @@ package com.volodymyr_x.easyenglishlearn.ui.exercises
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -47,6 +48,21 @@ fun ConstructorContent(
         )
 
         VerticalSpacer()
+
+        /*FlowRow(
+            maxItemsInEachRow = 6,
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            state.letters.forEach { text ->
+                Button(
+                    onClick = { letterButtonAction(text) },
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Text(text.toString())
+                }
+            }
+        }*/
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(6),
