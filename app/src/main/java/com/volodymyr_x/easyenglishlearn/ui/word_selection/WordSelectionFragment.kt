@@ -57,7 +57,7 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
         val intent = Intent(activity, ExerciseActivity::class.java)
         intent.putExtra(Constants.EXERCISE_TYPE, dto.exercise)
         intent.putParcelableArrayListExtra(Constants.SELECTED_WORDS, dto.selectedWordList)
-        intent.putExtra(Constants.TRANSLATION_DIRECTION, dto.isTranslationDirection)
+        intent.putExtra(Constants.IS_LEXEME_TO_TRANSLATION, dto.isTranslationDirection)
         startActivity(intent)
     }
 

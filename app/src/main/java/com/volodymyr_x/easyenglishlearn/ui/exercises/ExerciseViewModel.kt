@@ -39,7 +39,7 @@ abstract class ExerciseViewModel(
 
     init {
         val translationDirection =
-            state.get<Boolean>(Constants.TRANSLATION_DIRECTION) ?: true
+            state.get<Boolean>(Constants.IS_LEXEME_TO_TRANSLATION) ?: true
         val wordList: List<WordUI> =
             state.get<ArrayList<WordUI>>(Constants.SELECTED_WORDS) as? List<WordUI>
                 ?: emptyList()

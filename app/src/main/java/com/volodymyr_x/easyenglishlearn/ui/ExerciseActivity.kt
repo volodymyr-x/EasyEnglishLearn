@@ -24,7 +24,7 @@ class ExerciseActivity : AppCompatActivity() {
         val exerciseType = intent.getStringExtra(Constants.EXERCISE_TYPE)
         val selectedWordList =
             intent.getParcelableArrayList<WordUI>(Constants.SELECTED_WORDS) as ArrayList<WordUI>
-        val translationDirection = intent.getBooleanExtra(Constants.TRANSLATION_DIRECTION, true)
+        val translationDirection = intent.getBooleanExtra(Constants.IS_LEXEME_TO_TRANSLATION, true)
         val fm = supportFragmentManager
         var fragment = fm.findFragmentById(binding.exerciseFragmentContainer.id)
         if (fragment == null) {

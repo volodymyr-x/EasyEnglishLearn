@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,22 +21,23 @@ class QuizViewModel @Inject constructor(
     state: SavedStateHandle,
     private val checkQuizAnswerUseCase: CheckQuizAnswerUseCase
 ) : ViewModel() {
+    val isLexemeToTranslationFlow: StateFlow<Boolean> =
+        state.getStateFlow(Constants.IS_LEXEME_TO_TRANSLATION, true)
+    val wordListFlow: StateFlow<List<WordUI>> =
+        state.getStateFlow(Constants.SELECTED_WORDS, emptyList())
     private val _exerciseState = MutableStateFlow<ExerciseState>(ExerciseState.LoadingState)
     val exerciseState: StateFlow<ExerciseState> = _exerciseState.asStateFlow()
 
     init {
-        val isLexemeToTranslation =
-            state.get<Boolean>(Constants.TRANSLATION_DIRECTION) ?: true
-        val wordList: List<WordUI> =
-            state.get<ArrayList<WordUI>>(Constants.SELECTED_WORDS) as? List<WordUI>
-                ?: emptyList()
         viewModelScope.launch {
-            _exerciseState.update { state ->
+            isLexemeToTranslationFlow.combine(wordListFlow) { isLexemeToTranslation, wordList ->
                 checkQuizAnswerUseCase(
-                    currentExerciseState = state,
+                    currentExerciseState = ExerciseState.LoadingState,
                     wordList = wordList,
                     isLexemeToTranslation = isLexemeToTranslation
                 )
+            }.collect { newState ->
+                _exerciseState.value = newState
             }
         }
     }

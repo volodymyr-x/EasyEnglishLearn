@@ -2,7 +2,6 @@ package com.volodymyr_x.easyenglishlearn.ui.exercises
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -95,7 +94,7 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
             translationDirection: Boolean
         ) = Bundle().apply {
             putParcelableArrayList(Constants.SELECTED_WORDS, selectedWordList)
-            putBoolean(Constants.TRANSLATION_DIRECTION, translationDirection)
+            putBoolean(Constants.IS_LEXEME_TO_TRANSLATION, translationDirection)
         }
     }
 }

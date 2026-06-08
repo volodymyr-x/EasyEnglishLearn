@@ -1,26 +1,18 @@
 package com.volodymyr_x.easyenglishlearn.ui.exercises.quiz
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentQuizBinding
-import com.volodymyr_x.easyenglishlearn.ui.State
-import com.volodymyr_x.easyenglishlearn.ui.exercises.DataDto
 import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
-import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizViewModel
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuizFragment : Fragment(R.layout.fragment_quiz) {
@@ -98,7 +90,7 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
             translationDirection: Boolean
         ) = Bundle().apply {
             putParcelableArrayList(Constants.Companion.SELECTED_WORDS, selectedWordList)
-            putBoolean(Constants.Companion.TRANSLATION_DIRECTION, translationDirection)
+            putBoolean(Constants.Companion.IS_LEXEME_TO_TRANSLATION, translationDirection)
         }
     }
 }
