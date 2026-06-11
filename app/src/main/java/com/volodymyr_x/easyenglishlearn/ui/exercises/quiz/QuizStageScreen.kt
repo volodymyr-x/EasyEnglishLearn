@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
-fun QuizContent(
+fun QuizStageContent(
     state: QuizStageState,
     answerAction: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -51,7 +51,7 @@ fun QuizContent(
                     Modifier
                         .height(56.dp)
                         .selectable(
-                            selected = false /*(text == selectedOption)*/,
+                            selected = false, /*(text == selectedOption)*/
                             onClick = { answerAction(text) },
                         ),
                     verticalAlignment = Alignment.CenterVertically
@@ -74,8 +74,8 @@ fun QuizContent(
 
 @Preview(showBackground = true)
 @Composable
-fun QuizContentPreview() {
-    QuizContent(
+fun QuizStageContentPreview() {
+    QuizStageContent(
         state = QuizStageState(
             question = "What is the translation of 'cat'?",
             answers = listOf("кіт", "собака", "птиця")

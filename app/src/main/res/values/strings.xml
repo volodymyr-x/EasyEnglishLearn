@@ -47,4 +47,7 @@
     <string name="ca_cm_remove_word">Remove word</string>
     <string name="ca_cm_edit_category">Edit category</string>
     <string name="ca_cm_remove_category">Remove category</string>
+    <string name="quiz_completed">Quiz Completed!</string>
+    <string name="quiz_error_score">You made %d error(s).</string>
+    <string name="close">Close</string>
 </resources>

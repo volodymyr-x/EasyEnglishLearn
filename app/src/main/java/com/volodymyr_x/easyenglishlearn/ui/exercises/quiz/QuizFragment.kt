@@ -25,9 +25,12 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         _binding = FragmentQuizBinding.bind(view)
         setComposeContent(binding.root) {
             when (val screenState = viewModel.exerciseState.collectAsStateWithLifecycle().value) {
-                is ExerciseState.LoadingState -> {}
-                is ExerciseState.CompletedState -> {}
-                is ExerciseState.StageState -> QuizContent(
+                is ExerciseState.LoadingState -> LoadingScreen()
+                is ExerciseState.CompletedState -> QuizCompletedContent(
+                    state = screenState.data,
+                    closeAction = ::closeFragment
+                )
+                is ExerciseState.StageState -> QuizStageContent(
                     state = screenState.data,
                     answerAction = viewModel::onAnswerChecked
                 )
@@ -65,10 +68,6 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
-    private fun showFinalMessage(errorsCount: Int) {
-        showMessage(getString(R.string.errors_count, errorsCount))
-    }
-
     private fun showErrorMessage() {
         showMessage(getString(R.string.wrong_answer))
     }
@@ -89,8 +88,8 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
             selectedWordList: ArrayList<WordUI>,
             translationDirection: Boolean
         ) = Bundle().apply {
-            putParcelableArrayList(Constants.Companion.SELECTED_WORDS, selectedWordList)
-            putBoolean(Constants.Companion.IS_LEXEME_TO_TRANSLATION, translationDirection)
+            putParcelableArrayList(Constants.SELECTED_WORDS, selectedWordList)
+            putBoolean(Constants.IS_LEXEME_TO_TRANSLATION, translationDirection)
         }
     }
 }
