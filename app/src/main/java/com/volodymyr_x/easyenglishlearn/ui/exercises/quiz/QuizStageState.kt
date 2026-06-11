@@ -6,6 +6,7 @@ data class QuizStageState(
     val iteration: Int = 1,
     val errorCount: Int = 0,
     val question: String = "",
+    val incorrectAnswer: String = "",
     val isLexemeToTranslation: Boolean = true,
     val currentWord: WordUI? = null,
     val wordList: List<WordUI> = emptyList(),

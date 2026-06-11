@@ -10,14 +10,15 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
@@ -26,8 +27,6 @@ fun QuizStageContent(
     answerAction: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (selectedOption, _) = remember { mutableStateOf("") }
-
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -51,13 +50,13 @@ fun QuizStageContent(
                     Modifier
                         .height(56.dp)
                         .selectable(
-                            selected = false, /*(text == selectedOption)*/
+                            selected = false,
                             onClick = { answerAction(text) },
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = (text == selectedOption),
+                        selected = (text == state.incorrectAnswer),
                         onClick = null // Row handles the click
                     )
                     Text(
@@ -69,6 +68,14 @@ fun QuizStageContent(
         }
 
         VerticalSpacer()
+
+        if (state.incorrectAnswer.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.wrong_answer),
+                fontSize = 16.sp,
+                color = Color.Red
+            )
+        }
     }
 }
 

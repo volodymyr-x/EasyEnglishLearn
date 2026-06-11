@@ -70,15 +70,17 @@ class CheckQuizAnswerUseCase(
                         answers = createAnswers(
                             stageState.wordList,
                             newCurrentWord,
-                            stageState.isLexemeToTranslation
-                        )
+                            stageState.isLexemeToTranslation,
+                        ),
+                        incorrectAnswer = ""
                     )
                 )
             }
         } else {
             return ExerciseState.StageState(
                 stageState.copy(
-                    errorCount = stageState.errorCount + 1
+                    errorCount = stageState.errorCount + 1,
+                    incorrectAnswer = userAnswer
                 )
             )
         }
