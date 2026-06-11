@@ -41,6 +41,7 @@ class CheckQuizAnswerUseCaseTest {
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
         assert(stageState.answers.contains(stageState.currentWord?.translation))
+        assert(stageState.incorrectAnswer.isEmpty())
     }
 
     @Test
@@ -59,6 +60,7 @@ class CheckQuizAnswerUseCaseTest {
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
+        assert(stageState.incorrectAnswer.isNotEmpty())
     }
 
     @Test
@@ -105,6 +107,7 @@ class CheckQuizAnswerUseCaseTest {
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
         assert(stageState.answers.contains(stageState.currentWord?.lexeme))
+        assert(stageState.incorrectAnswer.isEmpty())
     }
 
     @Test
@@ -123,6 +126,7 @@ class CheckQuizAnswerUseCaseTest {
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
+        assert(stageState.incorrectAnswer.isNotEmpty())
     }
 
     @Test

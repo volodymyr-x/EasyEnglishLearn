@@ -2,7 +2,6 @@ package com.volodymyr_x.easyenglishlearn.ui.exercises.quiz
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,14 +65,6 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
 
     private fun closeFragment() {
         requireActivity().onBackPressedDispatcher.onBackPressed()
-    }
-
-    private fun showErrorMessage() {
-        showMessage(getString(R.string.wrong_answer))
-    }
-
-    private fun showMessage(message: String) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     companion object {
