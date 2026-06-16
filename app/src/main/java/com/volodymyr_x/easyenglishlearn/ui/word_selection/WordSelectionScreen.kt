@@ -2,6 +2,7 @@ package com.volodymyr_x.easyenglishlearn.ui.word_selection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +43,7 @@ fun WordSelectionContent(
     state: WordSelectionState,
     action: (WordSelectionEvent) -> Unit = {}
 ) {
+    var interactionSource by remember { mutableStateOf(MutableInteractionSource()) }
     Scaffold(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.safeDrawing)
@@ -98,7 +105,9 @@ fun WordSelectionContent(
                             role = Role.Checkbox,
                             onClick = {
                                 action(WordSelectionEvent.OnChooseAllClick)
-                            }
+                            },
+                            indication = ripple(color = Color.Blue),
+                            interactionSource = interactionSource,
                         )
                         .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -136,13 +145,16 @@ fun WordSelectionItem(
     word: WordUI,
     onChecked: (WordUI) -> Unit = {}
 ) {
+    var interactionSource by remember { mutableStateOf(MutableInteractionSource()) }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
                 role = Role.Checkbox,
-                onClick = { onChecked(word) }
+                onClick = { onChecked(word) },
+                indication = ripple(color = Color.Blue),
+                interactionSource = interactionSource,
             )
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
