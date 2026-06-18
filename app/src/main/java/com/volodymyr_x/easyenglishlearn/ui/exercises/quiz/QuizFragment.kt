@@ -35,27 +35,6 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
                 )
             }
         }
-        subscribeObservers()
-    }
-
-    private fun subscribeObservers() {
-        /*viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.exerciseState.collect {
-                    when (it) {
-                        is State.DataState<*> -> {
-                            val dataDto = it.data as DataDto.QuizDto
-                        }
-                        is State.ErrorState -> showErrorMessage()
-                        is State.CompletedState<*> -> {
-                            showFinalMessage(it.data as Int)
-                            closeFragment()
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }*/
     }
 
     override fun onDestroyView() {
