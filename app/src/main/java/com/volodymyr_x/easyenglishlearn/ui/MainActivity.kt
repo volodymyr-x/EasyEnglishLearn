@@ -40,6 +40,10 @@ class MainActivity : AppCompatActivity(), CategoryFragment.Callbacks {
         doAction(categoryName, Constants.ACTION_EDIT_CATEGORY)
     }
 
+    override fun onCategoryAdd() {
+        doAction(null, Constants.ACTION_ADD_CATEGORY)
+    }
+
     private fun doAction(categoryName: String?, actionCode: Int) {
         var containerId = R.id.detail_fragment_container
         if (findViewById<View?>(R.id.detail_fragment_container) == null) {
@@ -57,6 +61,10 @@ class MainActivity : AppCompatActivity(), CategoryFragment.Callbacks {
                 CategoryEditFragment.newInstance(categoryName)
             )
             Constants.ACTION_ABOUT -> transaction.replace(containerId, AboutFragment.newInstance())
+            Constants.ACTION_ADD_CATEGORY -> transaction.replace(
+                containerId,
+                CategoryEditFragment.newInstance()
+            )
         }
         transaction
             .addToBackStack(null)

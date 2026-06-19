@@ -17,7 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
     private var _binding: FragmentCategoryEditBinding? = null
     private val binding get() = _binding!!
-    private var adapter: CategoryEditAdapter? = null
     private val viewModel: CategoryEditViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,37 +39,6 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
                 event = viewModel::onEvent
             )
         }
-        subscribeObservers()
-    }
-
-    private fun subscribeObservers() {
-        /*with(viewModel) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    launch {
-                        words.collect { categoryList ->
-                            adapter?.setWordList(categoryList)
-                        }
-                    }
-                    launch {
-                        categoryEditState.collect { state ->
-                            when (state) {
-                                is CategoryEditState.CloseScreenState -> {
-                                    closeFragment()
-                                }
-                                is CategoryEditState.ShowMessage -> {
-                                    showMessage(state.message)
-                                }
-                                is CategoryEditState.CurrentWord -> {
-
-                                }
-                                else -> {}
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
     }
 
     private fun closeFragment() {
@@ -87,7 +55,7 @@ class CategoryEditFragment : Fragment(R.layout.fragment_category_edit) {
     }
 
     companion object {
-        fun newInstance(categoryName: String?): Fragment {
+        fun newInstance(categoryName: String? = null): Fragment {
             val args = Bundle()
             args.putString(Constants.ARG_CATEGORY_NAME, categoryName)
             val fragment: Fragment = CategoryEditFragment()

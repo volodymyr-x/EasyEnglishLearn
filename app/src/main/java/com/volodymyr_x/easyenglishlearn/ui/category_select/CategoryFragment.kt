@@ -23,6 +23,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
     interface Callbacks {
         fun onCategorySelected(categoryName: String?)
         fun onCategoryEdit(categoryName: String?)
+        fun onCategoryAdd()
     }
 
     override fun onAttach(context: Context) {
@@ -47,6 +48,9 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
                             callbacks?.onCategorySelected(action.categoryName)
                         }
                         is CategoryAction.Removed -> categoryRemovedYesClicked(action.categoryName)
+                        CategoryAction.Add -> {
+                            callbacks?.onCategoryAdd()
+                        }
                     }
                 }
             }

@@ -10,10 +10,14 @@ import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,10 +25,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryEditViewModel @Inject constructor(
-    state: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val wordsInteractor: WordsInteractor,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
+    private val currentCategoryNameFlow: StateFlow<String?> =
+        savedStateHandle.getStateFlow(Constants.ARG_CATEGORY_NAME, "")
     private val _categoryEditState = MutableStateFlow(CategoryEditState())
     val categoryEditState: StateFlow<CategoryEditState>
         get() = _categoryEditState
@@ -34,17 +40,19 @@ class CategoryEditViewModel @Inject constructor(
         get() = _categoryEditAction.receiveAsFlow()
 
     init {
-        val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
-        if (categoryName != null) {
-            viewModelScope.launch {
-                val wordsByCategory = wordsInteractor.getWordsByCategory(categoryName)
-                _categoryEditState.update { state ->
-                    state.copy(
+        viewModelScope.launch {
+            @OptIn(ExperimentalCoroutinesApi::class)
+            currentCategoryNameFlow.filterNotNull().flatMapLatest { categoryName ->
+                flow {
+                    val wordsByCategory = wordsInteractor.getWordsByCategory(categoryName)
+                    emit(_categoryEditState.value.copy(
                         categoryName = categoryName,
                         oldCategoryName = categoryName,
                         words = wordsByCategory
-                    )
+                    ))
                 }
+            }.collect { newState ->
+                _categoryEditState.value = newState
             }
         }
     }

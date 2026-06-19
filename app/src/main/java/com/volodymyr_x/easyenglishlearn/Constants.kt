@@ -25,5 +25,6 @@ interface Constants {
         const val WORD_QUIZ = "WORD_QUIZ"
         const val RESULT_KEY = "RESULT_KEY"
         const val EXERCISE_CHOICE_KEY = "EXERCISE_CHOICE_KEY"
+        const val ACTION_ADD_CATEGORY = 103
     }
 }
