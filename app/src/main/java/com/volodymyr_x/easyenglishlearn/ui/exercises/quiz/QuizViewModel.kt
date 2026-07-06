@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.domain.exercises.CheckQuizAnswerUseCase
-import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,14 +24,14 @@ class QuizViewModel @Inject constructor(
         state.getStateFlow(Constants.IS_LEXEME_TO_TRANSLATION, true)
     val wordListFlow: StateFlow<List<WordUI>> =
         state.getStateFlow(Constants.SELECTED_WORDS, emptyList())
-    private val _exerciseState = MutableStateFlow<ExerciseState>(ExerciseState.LoadingState)
-    val exerciseState: StateFlow<ExerciseState> = _exerciseState.asStateFlow()
+    private val _exerciseState = MutableStateFlow<QuizState>(QuizState.LoadingState)
+    val exerciseState: StateFlow<QuizState> = _exerciseState.asStateFlow()
 
     init {
         viewModelScope.launch {
             isLexemeToTranslationFlow.combine(wordListFlow) { isLexemeToTranslation, wordList ->
                 checkQuizAnswerUseCase(
-                    currentExerciseState = ExerciseState.LoadingState,
+                    currentExerciseState = QuizState.LoadingState,
                     wordList = wordList,
                     isLexemeToTranslation = isLexemeToTranslation
                 )
@@ -45,7 +44,7 @@ class QuizViewModel @Inject constructor(
     fun onAnswerChecked(answer: String) {
         viewModelScope.launch {
             when (val state = _exerciseState.value) {
-                is ExerciseState.StageState -> {
+                is QuizState.StageState -> {
                     val updatedStageState = checkQuizAnswerUseCase(
                         userAnswer = answer,
                         currentExerciseState = state,

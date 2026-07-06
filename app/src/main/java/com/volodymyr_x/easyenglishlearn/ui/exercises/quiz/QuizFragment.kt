@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentQuizBinding
-import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
+import com.volodymyr_x.easyenglishlearn.ui.exercises.LoadingScreen
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,12 +24,12 @@ class QuizFragment : Fragment(R.layout.fragment_quiz) {
         _binding = FragmentQuizBinding.bind(view)
         setComposeContent(binding.root) {
             when (val screenState = viewModel.exerciseState.collectAsStateWithLifecycle().value) {
-                is ExerciseState.LoadingState -> LoadingScreen()
-                is ExerciseState.CompletedState -> QuizCompletedContent(
+                is QuizState.LoadingState -> LoadingScreen()
+                is QuizState.CompletedState -> QuizCompletedContent(
                     state = screenState.data,
                     closeAction = ::closeFragment
                 )
-                is ExerciseState.StageState -> QuizStageContent(
+                is QuizState.StageState -> QuizStageContent(
                     state = screenState.data,
                     answerAction = viewModel::onAnswerChecked
                 )

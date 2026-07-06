@@ -2,6 +2,7 @@ package com.volodymyr_x.easyenglishlearn.di.modules
 
 import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.domain.WordsInteractorImpl
+import com.volodymyr_x.easyenglishlearn.domain.exercises.CheckConstructorAnswerUseCase
 import com.volodymyr_x.easyenglishlearn.domain.exercises.CheckQuizAnswerUseCase
 import com.volodymyr_x.easyenglishlearn.domain.repository.WordsRepository
 import dagger.Module
@@ -21,5 +22,10 @@ class UseCaseModule {
     @Provides
     fun provideCheckQuizAnswerUseCase() : CheckQuizAnswerUseCase {
         return CheckQuizAnswerUseCase()
+    }
+
+    @Provides
+    fun provideCheckConstructorAnswerUseCase() : CheckConstructorAnswerUseCase {
+        return CheckConstructorAnswerUseCase()
     }
 }

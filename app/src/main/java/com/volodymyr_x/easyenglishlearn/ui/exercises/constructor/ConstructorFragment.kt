@@ -1,22 +1,17 @@
-package com.volodymyr_x.easyenglishlearn.ui.exercises
+package com.volodymyr_x.easyenglishlearn.ui.exercises.constructor
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentConstructorBinding
-import com.volodymyr_x.easyenglishlearn.ui.State
+import com.volodymyr_x.easyenglishlearn.ui.exercises.LoadingScreen
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
@@ -28,16 +23,22 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentConstructorBinding.bind(view)
         setComposeContent(binding.root) {
-            val screenState =
-                viewModel.constructorScreenState.collectAsStateWithLifecycle().value
-            ConstructorContent(
-                state = screenState,
-                letterButtonAction = viewModel::onNewButtonClick,
-                undoButtonAction = viewModel::onButtonUndoClick
-            )
+            when (val screenState = viewModel.exerciseState.collectAsStateWithLifecycle().value) {
+                is ConstructorState.LoadingState -> LoadingScreen()
+                is ConstructorState.CompletedState -> ConstructorCompletedContent(
+                    state = screenState.data,
+                    closeAction = ::closeFragment
+                )
+                is ConstructorState.StageState -> ConstructorStageContent(
+                    state = screenState.data,
+                    event = viewModel::onEvent
+                )
+                is ConstructorState.UndoStageState -> ConstructorStageContent(
+                    state = screenState.data,
+                    event = viewModel::onEvent
+                )
+            }
         }
-        subscribeObservers()
-        viewModel.prepareQuestionAndAnswers()
     }
 
     override fun onDestroyView() {
@@ -45,40 +46,8 @@ class ConstructorFragment : Fragment(R.layout.fragment_constructor) {
         _binding = null
     }
 
-    private fun subscribeObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.exerciseState.collect {
-                    when (it) {
-                        is State.DataState<*> -> {
-                            val dataDto = it.data as DataDto.ConstructorDto
-                        }
-                        is State.ErrorState -> showError()
-                        is State.CompletedState<*> -> {
-                            showFinalMessage(it.data as Int)
-                            closeFragment()
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }
-    }
-
     private fun closeFragment() {
         requireActivity().onBackPressedDispatcher.onBackPressed()
-    }
-
-    private fun showFinalMessage(errorsCount: Int) {
-        showMessage(getString(R.string.errors_count, errorsCount))
-    }
-
-    private fun showError() {
-        showMessage(getString(R.string.wrong_answer))
-    }
-
-    private fun showMessage(message: String) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

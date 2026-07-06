@@ -1,30 +1,28 @@
-package com.volodymyr_x.easyenglishlearn.ui.exercises
+package com.volodymyr_x.easyenglishlearn.ui.exercises.constructor
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
-fun ConstructorContent(
-    state: DataDto.ConstructorDto,
-    letterButtonAction: (Char) -> Unit,
-    undoButtonAction: () -> Unit,
+fun ConstructorStageContent(
+    state: ConstructorStageState,
+    event: (ConstructorEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -42,66 +40,58 @@ fun ConstructorContent(
         VerticalSpacer()
 
         Text(
-            text = state.answer,
+            text = state.currentAnswer,
             fontSize = 24.sp,
             textAlign = TextAlign.Center
         )
 
         VerticalSpacer()
 
-        /*FlowRow(
+        FlowRow(
             maxItemsInEachRow = 6,
             horizontalArrangement = Arrangement.Center,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             state.letters.forEach { text ->
                 Button(
-                    onClick = { letterButtonAction(text) },
+                    onClick = { event(ConstructorEvent.LetterButtonClicked(letter = text)) },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
-                    Text(text.toString())
+                    Text(text)
                 }
             }
-        }*/
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(6),
-            modifier = Modifier.wrapContentHeight(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(state.letters) { text ->
-                Button(
-                    onClick = { letterButtonAction(text) },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(text.toString())
-                }
-            }
-
         }
 
         VerticalSpacer()
 
         Button(
-            onClick = { undoButtonAction() },
+            onClick = { event(ConstructorEvent.UndoButtonClicked) },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Undo")
+        }
+
+        VerticalSpacer()
+
+        if (state.incorrectAnswer.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.wrong_answer_with_value, state.incorrectAnswer),
+                fontSize = 16.sp,
+                color = Color.Red
+            )
         }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun ConstructorContentPreview() {
-    ConstructorContent(
-        state = DataDto.ConstructorDto(
+fun ConstructorStageContentPreview() {
+    ConstructorStageContent(
+        state = ConstructorStageState(
             question = "constructor",
-            answer = "конструктор",
-            letters = listOf('к', 'о', 'н', 'с', 'т', 'р', 'у', 'к', 'т', 'о', 'р')
+            currentAnswer = "конструктор",
+            letters = listOf("к", "о", "н", "с", "т", "р", "у", "к", "т", "о", "р"),
         ),
-        letterButtonAction = {},
-        undoButtonAction = {}
+        event = { },
     )
 }

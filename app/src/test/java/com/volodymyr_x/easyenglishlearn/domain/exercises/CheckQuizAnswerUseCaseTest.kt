@@ -1,6 +1,6 @@
 package com.volodymyr_x.easyenglishlearn.domain.exercises
 
-import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
+import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizState
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
@@ -12,14 +12,14 @@ class CheckQuizAnswerUseCaseTest {
     fun `first stage state lexeme to translation`() {
         val result = runBlocking {
             useCase(
-                currentExerciseState = ExerciseState.LoadingState,
+                currentExerciseState = QuizState.LoadingState,
                 wordList = wordList,
                 isLexemeToTranslation = true
             )
         }
         val expectedResult = startStageStateLexemeToTranslation
-        assert(result is ExerciseState.StageState)
-        val stageState = (result as ExerciseState.StageState).data
+        assert(result is QuizState.StageState)
+        val stageState = (result as QuizState.StageState).data
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
@@ -31,12 +31,12 @@ class CheckQuizAnswerUseCaseTest {
         val result = runBlocking {
             useCase(
                 userAnswer = startStageStateLexemeToTranslation.currentWord?.translation ?: "",
-                currentExerciseState = ExerciseState.StageState(startStageStateLexemeToTranslation)
+                currentExerciseState = QuizState.StageState(startStageStateLexemeToTranslation)
             )
         }
         val expectedResult = secondStageStateLexemeToTranslation
-        assert(result is ExerciseState.StageState)
-        val stageState = (result as ExerciseState.StageState).data
+        assert(result is QuizState.StageState)
+        val stageState = (result as QuizState.StageState).data
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
@@ -49,14 +49,14 @@ class CheckQuizAnswerUseCaseTest {
         val result = runBlocking {
             useCase(
                 userAnswer = "Apple111",
-                currentExerciseState = ExerciseState.StageState(startStageStateLexemeToTranslation)
+                currentExerciseState = QuizState.StageState(startStageStateLexemeToTranslation)
             )
         }
         val expectedResult = startStageStateLexemeToTranslation.copy(
             errorCount = startStageStateLexemeToTranslation.errorCount + 1
         )
-        assert(result is ExerciseState.StageState)
-        val stageState = (result as ExerciseState.StageState).data
+        assert(result is QuizState.StageState)
+        val stageState = (result as QuizState.StageState).data
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
@@ -68,24 +68,24 @@ class CheckQuizAnswerUseCaseTest {
         val result = runBlocking {
             useCase(
                 userAnswer = lastStageStateLexemeToTranslation.currentWord?.translation ?: "",
-                currentExerciseState = ExerciseState.StageState(lastStageStateLexemeToTranslation)
+                currentExerciseState = QuizState.StageState(lastStageStateLexemeToTranslation)
             )
         }
-        assert(result is ExerciseState.CompletedState)
+        assert(result is QuizState.CompletedState)
     }
 
     @Test
     fun `first stage state translation to lexeme`() {
         val result = runBlocking {
             useCase(
-                currentExerciseState = ExerciseState.LoadingState,
+                currentExerciseState = QuizState.LoadingState,
                 wordList = wordList,
                 isLexemeToTranslation = false
             )
         }
         val expectedResult = startStageStateTranslationToLexeme
-        assert(result is ExerciseState.StageState)
-        val stageState = (result as ExerciseState.StageState).data
+        assert(result is QuizState.StageState)
+        val stageState = (result as QuizState.StageState).data
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
@@ -97,12 +97,12 @@ class CheckQuizAnswerUseCaseTest {
         val result = runBlocking {
             useCase(
                 userAnswer = startStageStateTranslationToLexeme.currentWord?.lexeme ?: "",
-                currentExerciseState = ExerciseState.StageState(startStageStateTranslationToLexeme)
+                currentExerciseState = QuizState.StageState(startStageStateTranslationToLexeme)
             )
         }
         val expectedResult = secondStageStateTranslationToLexeme
-        assert(result is ExerciseState.StageState)
-        val stageState = (result as ExerciseState.StageState).data
+        assert(result is QuizState.StageState)
+        val stageState = (result as QuizState.StageState).data
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
@@ -115,14 +115,14 @@ class CheckQuizAnswerUseCaseTest {
         val result = runBlocking {
             useCase(
                 userAnswer = "Apple111",
-                currentExerciseState = ExerciseState.StageState(startStageStateTranslationToLexeme)
+                currentExerciseState = QuizState.StageState(startStageStateTranslationToLexeme)
             )
         }
         val expectedResult = startStageStateTranslationToLexeme.copy(
             errorCount = startStageStateTranslationToLexeme.errorCount + 1
         )
-        assert(result is ExerciseState.StageState)
-        val stageState = (result as ExerciseState.StageState).data
+        assert(result is QuizState.StageState)
+        val stageState = (result as QuizState.StageState).data
         assert(stageState.iteration == expectedResult.iteration)
         assert(stageState.errorCount == expectedResult.errorCount)
         assert(stageState.currentWord == expectedResult.currentWord)
@@ -134,9 +134,9 @@ class CheckQuizAnswerUseCaseTest {
         val result = runBlocking {
             useCase(
                 userAnswer = lastStageStateTranslationToLexeme.currentWord?.lexeme ?: "",
-                currentExerciseState = ExerciseState.StageState(lastStageStateTranslationToLexeme)
+                currentExerciseState = QuizState.StageState(lastStageStateTranslationToLexeme)
             )
         }
-        assert(result is ExerciseState.CompletedState)
+        assert(result is QuizState.CompletedState)
     }
 }

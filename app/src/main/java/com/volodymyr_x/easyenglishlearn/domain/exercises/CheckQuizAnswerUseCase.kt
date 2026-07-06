@@ -1,7 +1,7 @@
 package com.volodymyr_x.easyenglishlearn.domain.exercises
 
 import com.volodymyr_x.easyenglishlearn.model.Answer
-import com.volodymyr_x.easyenglishlearn.ui.exercises.ExerciseState
+import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizState
 import com.volodymyr_x.easyenglishlearn.ui.exercises.quiz.QuizStageState
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import kotlinx.coroutines.CoroutineDispatcher
@@ -13,31 +13,31 @@ class CheckQuizAnswerUseCase(
 ) {
 
     suspend operator fun invoke(
-        currentExerciseState: ExerciseState,
+        currentExerciseState: QuizState,
         userAnswer: String = "",
         isLexemeToTranslation: Boolean = true,
         wordList: List<WordUI> = emptyList()
-    ): ExerciseState = withContext(dispatcher) {
+    ): QuizState = withContext(dispatcher) {
         when (currentExerciseState) {
-            is ExerciseState.LoadingState -> getInitialQuizState(wordList, isLexemeToTranslation)
-            is ExerciseState.CompletedState -> currentExerciseState
-            is ExerciseState.StageState -> checkAnswer(userAnswer, currentExerciseState.data)
+            is QuizState.LoadingState -> getInitialQuizState(wordList, isLexemeToTranslation)
+            is QuizState.CompletedState -> currentExerciseState
+            is QuizState.StageState -> checkAnswer(userAnswer, currentExerciseState.data)
         }
     }
 
     private fun getInitialQuizState(
         wordList: List<WordUI>,
         isLexemeToTranslation: Boolean
-    ): ExerciseState {
+    ): QuizState {
         val initialWord = wordList[0]
         val initialQuizState = QuizStageState(
-            iteration = 0,
+            iteration = 0, // maybe should set up as 1
             errorCount = 0,
             isLexemeToTranslation = isLexemeToTranslation,
             currentWord = initialWord,
             wordList = wordList,
         )
-        return ExerciseState.StageState(
+        return QuizState.StageState(
             initialQuizState.copy(
                 iteration = 1,
                 question = createQuestion(initialQuizState),
@@ -50,7 +50,7 @@ class CheckQuizAnswerUseCase(
         )
     }
 
-    private fun checkAnswer(userAnswer: String, stageState: QuizStageState): ExerciseState {
+    private fun checkAnswer(userAnswer: String, stageState: QuizStageState): QuizState {
         val answer = Answer(
             question = stageState.currentWord,
             answer = userAnswer,
@@ -59,10 +59,10 @@ class CheckQuizAnswerUseCase(
         if (answer.isCorrect) {
             val isLastIteration = stageState.iteration == stageState.wordList.size
             return if (isLastIteration) {
-                ExerciseState.CompletedState(stageState)
+                QuizState.CompletedState(stageState)
             } else {
                 val newCurrentWord = stageState.wordList[stageState.iteration]
-                ExerciseState.StageState(
+                QuizState.StageState(
                     stageState.copy(
                         iteration = stageState.iteration + 1,
                         currentWord = newCurrentWord,
@@ -77,7 +77,7 @@ class CheckQuizAnswerUseCase(
                 )
             }
         } else {
-            return ExerciseState.StageState(
+            return QuizState.StageState(
                 stageState.copy(
                     errorCount = stageState.errorCount + 1,
                     incorrectAnswer = userAnswer
@@ -93,7 +93,7 @@ class CheckQuizAnswerUseCase(
     ): List<String> {
         val answerList = wordList
             .filter { it != currentWord }
-            .shuffled()
+            .shuffled() // redundant
             .take(2)
             .toMutableList()
             .also { list ->

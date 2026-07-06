@@ -1,4 +1,4 @@
-package com.volodymyr_x.easyenglishlearn.ui.exercises.quiz
+package com.volodymyr_x.easyenglishlearn.ui.exercises
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
