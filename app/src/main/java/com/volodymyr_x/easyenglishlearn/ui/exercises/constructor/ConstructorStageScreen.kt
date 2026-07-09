@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
+import com.volodymyr_x.easyenglishlearn.ui.theme.AppTheme
 
 @Composable
 fun ConstructorStageContent(
@@ -66,6 +69,7 @@ fun ConstructorStageContent(
 
         Button(
             onClick = { event(ConstructorEvent.UndoButtonClicked) },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Undo")
@@ -86,12 +90,14 @@ fun ConstructorStageContent(
 @Preview(showSystemUi = true)
 @Composable
 fun ConstructorStageContentPreview() {
-    ConstructorStageContent(
-        state = ConstructorStageState(
-            question = "constructor",
-            currentAnswer = "конструктор",
-            letters = listOf("к", "о", "н", "с", "т", "р", "у", "к", "т", "о", "р"),
-        ),
-        event = { },
-    )
+    AppTheme {
+        ConstructorStageContent(
+            state = ConstructorStageState(
+                question = "constructor",
+                currentAnswer = "конструктор",
+                letters = listOf("к", "о", "н", "с", "т", "р", "у", "к", "т", "о", "р"),
+            ),
+            event = { },
+        )
+    }
 }
