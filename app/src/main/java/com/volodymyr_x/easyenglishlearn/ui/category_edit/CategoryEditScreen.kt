@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -26,9 +27,36 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
+
+@Composable
+fun CategoryEditScreen(
+    oldCategoryName: String,
+    closeFragmentAction: () -> Unit,
+    showMessageAction: (String) -> Unit = {}
+) {
+    val viewModel = hiltViewModel { factory: CategoryEditViewModel.Factory ->
+        factory.create(oldCategoryName)
+    }
+    LaunchedEffect(viewModel) {
+        viewModel.categoryEditAction.collect { action ->
+            when (action) {
+                is CategoryEditAction.ShowMessage -> showMessageAction(action.message)
+                CategoryEditAction.CloseScreen -> closeFragmentAction()
+            }
+        }
+    }
+    val state = viewModel.categoryEditState.collectAsStateWithLifecycle().value
+    CategoryEditContent(
+        oldCategoryName = oldCategoryName,
+        state = state,
+        event = viewModel::onEvent
+    )
+}
 
 @Composable
 fun CategoryEditContent(

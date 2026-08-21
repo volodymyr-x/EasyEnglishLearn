@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.databinding.FragmentConstructorBinding
-import com.volodymyr_x.easyenglishlearn.ui.exercises.LoadingScreen
+import com.volodymyr_x.easyenglishlearn.ui.base_composables.LoadingScreen
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
 import com.volodymyr_x.easyenglishlearn.util.setComposeContent
 import dagger.hilt.android.AndroidEntryPoint

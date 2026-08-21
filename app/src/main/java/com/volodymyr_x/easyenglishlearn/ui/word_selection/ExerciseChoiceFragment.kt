@@ -19,7 +19,7 @@ class ExerciseChoiceFragment : DialogFragment(R.layout.fragment_exercise_choice)
     }
 
     private fun initView() {
-        with(binding) {
+        /*with(binding) {
             ecfBtnQuiz.setOnClickListener {
                 prepareFragmentResult(getDto(Constants.WORD_QUIZ))
                 closeDialog()
@@ -29,21 +29,21 @@ class ExerciseChoiceFragment : DialogFragment(R.layout.fragment_exercise_choice)
                 closeDialog()
             }
             ecfBtnCancel.setOnClickListener { closeDialog() }
-        }
+        }*/
     }
 
-    private fun prepareFragmentResult(dto: ExerciseChoiceDto) {
+    private fun prepareFragmentResult(dto: ExerciseChoiceResult) {
         parentFragmentManager.setFragmentResult(
             Constants.EXERCISE_CHOICE_FRAGMENT,
             bundleOf(Constants.EXERCISE_CHOICE_KEY to dto)
         )
     }
 
-    private fun getDto(@Constants.Exercises exerciseType: String): ExerciseChoiceDto =
+    /*private fun getDto(@Constants.Exercises exerciseType: String): ExerciseChoiceDto =
         ExerciseChoiceDto(
             isFromEnglish(),
             exerciseType
-        )
+        )*/
 
     private fun closeDialog() {
         dismiss()

@@ -1,12 +1,7 @@
 package com.volodymyr_x.easyenglishlearn
 
-import androidx.annotation.StringDef
 
 interface Constants {
-    @Retention(AnnotationRetention.SOURCE)
-    @StringDef(WORD_CONSTRUCTOR, WORD_QUIZ)
-
-    annotation class Exercises
     companion object {
         const val CATEGORY_NAME = "CATEGORY_NAME"
         const val DIALOG_REMOVE_CATEGORY = "DIALOG_REMOVE_CATEGORY"

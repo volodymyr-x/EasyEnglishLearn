@@ -1,11 +1,13 @@
 package com.volodymyr_x.easyenglishlearn.ui.word_selection
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -14,11 +16,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class WordSelectionViewModel @Inject constructor(
-    state: SavedStateHandle,
+@HiltViewModel(assistedFactory = WordSelectionViewModel.Factory::class)
+class WordSelectionViewModel @AssistedInject constructor(
+    @Assisted private val categoryName: String,
     private val wordsInteractor: WordsInteractor
 ) : ViewModel() {
     private val _screenState = MutableStateFlow(WordSelectionState())
@@ -30,11 +31,12 @@ class WordSelectionViewModel @Inject constructor(
 
 
     init {
-        val categoryName = state.get<String>(Constants.ARG_CATEGORY_NAME)
-        categoryName?.let {
-            updateScreenState { it.copy(categoryName = categoryName) }
-            loadWords()
-        }
+        loadWords()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(categoryName: String): WordSelectionViewModel
     }
 
     fun onAction(action: WordSelectionEvent) {
@@ -42,7 +44,7 @@ class WordSelectionViewModel @Inject constructor(
             is WordSelectionEvent.OnBtnStartClick -> onBtnStartClick()
             is WordSelectionEvent.OnItemCheckBoxChange -> onItemCheckBoxChange(action.word)
             is WordSelectionEvent.OnChooseAllClick -> onChooseAllClick()
-            is WordSelectionEvent.SetExerciseChoiceDto -> sendDTO(action.exerciseChoiceDto)
+            is WordSelectionEvent.OnExerciseChoose -> sendChoiceResult(action.exerciseChoiceResult)
             WordSelectionEvent.HideDialog -> hideChooseExerciseDialog()
         }
     }
@@ -85,7 +87,6 @@ class WordSelectionViewModel @Inject constructor(
 
     private fun loadWords() {
         viewModelScope.launch {
-            val categoryName = _screenState.value.categoryName
             val words = wordsInteractor.getWordsByCategory(categoryName).map { word ->
                 WordUI(
                     word.id,
@@ -93,22 +94,23 @@ class WordSelectionViewModel @Inject constructor(
                     word.translation
                 )
             }
-            updateScreenState { it.copy(categoryWords = words) }
+            updateScreenState { it.copy(
+                categoryName = categoryName,
+                categoryWords = words
+            ) }
         }
     }
 
-    private fun sendDTO(exerciseChoiceDto: ExerciseChoiceDto?) {
+    private fun sendChoiceResult(exerciseChoiceResult: ExerciseChoiceResult) {
         hideChooseExerciseDialog()
-        exerciseChoiceDto?.let {
-            val dto = WordSelectionDto(
-                exerciseChoiceDto.isWordToTranslation,
+            val dto = WordSelectionResult(
+                exerciseChoiceResult.isWordToTranslation,
                 getSelectedWords() as ArrayList<WordUI>,
-                exerciseChoiceDto.exerciseType
+                exerciseChoiceResult.exerciseType
             )
             viewModelScope.launch {
                 _wordSelectionAction.send(WordSelectionAction.StartExercise(dto))
             }
-        }
     }
 
     private fun hideChooseExerciseDialog() {

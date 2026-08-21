@@ -1,15 +1,19 @@
 package com.volodymyr_x.easyenglishlearn.ui
 
-import androidx.appcompat.app.AppCompatActivity
-import androidx.annotation.LayoutRes
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
 import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
-import com.volodymyr_x.easyenglishlearn.ui.category_select.CategoryFragment
-import com.volodymyr_x.easyenglishlearn.ui.word_selection.WordSelectionFragment
+import com.volodymyr_x.easyenglishlearn.navigation.NavigationRoot
 import com.volodymyr_x.easyenglishlearn.ui.category_edit.CategoryEditFragment
+import com.volodymyr_x.easyenglishlearn.ui.category_select.CategoryFragment
+import com.volodymyr_x.easyenglishlearn.ui.theme.AppTheme
+import com.volodymyr_x.easyenglishlearn.ui.word_selection.WordSelectionFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,14 +25,14 @@ class MainActivity : AppCompatActivity(), CategoryFragment.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(layoutResId)
-        val fm = supportFragmentManager
-        var fragment = fm.findFragmentById(R.id.fragment_container)
-        if (fragment == null) {
-            fragment = CategoryFragment.newInstance()
-            fm.beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit()
+        setContent {
+            AppTheme {
+                NavigationRoot(
+                    showMessageAction = { message ->
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
         }
     }
 

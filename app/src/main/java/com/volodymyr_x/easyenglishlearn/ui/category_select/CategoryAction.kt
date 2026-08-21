@@ -5,6 +5,4 @@ sealed interface CategoryAction {
     data class Edit(val categoryName: String) : CategoryAction
     data object CreateNew : CategoryAction
     data class Removed(val categoryName: String) : CategoryAction
-
-    data object Add : CategoryAction
 }

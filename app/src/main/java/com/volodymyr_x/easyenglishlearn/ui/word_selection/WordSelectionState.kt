@@ -8,5 +8,5 @@ data class WordSelectionState(
     val isChooseAllChecked: Boolean = false,
     val message: String? = null,
     val openChooseExerciseDialog: Boolean = false,
-    val startExerciseDto: WordSelectionDto? = null
+    val startExerciseDto: WordSelectionResult? = null
 )

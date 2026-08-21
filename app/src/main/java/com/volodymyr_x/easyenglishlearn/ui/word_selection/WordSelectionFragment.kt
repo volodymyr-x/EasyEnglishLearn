@@ -29,7 +29,7 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
                 viewModel.wordSelectionAction.collect { action ->
                     when (action) {
                         WordSelectionAction.ShowMessage -> showMessage()
-                        is WordSelectionAction.StartExercise -> startExercise(action.dto)
+                        is WordSelectionAction.StartExercise -> startExercise(action.result)
                     }
                 }
             }
@@ -53,12 +53,12 @@ class WordSelectionFragment : Fragment(R.layout.fragment_word_selection) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun startExercise(dto: WordSelectionDto) {
-        val intent = Intent(activity, ExerciseActivity::class.java)
+    private fun startExercise(dto: WordSelectionResult) {
+        /*val intent = Intent(activity, ExerciseActivity::class.java)
         intent.putExtra(Constants.EXERCISE_TYPE, dto.exercise)
         intent.putParcelableArrayListExtra(Constants.SELECTED_WORDS, dto.selectedWordList)
         intent.putExtra(Constants.IS_LEXEME_TO_TRANSLATION, dto.isTranslationDirection)
-        startActivity(intent)
+        startActivity(intent)*/
     }
 
     companion object {

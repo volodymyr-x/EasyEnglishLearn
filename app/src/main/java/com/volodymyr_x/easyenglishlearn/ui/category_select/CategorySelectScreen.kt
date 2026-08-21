@@ -16,6 +16,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -24,7 +26,41 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.volodymyr_x.easyenglishlearn.R
+import com.volodymyr_x.easyenglishlearn.navigation.Route
+
+@Composable
+fun CategorySelectScreen(action: (Route) -> Unit) {
+    val viewModel: CategoryViewModel = hiltViewModel()
+
+    LaunchedEffect(viewModel) {
+        viewModel.categoryAction.collect { action ->
+            when (action) {
+                CategoryAction.CreateNew -> {
+                    //callbacks?.onCategoryEdit("")
+                    action(Route.CategoryAdd)
+                }
+                is CategoryAction.Edit -> {
+                    //callbacks?.onCategoryEdit(action.categoryName)
+                    action(Route.CategoryEdit(categoryName = action.categoryName))
+                }
+                is CategoryAction.Selected -> {
+                    //callbacks?.onCategorySelected(action.categoryName)
+                    action(Route.WordSelection(categoryName = action.categoryName))
+                }
+                is CategoryAction.Removed -> { /*showToast(action.categoryName)*/ }
+            }
+        }
+    }
+    val categoryState by viewModel.categoryState.collectAsStateWithLifecycle()
+    CategorySelectContent(
+        state = categoryState,
+        onEvent = { viewModel.onCategoryEvent(it) },
+    )
+}
 
 @Composable
 fun CategorySelectContent(

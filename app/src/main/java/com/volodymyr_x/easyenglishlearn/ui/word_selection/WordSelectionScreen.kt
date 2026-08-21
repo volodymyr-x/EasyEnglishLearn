@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,9 +35,39 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 import com.volodymyr_x.easyenglishlearn.ui.model.WordUI
+
+@Composable
+fun WordSelectionScreen(
+    categoryName: String,
+    startExerciseAction: (WordSelectionResult) -> Unit,
+    showMessageAction: (String) -> Unit = {}
+) {
+    val viewModel = hiltViewModel { factory: WordSelectionViewModel.Factory ->
+        factory.create(categoryName)
+    }
+    val message =
+        stringResource(R.string.wsa_toast_min_words_count, Constants.MIN_CHECKED_WORD_QUANTITY)
+    LaunchedEffect(viewModel) {
+        viewModel.wordSelectionAction.collect { action ->
+            when (action) {
+                WordSelectionAction.ShowMessage -> showMessageAction(message)
+                is WordSelectionAction.StartExercise -> startExerciseAction(action.result)
+            }
+        }
+    }
+    val wordSelectionState =
+        viewModel.screenState.collectAsStateWithLifecycle().value
+    WordSelectionContent(
+        state = wordSelectionState,
+        action = viewModel::onAction
+    )
+}
 
 @Composable
 fun WordSelectionContent(
@@ -73,7 +104,7 @@ fun WordSelectionContent(
                             action(WordSelectionEvent.HideDialog)
                         },
                         { exerciseChoiceDto ->
-                            action(WordSelectionEvent.SetExerciseChoiceDto(exerciseChoiceDto))
+                            action(WordSelectionEvent.OnExerciseChoose(exerciseChoiceDto))
                         }
                     )
                 }

@@ -18,10 +18,40 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.volodymyr_x.easyenglishlearn.R
+import com.volodymyr_x.easyenglishlearn.ui.base_composables.LoadingScreen
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
+import com.volodymyr_x.easyenglishlearn.ui.category_edit.CategoryEditViewModel
 import com.volodymyr_x.easyenglishlearn.ui.theme.AppTheme
+import com.volodymyr_x.easyenglishlearn.ui.word_selection.WordSelectionResult
 
+@Composable
+fun ExerciseConstructorScreen(
+    wordSelectionResult: WordSelectionResult,
+    closeFragmentAction: () -> Unit
+) {
+    val viewModel = hiltViewModel { factory: ConstructorViewModel.Factory ->
+        factory.create(wordSelectionResult)
+    }
+    when (val screenState = viewModel.exerciseState.collectAsStateWithLifecycle().value) {
+        is ConstructorState.LoadingState -> LoadingScreen()
+        is ConstructorState.CompletedState -> ConstructorCompletedContent(
+            state = screenState.data,
+            closeAction = closeFragmentAction
+        )
+        is ConstructorState.StageState -> ConstructorStageContent(
+            state = screenState.data,
+            event = viewModel::onEvent
+        )
+        is ConstructorState.UndoStageState -> ConstructorStageContent(
+            state = screenState.data,
+            event = viewModel::onEvent
+        )
+    }
+}
 @Composable
 fun ConstructorStageContent(
     state: ConstructorStageState,

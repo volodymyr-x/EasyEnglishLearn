@@ -48,9 +48,9 @@ class CategoryFragment : Fragment(R.layout.fragment_category_select) {
                             callbacks?.onCategorySelected(action.categoryName)
                         }
                         is CategoryAction.Removed -> categoryRemovedYesClicked(action.categoryName)
-                        CategoryAction.Add -> {
+                        /*CategoryAction.Add -> {
                             callbacks?.onCategoryAdd()
-                        }
+                        }*/
                     }
                 }
             }

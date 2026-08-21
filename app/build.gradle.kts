@@ -45,6 +45,8 @@ val hiltVersion: String by rootProject.extra
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.recyclerview)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -54,6 +56,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.navigation3)
     coreLibraryDesugaring(libs.core.library.desugaring)
 
     //Compose
@@ -76,6 +79,7 @@ dependencies {
 
     //Dagger Hilt
     implementation(libs.hilt.android)
+    implementation(libs.hilt.compose.viewmodel)
     ksp(libs.hilt.android.compiler)
 
     //Kotlin serialization
@@ -84,7 +88,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

@@ -23,14 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
+import com.volodymyr_x.easyenglishlearn.navigation.Route
 import com.volodymyr_x.easyenglishlearn.ui.base_composables.VerticalSpacer
 
 @Composable
 fun ExerciseChoiceContent(
     onDismissRequest: () -> Unit,
-    onConfirmation: (ExerciseChoiceDto) -> Unit,
+    onConfirmation: (ExerciseChoiceResult) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val radioOptions = listOf("word -> translation", "translation -> word")
@@ -89,9 +89,9 @@ fun ExerciseChoiceContent(
                 Button(
                     onClick = {
                         onConfirmation(
-                            ExerciseChoiceDto(
+                            ExerciseChoiceResult(
                                 isWordToTranslation = selectedOption == radioOptions[0],
-                                exerciseType = Constants.WORD_QUIZ
+                                exerciseType = ExerciseType.QUIZ
                             )
                         )
                     },
@@ -105,9 +105,9 @@ fun ExerciseChoiceContent(
                 Button(
                     onClick = {
                         onConfirmation(
-                            ExerciseChoiceDto(
+                            ExerciseChoiceResult(
                                 isWordToTranslation = selectedOption == radioOptions[0],
-                                exerciseType = Constants.WORD_CONSTRUCTOR
+                                exerciseType = ExerciseType.CONSTRUCTOR
                             )
                         )
                     },

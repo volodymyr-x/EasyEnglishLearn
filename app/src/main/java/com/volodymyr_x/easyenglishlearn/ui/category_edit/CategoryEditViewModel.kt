@@ -1,36 +1,30 @@
 package com.volodymyr_x.easyenglishlearn.ui.category_edit
 
 import androidx.annotation.StringRes
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.volodymyr_x.easyenglishlearn.Constants
 import com.volodymyr_x.easyenglishlearn.R
 import com.volodymyr_x.easyenglishlearn.domain.WordsInteractor
 import com.volodymyr_x.easyenglishlearn.model.Word
 import com.volodymyr_x.easyenglishlearn.util.ResourceProvider
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CategoryEditViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = CategoryEditViewModel.Factory::class)
+class CategoryEditViewModel @AssistedInject constructor(
+    @Assisted private val currentCategoryName: String,
     private val wordsInteractor: WordsInteractor,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
-    private val currentCategoryNameFlow: StateFlow<String?> =
-        savedStateHandle.getStateFlow(Constants.ARG_CATEGORY_NAME, "")
     private val _categoryEditState = MutableStateFlow(CategoryEditState())
     val categoryEditState: StateFlow<CategoryEditState>
         get() = _categoryEditState
@@ -41,20 +35,20 @@ class CategoryEditViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            @OptIn(ExperimentalCoroutinesApi::class)
-            currentCategoryNameFlow.filterNotNull().flatMapLatest { categoryName ->
-                flow {
-                    val wordsByCategory = wordsInteractor.getWordsByCategory(categoryName)
-                    emit(_categoryEditState.value.copy(
-                        categoryName = categoryName,
-                        oldCategoryName = categoryName,
-                        words = wordsByCategory
-                    ))
-                }
-            }.collect { newState ->
-                _categoryEditState.value = newState
+            val wordsByCategory = wordsInteractor.getWordsByCategory(currentCategoryName)
+            _categoryEditState.update { state ->
+                state.copy(
+                    categoryName = currentCategoryName,
+                    oldCategoryName = currentCategoryName,
+                    words = wordsByCategory
+                )
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(currentCategoryName: String): CategoryEditViewModel
     }
 
     private fun onBtnSaveCategoryClick() {

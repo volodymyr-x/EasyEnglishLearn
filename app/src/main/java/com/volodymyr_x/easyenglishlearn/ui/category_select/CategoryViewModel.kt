@@ -37,7 +37,7 @@ class CategoryViewModel @Inject constructor(
 
     private fun createNewCategory() {
         viewModelScope.launch {
-            _categoryAction.send(CategoryAction.Add)
+            _categoryAction.send(CategoryAction.CreateNew)
         }
     }
 
